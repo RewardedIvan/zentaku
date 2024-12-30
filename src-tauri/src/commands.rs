@@ -74,7 +74,7 @@ pub async fn oauth(state: tauri::State<'_, Mutex<AppState>>, app_handle: tauri::
 }
 
 #[tauri::command]
-pub async fn graphql(state: tauri::State<'_, Mutex<AppState>>, query: String) -> Result<String, AppError> {
+pub async fn graphql(state: tauri::State<'_, Mutex<AppState>>, query: String) -> Result<HashMap<String, serde_json::Value>, AppError> {
     let token =
         state.lock().await
         .token.clone()
@@ -93,6 +93,6 @@ pub async fn graphql(state: tauri::State<'_, Mutex<AppState>>, query: String) ->
                 )?
             )
             .send().await?
-            .text().await?
+            .json().await?
     )
 }
