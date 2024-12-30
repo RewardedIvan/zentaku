@@ -5,6 +5,7 @@ use url::Url;
 use tokio::sync::Mutex;
 use base64::prelude::{BASE64_STANDARD, Engine};
 use rand::Rng;
+use serde_json::json;
 use std::{
     sync::mpsc::channel,
     collections::HashMap
@@ -70,4 +71,28 @@ pub async fn oauth(state: tauri::State<'_, Mutex<AppState>>, app_handle: tauri::
     state.lock().await.token = Some(token);
 
     Ok(())
+}
+
+#[tauri::command]
+pub async fn graphql(state: tauri::State<'_, Mutex<AppState>>, query: String) -> Result<String, AppError> {
+    let token =
+        state.lock().await
+        .token.clone()
+        .ok_or(
+            AppError::Graphql("no token".to_string())
+        )?;
+
+    Ok(
+        state.lock().await.client.post("https://graphql.anilist.co")
+            .header("Authorization", format!("{} {}", token.token_type, token.access_token))
+            .header("Content-Type", "application/json")
+            .header("Accept", "application/json")
+            .body(
+                serde_json::to_string(
+                    &json!({ "query": query })
+                )?
+            )
+            .send().await?
+            .text().await?
+    )
 }

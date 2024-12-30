@@ -3,7 +3,7 @@ use reqwest::Client as RqClient;
 use serde::{Deserialize, Serialize};
 use libaes::Cipher;
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Token {
     pub access_token: String,
     pub token_type: String,

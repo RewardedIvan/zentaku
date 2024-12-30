@@ -14,6 +14,8 @@ pub enum AppError {
     SerdeJson(#[from] serde_json::Error),
     #[error("error deserializing token: {0}")]
     TokenStore(String),
+    #[error("graphql error: {0}")]
+    Graphql(String),
 }
 
 #[derive(serde::Serialize)]
@@ -27,6 +29,7 @@ pub enum ErrorKind {
     Store(String),
     SerdeJson(String),
     TokenStore(String),
+    Graphql(String),
 }
 
 impl serde::Serialize for AppError {
@@ -43,6 +46,7 @@ impl serde::Serialize for AppError {
             Self::Store(_) => ErrorKind::Store(error_message),
             Self::SerdeJson(_) => ErrorKind::SerdeJson(error_message),
             Self::TokenStore(_) => ErrorKind::TokenStore(error_message),
+            Self::Graphql(_) => ErrorKind::Graphql(error_message),
         };
         error_kind.serialize(serializer)
     }
