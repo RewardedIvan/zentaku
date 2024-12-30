@@ -5,7 +5,17 @@ pub enum AppError {
     #[error("failed to parse as string: {0}")]
     Utf8(#[from] std::str::Utf8Error),
     #[error("reqwest failed: {0}")]
-    Reqwest(#[from] reqwest::Error),
+    Reqwest(#[from] tauri_plugin_http::reqwest::Error),
+    #[error("custom error: {0}")]
+    Custom(String),
+    #[error("failed to receive message: {0}")]
+    RecvError(#[from] std::sync::mpsc::RecvError),
+    #[error("store error: {0}")]
+    Store(#[from] tauri_plugin_store::Error),
+    #[error("serde_json error: {0}")]
+    SerdeJson(#[from] serde_json::Error),
+    #[error("error deserializing token: {0}")]
+    TokenStore(String),
 }
 
 #[derive(serde::Serialize)]
@@ -15,6 +25,11 @@ pub enum ErrorKind {
     Io(String),
     Utf8(String),
     Reqwest(String),
+    Custom(String),
+    RecvError(String),
+    Store(String),
+    SerdeJson(String),
+    TokenStore(String),
 }
 
 impl serde::Serialize for AppError {
@@ -27,6 +42,11 @@ impl serde::Serialize for AppError {
             Self::Io(_) => ErrorKind::Io(error_message),
             Self::Utf8(_) => ErrorKind::Utf8(error_message),
             Self::Reqwest(_) => ErrorKind::Reqwest(error_message),
+            Self::Custom(_) => ErrorKind::Custom(error_message),
+            Self::RecvError(_) => ErrorKind::RecvError(error_message),
+            Self::Store(_) => ErrorKind::Store(error_message),
+            Self::SerdeJson(_) => ErrorKind::SerdeJson(error_message),
+            Self::TokenStore(_) => ErrorKind::TokenStore(error_message),
         };
         error_kind.serialize(serializer)
     }
