@@ -18,13 +18,11 @@ extern crate dotenv_codegen;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_oauth::init())
         .plugin(tauri_plugin_store::Builder::new().build())
         .invoke_handler(
             tauri::generate_handler![
-                commands::get_token,
                 commands::oauth,
                 commands::check_login
             ]
@@ -35,7 +33,7 @@ pub fn run() {
                 let key = dotenv!("TOKEN_ENCRYPT_KEY").as_bytes();
 
                 if key.len() != AES_256_KEY_LEN {
-                    Err(AppError::Custom("TOKEN_ENCRYPT_KEY is not 32 bytes long".to_string()))
+                    Err(AppError::TokenStore("TOKEN_ENCRYPT_KEY is not 32 bytes long".to_string()))
                 } else {
                     // the things you do for type safety
                     let mut key_typed = [0u8; 32];

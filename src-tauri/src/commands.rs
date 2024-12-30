@@ -16,24 +16,12 @@ use crate::{
 };
 
 #[tauri::command]
-pub async fn get_token(state: tauri::State<'_, Mutex<AppState>>) -> Result<String, AppError> {
-    //format!("Hello, {}! You've been greeted from Rust!", name);
-
-    //let res = state.client.get("https://httpbin.org/ip").send().let store = app.store(path)?;await?;
-    //let resp = res.json::<HashMap<String, String>>().await?;
-
-    //Ok(format!("{}", resp.get("origin").unwrap()))
-    Ok(format!("{:?}", state.lock().await.token))
-}
-
-#[tauri::command]
-pub async fn check_login(state: tauri::State<'_, Mutex<AppState>>, app_handle: tauri::AppHandle) -> Result<bool, AppError> {
-    // just hope the ui runs this command before doing anything else
+pub async fn check_login(state: tauri::State<'_, Mutex<AppState>>) -> Result<bool, AppError> {
     Ok(state.lock().await.token.is_some())
 }
 
 #[tauri::command]
-pub async fn oauth(state: tauri::State<'_, Mutex<AppState>>, app_handle: tauri::AppHandle) -> Result<bool, AppError> {
+pub async fn oauth(state: tauri::State<'_, Mutex<AppState>>, app_handle: tauri::AppHandle) -> Result<(), AppError> {
     let config = OauthConfig {
         ports: Some(vec![3622]),
         response: Some("<style>body { background: #000; color: #FFF; }</style>Auth process completed. You can close this tab/window.".into()),
@@ -48,7 +36,6 @@ pub async fn oauth(state: tauri::State<'_, Mutex<AppState>>, app_handle: tauri::
         // though they didn't do this when you set response_type=code
         let binding = Url::parse(&url.replace("#", "?"))
             .expect("Failed to parse url");
-        //println!("url: {url}, binding: {:?}", binding);
 
         let query = binding.query_pairs().collect::<HashMap<_, _>>();
 
@@ -61,7 +48,6 @@ pub async fn oauth(state: tauri::State<'_, Mutex<AppState>>, app_handle: tauri::
         ).expect("Failed to send code to main thread");
     })?;
     
-    //println!("Started server on port {p}");
     let token = rx.recv()?;
     let token_store = app_handle.store("token")?;
 
@@ -83,5 +69,5 @@ pub async fn oauth(state: tauri::State<'_, Mutex<AppState>>, app_handle: tauri::
 
     state.lock().await.token = Some(token);
 
-    Ok(true)
+    Ok(())
 }
