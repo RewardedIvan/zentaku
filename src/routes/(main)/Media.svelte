@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
 	import type { Media } from "$lib/anilist";
 	import Ripple from "$lib/ui/Ripple.svelte";
 	import Tooltip from "$lib/ui/Tooltip.svelte";
@@ -11,7 +12,7 @@
 </script>
 
 <Tooltip class="entry">
-	<Ripple>
+	<Ripple onClick={() => goto(`/anime/${media.id}`)}>
 		<img class="cover" src={media.coverImage.large} alt="cover" draggable={false} />
 	</Ripple>
 

@@ -24,6 +24,7 @@ export interface List {
 export interface Media {
 	id: number;
 	bannerImage: string;
+	description: string;
 	coverImage: {
 		large: string;
 		color: string;
@@ -40,6 +41,7 @@ interface Query {
 	data: {
 		Viewer?: Viewer;
 		MediaListCollection?: MediaListCollection;
+		Media?: Media;
 	};
 }
 
@@ -90,7 +92,6 @@ export async function getMediaLists(type: "anime" | "manga") {
 							id
 							media {
 								id
-								bannerImage
 								coverImage {
 									large
 									color
@@ -112,4 +113,31 @@ export async function getMediaLists(type: "anime" | "manga") {
 	});
 
 	return q.data.MediaListCollection?.lists;
+}
+
+export async function getMedia(id: number) {
+	const q = await invoke<Query>("graphql", {
+		query: `
+			query($id: Int!) {
+				Media(id: $id) {
+					id
+					bannerImage
+					description
+					coverImage {
+						large
+						color
+					}
+					title {
+						romaji
+						english
+					}
+				}
+			}
+		`,
+		variables: {
+			id,
+		},
+	});
+
+	return q.data.Media;
 }
