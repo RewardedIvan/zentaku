@@ -2,6 +2,7 @@
 	import { StyleFromScheme } from "m3-svelte";
 	import { scheme } from "$lib/stores/theme";
 	import "@fontsource/roboto";
+	import "@fontsource/afacad-flux";
 	import "../app.css";
 
 	const { children } = $props();
