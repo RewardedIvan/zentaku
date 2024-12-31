@@ -25,6 +25,12 @@ export interface Media {
 	id: number;
 	bannerImage: string;
 	description: string;
+	episodes: number;
+	status: "FINISHED" | "RELEASING" | "NOT_YET_RELEASED" | "CANCELLED" | "HIATUS";
+	nextAiringEpisode?: {
+		episode: number;
+		airingAt: number;
+	};
 	coverImage: {
 		large: string;
 		color: string;
@@ -123,6 +129,8 @@ export async function getMedia(id: number) {
 					id
 					bannerImage
 					description
+					episodes
+					status
 					coverImage {
 						large
 						color
@@ -130,6 +138,10 @@ export async function getMedia(id: number) {
 					title {
 						romaji
 						english
+					}
+					nextAiringEpisode {
+						episode
+						airingAt
 					}
 				}
 			}

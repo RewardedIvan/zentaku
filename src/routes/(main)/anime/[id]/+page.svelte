@@ -1,10 +1,26 @@
 <script lang="ts">
 	import { page } from "$app/state";
 	import { getMedia, type Media } from "$lib/anilist";
-	import { Button, CircularProgressIndeterminate, FAB, Icon } from "m3-svelte";
+	import { Button, Card, CircularProgressIndeterminate, FAB, Icon } from "m3-svelte";
 
 	import TVIcon from "@ktibow/iconset-material-symbols/monitor";
 	import EditIcon from "@ktibow/iconset-material-symbols/edit";
+	import Relative from "$lib/ui/Relative.svelte";
+
+	function statusToString(status: Media["status"]) {
+		switch (status) {
+			case "FINISHED":
+				return "Finished";
+			case "RELEASING":
+				return "Releasing";
+			case "NOT_YET_RELEASED":
+				return "Not released yet";
+			case "CANCELLED":
+				return "Cancelled";
+			case "HIATUS":
+				return "Hiatus";
+		}
+	}
 </script>
 
 {#await getMedia(parseInt(page.params.id))}
@@ -28,6 +44,7 @@
 
 		<div class="flex flex-col gap-2 items-start flex-grow w-full max-w-max">
 			<img src={media.coverImage.large} alt="cover" class="max-w-max" />
+
 			<div class="flex flex-col gap-2 w-full">
 				<Button type="filled" iconType="left"><Icon icon={TVIcon} /> Watch</Button>
 				<Button type="filled" iconType="left"><Icon icon={EditIcon} /> Edit</Button>
@@ -40,6 +57,20 @@
 			</span>
 
 			<p class="text-md font-roboto">{@html media.description}</p>
+
+			<div class="flex flex-row gap-2 items-center">
+				<Card type="filled">{statusToString(media.status)}</Card>
+				{#if media.nextAiringEpisode}
+					<Card type="filled">
+						{media.episodes || "No"} episodes total, {media.nextAiringEpisode.episode - 1} released
+					</Card>
+					<Card type="filled"
+						>Next episode airing in <Relative futureUnix={media.nextAiringEpisode.airingAt} /></Card
+					>
+				{:else}
+					<Card type="filled">{media.episodes || "No"} episodes</Card>
+				{/if}
+			</div>
 		</div>
 	</div>
 {/snippet}

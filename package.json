@@ -19,6 +19,7 @@
 		"@fontsource/roboto": "^5.1.0",
 		"@ktibow/iconset-material-symbols": "^0.0.1733470085",
 		"@tauri-apps/api": "^2",
+		"date-fns": "^4.1.0",
 		"m3-svelte": "^3.4.5",
 		"svelte-floating-ui": "^1.5.9"
 	},
