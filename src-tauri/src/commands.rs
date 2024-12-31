@@ -13,7 +13,7 @@ use std::{
 
 use crate::{
     error::AppError,
-    types::{AppState, Token}
+    types::{AppState, Token, Json}
 };
 
 #[tauri::command]
@@ -74,7 +74,7 @@ pub async fn oauth(state: tauri::State<'_, Mutex<AppState>>, app_handle: tauri::
 }
 
 #[tauri::command]
-pub async fn graphql(state: tauri::State<'_, Mutex<AppState>>, query: String) -> Result<HashMap<String, serde_json::Value>, AppError> {
+pub async fn graphql(state: tauri::State<'_, Mutex<AppState>>, query: String, variables: Json) -> Result<Json, AppError> {
     let token =
         state.lock().await
         .token.clone()
@@ -89,7 +89,7 @@ pub async fn graphql(state: tauri::State<'_, Mutex<AppState>>, query: String) ->
             .header("Accept", "application/json")
             .body(
                 serde_json::to_string(
-                    &json!({ "query": query })
+                    &json!({ "query": query, "variables": variables })
                 )?
             )
             .send().await?
