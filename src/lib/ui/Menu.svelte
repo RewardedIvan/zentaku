@@ -1,29 +1,27 @@
 <script lang="ts">
-	import { easeEmphasizedAccel, easeEmphasizedDecel, Menu, MenuItem } from "m3-svelte";
+	import { easeEmphasizedAccel, easeEmphasizedDecel, Menu } from "m3-svelte";
 	import { createFloatingActions } from "svelte-floating-ui";
-	import type { Snippet } from "svelte";
-	import { offset, shift, flip } from "@floating-ui/dom";
+	import { type Snippet } from "svelte";
+	import { offset, shift, flip, type Placement } from "@floating-ui/dom";
 	import { slide } from "svelte/transition";
 
 	interface Props {
 		children: Snippet<[]>;
 		menu: Snippet<[]>;
+		placement?: Placement;
 		open: boolean;
 	}
 
-	let { children, menu, open = $bindable() }: Props = $props();
-
-	let child: HTMLElement | null = $state(null);
-	let menue: HTMLElement | null = $state(null);
+	let { children, menu, placement = "bottom", open = $bindable() }: Props = $props();
 
 	const [floatingRef, floatingContent] = createFloatingActions({
 		strategy: "absolute",
-		placement: "top",
+		placement,
 		middleware: [offset(6), flip(), shift()],
 	});
 </script>
 
-<div class="flex" bind:this={child} use:floatingRef>
+<div class="flex" use:floatingRef>
 	{@render children()}
 </div>
 
@@ -34,7 +32,6 @@
 		aria-haspopup="menu"
 		in:slide={{ duration: 200, easing: easeEmphasizedDecel, axis: "y" }}
 		out:slide={{ duration: 200, easing: easeEmphasizedAccel, axis: "y" }}
-		bind:this={menue}
 		use:floatingContent
 	>
 		<Menu>

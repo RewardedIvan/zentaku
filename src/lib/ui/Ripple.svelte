@@ -3,16 +3,24 @@
 	import type { Snippet } from "svelte";
 
 	interface Props {
-		onClick: () => void;
+		onClick?: () => void;
+		onRightClick?: () => void;
 		children: Snippet<[]>;
 		class?: string;
 		[key: string]: any;
 	}
 
-	const { children, onClick, class: className, ...rest }: Props = $props();
+	const { children, onClick, onRightClick, class: className, ...rest }: Props = $props();
+
+	function onContextMenu(e: MouseEvent) {
+		if (onRightClick) {
+			onRightClick();
+			e.preventDefault();
+		}
+	}
 </script>
 
-<button class="relative {className}" onclick={onClick} {...rest}>
+<button class="relative {className}" onclick={onClick} oncontextmenu={onContextMenu} {...rest}>
 	{@render children()}
 
 	<Layer />

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Card, easeEmphasizedAccel, easeEmphasizedDecel, Menu, MenuItem } from "m3-svelte";
+	import { easeEmphasizedAccel, easeEmphasizedDecel } from "m3-svelte";
 	import { createFloatingActions } from "svelte-floating-ui";
-	import type { Snippet } from "svelte";
+	import { type Snippet } from "svelte";
 	import { offset, shift, flip, type Placement } from "@floating-ui/dom";
 	import { slide } from "svelte/transition";
 
@@ -23,20 +23,17 @@
 		...rest
 	}: Props = $props();
 
-	let child: HTMLElement | null = $state(null);
-	let tooltipe: HTMLElement | null = $state(null);
 	let show = $state(false);
 
 	const [floatingRef, floatingContent] = createFloatingActions({
 		strategy: "absolute",
-		placement: placement,
+		placement,
 		middleware: [offset(6), flip(), shift()],
 	});
 </script>
 
 <div
 	class="flex {className}"
-	bind:this={child}
 	use:floatingRef
 	onpointermove={() => (show = true)}
 	onpointerleave={() => (show = false)}
@@ -47,12 +44,11 @@
 
 {#if show}
 	<div
-		class="w-max absolute bg-inverse-surface text-inverse-on-surface p-2 rounded-xl"
+		class="w-max absolute bg-inverse-surface text-inverse-on-surface p-2 rounded-xl z-[999]"
 		style="left: 0; top: 0;"
 		aria-haspopup="menu"
 		in:slide={{ duration: 200, easing: easeEmphasizedDecel, axis: "y" }}
-		out:slide={{ duration: 200, easing: easeEmphasizedAccel, axis: "y" }}
-		bind:this={tooltipe}
+		out:slide={{ duration: 20, easing: easeEmphasizedAccel, axis: "y" }}
 		use:floatingContent
 	>
 		{@render tooltip()}

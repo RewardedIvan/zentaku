@@ -1,14 +1,7 @@
 <script lang="ts">
 	import Menu from "$lib/ui/Menu.svelte";
 	import Ripple from "$lib/ui/Ripple.svelte";
-	import { invoke } from "@tauri-apps/api/core";
-	import {
-		MenuItem,
-		ListItemButton,
-		Icon,
-		LinearProgressIndeterminate,
-		CircularProgressIndeterminate,
-	} from "m3-svelte";
+	import { MenuItem, CircularProgressIndeterminate } from "m3-svelte";
 	import { getProfile, getMediaLists } from "$lib/anilist";
 	import MediaList from "./MediaList.svelte";
 

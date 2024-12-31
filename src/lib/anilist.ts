@@ -21,7 +21,7 @@ export interface List {
 	}[];
 }
 
-interface Media {
+export interface Media {
 	id: number;
 	bannerImage: string;
 	coverImage: {
