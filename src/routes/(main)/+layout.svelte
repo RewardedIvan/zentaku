@@ -2,8 +2,9 @@
 	import Menu from "$lib/ui/Menu.svelte";
 	import Ripple from "$lib/ui/Ripple.svelte";
 	import { MenuItem, CircularProgressIndeterminate } from "m3-svelte";
-	import { getProfile, getMediaLists } from "$lib/anilist";
-	import MediaList from "./MediaList.svelte";
+	import { getProfile } from "$lib/anilist";
+
+	const { children } = $props();
 
 	let profileMenuOpen = $state(false);
 </script>
@@ -31,17 +32,6 @@
 			{/await}
 		</div>
 	</div>
-	<div class="flex flex-grow flex-col">
-		{#await getMediaLists("anime")}
-			<CircularProgressIndeterminate />
-		{:then mediaLists}
-			{#if mediaLists}
-				{#each mediaLists as list}
-					<MediaList {list} />
-				{/each}
-			{:else}
-				<span class="text-center">No lists</span>
-			{/if}
-		{/await}
-	</div>
+
+	{@render children()}
 </div>
