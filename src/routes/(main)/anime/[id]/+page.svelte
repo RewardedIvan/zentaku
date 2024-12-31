@@ -26,8 +26,8 @@
 			class="absolute z-[-1] left-0 top-0 h-full object-cover blur brightness-50"
 		/>
 
-		<div class="flex flex-col gap-2 items-start flex-grow w-full">
-			<img src={media.coverImage.large} alt="cover" class="w-full" />
+		<div class="flex flex-col gap-2 items-start flex-grow w-full max-w-max">
+			<img src={media.coverImage.large} alt="cover" class="max-w-max" />
 			<div class="flex flex-col gap-2 w-full">
 				<Button type="filled" iconType="left"><Icon icon={TVIcon} /> Watch</Button>
 				<Button type="filled" iconType="left"><Icon icon={EditIcon} /> Edit</Button>
