@@ -35,6 +35,7 @@ export interface Media {
 		large: string;
 		color: string;
 	};
+	genres: string[];
 	title: Title;
 }
 
@@ -131,6 +132,7 @@ export async function getMedia(id: number) {
 					description
 					episodes
 					status
+					genres
 					coverImage {
 						large
 						color

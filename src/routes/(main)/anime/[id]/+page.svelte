@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { page } from "$app/state";
 	import { getMedia, type Media } from "$lib/anilist";
+	import Relative from "$lib/ui/Relative.svelte";
 	import { Button, Card, CircularProgressIndeterminate, FAB, Icon } from "m3-svelte";
 
 	import TVIcon from "@ktibow/iconset-material-symbols/monitor";
 	import EditIcon from "@ktibow/iconset-material-symbols/edit";
-	import Relative from "$lib/ui/Relative.svelte";
 
 	function statusToString(status: Media["status"]) {
 		switch (status) {
@@ -70,6 +70,12 @@
 				{:else}
 					<Card type="filled">{media.episodes || "No"} episodes</Card>
 				{/if}
+			</div>
+
+			<div class="flex flex-row gap-2 items-center">
+				{#each media.genres as genre}
+					<Card type="outlined">{genre}</Card>
+				{/each}
 			</div>
 		</div>
 	</div>
