@@ -25,7 +25,8 @@ pub fn run() {
             tauri::generate_handler![
                 commands::oauth,
                 commands::check_login,
-                commands::graphql
+                commands::graphql,
+                commands::fetch,
             ]
         )
         .setup(|app| {

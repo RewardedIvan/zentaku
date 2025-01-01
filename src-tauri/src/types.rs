@@ -19,3 +19,33 @@ pub struct AppState {
     pub client: RqClient,
     pub aes: Cipher,
 }
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct FetchResponse {
+    pub headers: HashMap<String, String>,
+    pub status: u16,
+    pub body: String,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub enum FetchMethod {
+    GET,
+    POST,
+    PUT,
+    DELETE,
+    OPTIONS,
+    PATCH
+}
+
+impl FetchMethod {
+    pub fn to_reqwest(&self) -> reqwest::Method {
+        match self {
+            FetchMethod::GET => reqwest::Method::GET,
+            FetchMethod::POST => reqwest::Method::POST,
+            FetchMethod::PUT => reqwest::Method::PUT,
+            FetchMethod::DELETE => reqwest::Method::DELETE,
+            FetchMethod::OPTIONS => reqwest::Method::OPTIONS,
+            FetchMethod::PATCH => reqwest::Method::PATCH,
+        }
+    }
+}

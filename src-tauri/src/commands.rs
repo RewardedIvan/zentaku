@@ -13,7 +13,7 @@ use std::{
 
 use crate::{
     error::AppError,
-    types::{AppState, Token, Json}
+    types::{AppState, Token, Json, FetchResponse, FetchMethod}
 };
 
 #[tauri::command]
@@ -94,5 +94,28 @@ pub async fn graphql(state: tauri::State<'_, Mutex<AppState>>, query: String, va
             )
             .send().await?
             .json().await?
+    )
+}
+
+#[tauri::command]
+pub async fn fetch(state: tauri::State<'_, Mutex<AppState>>, url: String, method: FetchMethod, body: Option<String>, headers: Option<HashMap<String, String>>) -> Result<FetchResponse, AppError> {
+    let mut req = state.lock().await.client.request(method.to_reqwest(), url);
+
+    if let Some(body) = body {
+        req = req.body(body);
+    }
+
+    if let Some(headers) = headers {
+        req = headers.iter().fold(req, |prev, (k, v)| prev.header(k, v));
+    }
+
+    let res = req.send().await?;
+
+    Ok(
+        FetchResponse {
+            headers: res.headers().iter().map(|(key, value)| (key.to_string(), value.to_str().unwrap().to_string())).collect(),
+            status: res.status().as_u16(),
+            body: res.text().await?
+        }
     )
 }
