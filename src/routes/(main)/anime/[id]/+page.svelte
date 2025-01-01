@@ -2,7 +2,8 @@
 	import { page } from "$app/state";
 	import { getMedia, type Media } from "$lib/anilist";
 	import Relative from "$lib/ui/Relative.svelte";
-	import { Button, Card, CircularProgressIndeterminate, FAB, Icon } from "m3-svelte";
+	import { goto } from "$app/navigation";
+	import { Button, Card, CircularProgressIndeterminate, Icon } from "m3-svelte";
 
 	import TVIcon from "@ktibow/iconset-material-symbols/monitor";
 	import EditIcon from "@ktibow/iconset-material-symbols/edit";
@@ -46,7 +47,9 @@
 			<img src={media.coverImage.large} alt="cover" class="max-w-max" />
 
 			<div class="flex flex-col gap-2 w-full">
-				<Button type="filled" iconType="left"><Icon icon={TVIcon} /> Watch</Button>
+				<Button type="filled" iconType="left" on:click={() => goto(`/anime/${media.id}/watch`)}>
+					<Icon icon={TVIcon} /> Watch
+				</Button>
 				<Button type="filled" iconType="left"><Icon icon={EditIcon} /> Edit</Button>
 			</div>
 		</div>
