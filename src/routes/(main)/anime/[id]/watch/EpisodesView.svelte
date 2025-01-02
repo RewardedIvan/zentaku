@@ -20,7 +20,7 @@
 				<Tooltip placement="right">
 					<ListItemButton
 						headline={episode.title}
-						supporting={episode.description}
+						supporting={episode.description ?? undefined}
 						on:click={() => playEpisode(episode)}
 						extraOptions={{ style: "display: flex; width: 100%;" }}
 					>
