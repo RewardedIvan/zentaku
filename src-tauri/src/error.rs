@@ -16,6 +16,8 @@ pub enum AppError {
     TokenStore(String),
     #[error("graphql error: {0}")]
     Graphql(String),
+    #[error("tauri error: {0}")]
+    Tauri(#[from] tauri::Error),
 }
 
 #[derive(serde::Serialize)]
@@ -30,6 +32,7 @@ pub enum ErrorKind {
     SerdeJson(String),
     TokenStore(String),
     Graphql(String),
+    Tauri(String),
 }
 
 impl serde::Serialize for AppError {
@@ -47,6 +50,7 @@ impl serde::Serialize for AppError {
             Self::SerdeJson(_) => ErrorKind::SerdeJson(error_message),
             Self::TokenStore(_) => ErrorKind::TokenStore(error_message),
             Self::Graphql(_) => ErrorKind::Graphql(error_message),
+            Self::Tauri(_) => ErrorKind::Tauri(error_message),
         };
         error_kind.serialize(serializer)
     }

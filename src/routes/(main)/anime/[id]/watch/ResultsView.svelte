@@ -41,7 +41,9 @@
 							{#if result.episodes}
 								<span class="font-afacad-flux text-sm">{result.episodes} episodes</span>
 							{/if}
-							<img src={result.coverUrl} alt="cover" width={128} class="self-center rounded-md" />
+							{#if result.coverUrl}
+								<img src={result.coverUrl} alt="cover" width={128} class="self-center rounded-md" />
+							{/if}
 						</CardClickable>
 
 						{#snippet tooltip()}

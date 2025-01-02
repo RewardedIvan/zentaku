@@ -27,6 +27,8 @@ pub fn run() {
                 commands::check_login,
                 commands::graphql,
                 commands::fetch,
+                commands::get_sources,
+                commands::open_source_dir,
             ]
         )
         .setup(|app| {

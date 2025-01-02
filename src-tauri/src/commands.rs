@@ -1,3 +1,4 @@
+use tauri::Manager;
 use tauri_plugin_oauth::OauthConfig;
 use tauri_plugin_store::StoreExt;
 
@@ -8,7 +9,8 @@ use rand::Rng;
 use serde_json::json;
 use std::{
     sync::mpsc::channel,
-    collections::HashMap
+    collections::HashMap,
+    fs,
 };
 
 use crate::{
@@ -118,4 +120,51 @@ pub async fn fetch(state: tauri::State<'_, Mutex<AppState>>, url: String, method
             body: res.text().await?
         }
     )
+}
+
+#[tauri::command]
+pub async fn get_sources(app_handle: tauri::AppHandle) -> Result<HashMap<String, String>, AppError> {
+    let path = 
+        app_handle
+        .path()
+        .app_data_dir()?
+        .join("sources");
+
+    if !path.exists() {
+        fs::create_dir_all(&path)?;
+    }
+
+    Ok(
+        fs::read_dir(&path)?.map(|e| {
+            let e = e.as_ref().unwrap();
+
+            (
+                e
+                .file_name()
+                .into_string()
+                .unwrap()
+            ,
+                fs::read_to_string(
+                    e.path()
+                ).unwrap()
+            )
+        }).collect()
+    )
+}
+
+#[tauri::command]
+pub async fn open_source_dir(app_handle: tauri::AppHandle) -> Result<(), AppError> {
+    let path = 
+        app_handle
+        .path()
+        .app_data_dir()?
+        .join("sources");
+
+    if !path.exists() {
+        fs::create_dir_all(&path)?;
+    }
+
+    open::that(path)?;
+
+    Ok(())
 }
