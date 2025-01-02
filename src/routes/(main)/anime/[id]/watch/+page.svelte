@@ -3,6 +3,7 @@
 	import { Card } from "m3-svelte";
 	import type { QueryEpisodeInfo, QueryResult, VideoSource } from "$lib/source";
 	import { type Media, getMedia } from "$lib/anilist";
+	import { SourceSettings } from "$lib/stores/SourceStores";
 
 	import SourcesView from "./sources/SourcesView.svelte";
 	import ResultsView from "./ResultsView.svelte";
@@ -16,14 +17,18 @@
 	async function search(source: VideoSource<unknown>) {
 		currentSource = source;
 		episodes = null;
+
 		let m = await media;
 		if (!m) return;
-		sourceResults = source.search(source.defaultSettings, m);
+
+		sourceResults = source.search($SourceSettings[source.name] ?? currentSource.defaultSettings, m);
 	}
 
 	async function getEpisodes(id: string) {
 		if (!currentSource) return;
-		episodes = currentSource.getEpisodes(currentSource.defaultSettings, id);
+
+		const settings = $SourceSettings[currentSource.name] ?? currentSource.defaultSettings;
+		episodes = currentSource.getEpisodes(settings, id);
 	}
 
 	async function playEpisode(episode: QueryEpisodeInfo) {}
