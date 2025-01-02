@@ -27,11 +27,3 @@ export interface VideoSource<S> {
 	getEpisodes: (settings: S, id: string) => Promise<QueryEpisodeInfo[]>;
 	getEpisode: (settings: S, id: string, episode: number) => Promise<QueryEpisodeResult>;
 }
-
-export interface VideoSourceSerialized<S> {
-	name: string;
-	icon: string;
-	url: string;
-	defaultSettings: S;
-	sourceCode: string;
-}
