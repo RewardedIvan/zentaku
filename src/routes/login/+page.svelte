@@ -38,6 +38,7 @@
 						<span class="text-center">Check your browser.</span>
 						<LinearProgressIndeterminate />
 					{:then}
+						<Button type="tonal" on:click={() => goto("/")}>Home</Button>
 						<span class="text-center">Logged in!</span>
 					{/await}
 				{/if}
