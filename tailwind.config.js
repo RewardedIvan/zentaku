@@ -47,6 +47,7 @@ export default {
 			fontFamily: {
 				roboto: "Roboto",
 				"afacad-flux": "'Afacad Flux'",
+				"jetbrains-mono": "'JetBrains Mono'",
 			},
 		},
 	},

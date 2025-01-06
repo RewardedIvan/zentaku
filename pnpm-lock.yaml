@@ -17,6 +17,9 @@ importers:
       '@fontsource/afacad-flux':
         specifier: ^5.0.2
         version: 5.0.2
+      '@fontsource/jetbrains-mono':
+        specifier: ^5.1.2
+        version: 5.1.2
       '@fontsource/roboto':
         specifier: ^5.1.0
         version: 5.1.0
@@ -256,6 +259,9 @@ packages:
 
   '@fontsource/afacad-flux@5.0.2':
     resolution: {integrity: sha512-FUFwyjaIbsW5lFtOzNSYDAVixVL/5YEPdT3FQGkXHSxe713V6L5UOjHAopU9ZauioN4rabLjshNTfPqZH0nvXQ==}
+
+  '@fontsource/jetbrains-mono@5.1.2':
+    resolution: {integrity: sha512-muYZK6W3NTrKpKTjoF2dkrtMjXLlPZhniLiLjMmfegRibl2L6jUJh9gB6UcbcZs3zHdIYTmzMkXNbNoI2kXX3Q==}
 
   '@fontsource/roboto@5.1.0':
     resolution: {integrity: sha512-cFRRC1s6RqPygeZ8Uw/acwVHqih8Czjt6Q0MwoUoDe9U3m4dH1HmNDRBZyqlMSFwgNAUKgFImncKdmDHyKpwdg==}
@@ -1394,6 +1400,8 @@ snapshots:
   '@floating-ui/utils@0.2.8': {}
 
   '@fontsource/afacad-flux@5.0.2': {}
+
+  '@fontsource/jetbrains-mono@5.1.2': {}
 
   '@fontsource/roboto@5.1.0': {}
 
