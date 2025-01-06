@@ -15,6 +15,7 @@
 	},
 	"license": "MIT",
 	"dependencies": {
+		"@date-fns/utc": "^2.1.0",
 		"@floating-ui/core": "^1.6.8",
 		"@floating-ui/dom": "^1.6.12",
 		"@fontsource/afacad-flux": "^5.0.2",
