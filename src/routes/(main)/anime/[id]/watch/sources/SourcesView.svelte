@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { FAB } from "m3-svelte";
 	import type { VideoSource } from "$lib/source";
-	import { TrustStore } from "$lib/stores/SourceStores";
+	import { TrustStore, hashSource } from "$lib/stores/SourceStores";
 	import { invoke } from "@tauri-apps/api/core";
 	import { fetch as unsafeFetch } from "$lib/tauri";
 	import type { IconifyIcon } from "@iconify/types";
@@ -23,13 +23,6 @@
 
 	const { search, clearResults }: Props = $props();
 
-	async function hash(str: string) {
-		const msgUint8 = new TextEncoder().encode(str);
-		const hashBuffer = await window.crypto.subtle.digest("SHA-256", msgUint8);
-		const hashArray = Array.from(new Uint8Array(hashBuffer));
-		return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-	}
-
 	let warningOpen = $state(false);
 	let trustDialogOpen = $state(false);
 	let sources: VideoSource<unknown>[] = $state([]);
@@ -40,7 +33,7 @@
 		warningOpen = (
 			await Promise.all(
 				Object.entries(scripts).map(async ([_fileName, script]) => {
-					return Object.hasOwn($TrustStore, await hash(script));
+					return Object.hasOwn($TrustStore, await hashSource(script));
 				}),
 			)
 		).includes(false);
@@ -68,7 +61,7 @@
 		let newEntries = Object.fromEntries(
 			await Promise.all(
 				Object.entries(scripts).map(async ([_fileName, script]) => {
-					let scriptHash = await hash(script);
+					let scriptHash = await hashSource(script);
 					return [scriptHash, script];
 				}),
 			),
