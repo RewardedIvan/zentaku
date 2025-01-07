@@ -18,9 +18,10 @@
 
 	interface Props {
 		search: (source: VideoSource<unknown>) => void;
+		clearResults: () => void;
 	}
 
-	const { search }: Props = $props();
+	const { search, clearResults }: Props = $props();
 
 	async function hash(str: string) {
 		const msgUint8 = new TextEncoder().encode(str);
@@ -52,6 +53,7 @@
 	async function refreshSources() {
 		warningOpen = false;
 
+		clearResults();
 		const scripts = await invoke<Record<string, string>>("get_sources");
 		sources = Object.entries(scripts)
 			.map(([_fileName, script]) => {

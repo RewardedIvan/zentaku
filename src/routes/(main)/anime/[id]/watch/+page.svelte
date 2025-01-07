@@ -32,11 +32,16 @@
 	}
 
 	async function playEpisode(episode: EpisodeInfo) {}
+
+	function clearResults() {
+		sourceResults = null;
+		episodes = null;
+	}
 </script>
 
 <div class="flex flex-col flex-grow gap-2 items-center justify-center m-2">
 	<Card type="filled">
-		<SourcesView {search} />
+		<SourcesView {search} {clearResults} />
 	</Card>
 
 	{#if sourceResults}
