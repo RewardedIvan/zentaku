@@ -1,29 +1,33 @@
 import type { Media } from "./anilist";
 
-export interface QueryResult {
+// ids are source-provided, except anilistMedia
+
+export interface SearchResult {
 	id: string;
 	title: string;
 	coverUrl?: string;
 	episodes?: number;
 }
 
-export interface QueryEpisodeResult {
-	title: string;
-	videoUrl: string;
+// gets put into <source>
+export interface VideoResult {
+	src: string;
+	type?: string;
+	track?: string;
 }
 
-export interface QueryEpisodeInfo {
+export interface EpisodeInfo {
 	description: string | null;
 	number: number;
 	title: string;
 }
 
 export interface VideoSource<S> {
-	name: string;
+	name: string; // names should be unique
 	icon: string;
 	url: string;
 	defaultSettings: S;
-	search: (settings: S, media: Media) => Promise<QueryResult[]>;
-	getEpisodes: (settings: S, id: string) => Promise<QueryEpisodeInfo[]>;
-	getEpisode: (settings: S, id: string, episode: number) => Promise<QueryEpisodeResult>;
+	search: (settings: S, anilistMedia: Media) => Promise<SearchResult[]>;
+	getEpisodes: (settings: S, id: string) => Promise<EpisodeInfo[]>;
+	getVideo: (settings: S, id: string, episode: number) => Promise<VideoResult[]>;
 }

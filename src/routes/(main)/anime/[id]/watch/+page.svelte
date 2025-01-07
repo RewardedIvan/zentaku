@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/state";
 	import { Card } from "m3-svelte";
-	import type { QueryEpisodeInfo, QueryResult, VideoSource } from "$lib/source";
+	import type { SearchResult, VideoSource, EpisodeInfo } from "$lib/source";
 	import { type Media, getMedia } from "$lib/anilist";
 	import { SourceSettings } from "$lib/stores/SourceStores";
 
@@ -9,8 +9,8 @@
 	import ResultsView from "./ResultsView.svelte";
 	import EpisodesView from "./EpisodesView.svelte";
 
-	let sourceResults: Promise<QueryResult[]> | null = $state(null);
-	let episodes: Promise<QueryEpisodeInfo[]> | null = $state(null);
+	let sourceResults: Promise<SearchResult[]> | null = $state(null);
+	let episodes: Promise<EpisodeInfo[]> | null = $state(null);
 	let media: Promise<Media | undefined> = $state(getMedia(parseInt(page.params.id)));
 	let currentSource: VideoSource<unknown> | null = $state(null);
 
@@ -31,7 +31,7 @@
 		episodes = currentSource.getEpisodes(settings, id);
 	}
 
-	async function playEpisode(episode: QueryEpisodeInfo) {}
+	async function playEpisode(episode: EpisodeInfo) {}
 </script>
 
 <div class="flex flex-col flex-grow gap-2 items-center justify-center m-2">

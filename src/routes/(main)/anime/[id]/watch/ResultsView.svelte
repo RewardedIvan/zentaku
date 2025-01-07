@@ -8,7 +8,7 @@
 		FAB,
 	} from "m3-svelte";
 	import Tooltip from "$lib/ui/Tooltip.svelte";
-	import type { QueryResult } from "$lib/source";
+	import type { SearchResult } from "$lib/source";
 
 	import ExpandMore from "@ktibow/iconset-material-symbols/expand-more";
 	import ExpandLess from "@ktibow/iconset-material-symbols/expand-less";
@@ -16,7 +16,7 @@
 	let resultsExpanded = $state(true);
 
 	interface Props {
-		sourceResults: Promise<QueryResult[]> | null;
+		sourceResults: Promise<SearchResult[]> | null;
 		getEpisodes: (id: string) => void;
 	}
 

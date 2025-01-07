@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { QueryEpisodeInfo } from "$lib/source";
+	import type { EpisodeInfo } from "$lib/source";
 	import Tooltip from "$lib/ui/Tooltip.svelte";
 	import { Divider, ListItemButton } from "m3-svelte";
 
 	interface Props {
-		episodes: Promise<QueryEpisodeInfo[]> | null;
-		playEpisode: (episode: QueryEpisodeInfo) => void;
+		episodes: Promise<EpisodeInfo[]> | null;
+		playEpisode: (episode: EpisodeInfo) => void;
 	}
 
 	const { episodes, playEpisode }: Props = $props();
