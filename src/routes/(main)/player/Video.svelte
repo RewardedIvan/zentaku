@@ -5,7 +5,7 @@
 	import { getCurrentWindow } from "@tauri-apps/api/window";
 	import { type IconifyIcon } from "@iconify/types";
 	import { type Placement } from "@floating-ui/core";
-	import { onMount } from "svelte";
+	import { onMount, type Snippet } from "svelte";
 	import { linear } from "svelte/easing";
 	import { Tween } from "svelte/motion";
 	import { Topbar } from "$lib/stores/Topbar";
@@ -36,10 +36,10 @@
 	interface Props {
 		class?: string;
 		videoClass?: string;
-		src: string;
+		children: Snippet<[]>;
 	}
 
-	let { src, class: className, videoClass }: Props = $props();
+	let { class: className, videoClass, children }: Props = $props();
 
 	let paused = $state(false);
 	let volume = $state(0.5);
@@ -185,7 +185,6 @@
 	<video
 		class="flex-grow min-w-0 min-h-0 {fitStyle} {videoClass}"
 		style:cursor={controlsOpacity.current === 0 ? "none" : "auto"}
-		{src}
 		onmousemove={handleMove}
 		onmousedown={handleMousedown}
 		controls={false}
@@ -197,6 +196,7 @@
 		bind:this={video}
 	>
 		<track kind="captions" />
+		{@render children()}
 	</video>
 
 	<div
