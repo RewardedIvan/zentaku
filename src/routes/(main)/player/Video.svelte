@@ -36,10 +36,12 @@
 	interface Props {
 		class?: string;
 		videoClass?: string;
+		previous?: () => void;
+		next?: () => void;
 		children: Snippet<[]>;
 	}
 
-	let { class: className, videoClass, children }: Props = $props();
+	let { class: className, videoClass, previous, next, children }: Props = $props();
 
 	let paused = $state(false);
 	let volume = $state(0.5);
@@ -247,13 +249,17 @@
 			{/snippet}
 
 			<div class="flex flex-row gap-2 items-center">
-				{@render button(() => {}, PreviousIcon, "Previous")}
+				{#if previous}
+					{@render button(previous, PreviousIcon, "Previous")}
+				{/if}
 				{@render button(
 					() => (paused = !paused),
 					paused ? PlayIcon : PauseIcon,
 					paused ? "Play" : "Pause",
 				)}
-				{@render button(() => {}, NextIcon, "Next")}
+				{#if next}
+					{@render button(next, NextIcon, "Next")}
+				{/if}
 
 				<M2Slider
 					bind:value={volume}
