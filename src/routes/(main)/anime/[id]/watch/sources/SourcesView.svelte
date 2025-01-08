@@ -27,6 +27,7 @@
 	let warningOpen = $state(false);
 	let trustDialogOpen = $state(false);
 	let sources: VideoSource<unknown>[] = $state([]);
+	let progress = $derived($Progress.find(p => p.anilistId === $Playing.anilistId));
 
 	async function openWarning() {
 		warningOpen = !await areAllScriptsTrusted();
@@ -65,8 +66,8 @@
 	{@render tooltipFab(TrustIcon, () => (trustDialogOpen = true), "Trusted sources")}
 	{@render tooltipFab(RefreshIcon, openWarning, "Refresh sources")}
 	{@render tooltipFab(FolderIcon, () => invoke("open_source_dir"), "Open sources' directory")}
-	{#if $Progress.find(p => p.anilistId === $Playing.anilistId) != null}
-		{@render tooltipFab(PlayIcon, continu, "Continue")}
+	{#if progress != null}
+		{@render tooltipFab(PlayIcon, continu, `Continue (ep${progress.currentEpisode} on "${progress.source}")`)}
 	{/if}
 </div>
 
