@@ -1,9 +1,11 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
 	import { page } from "$app/state";
 	import { Card } from "m3-svelte";
 	import type { SearchResult, VideoSource, EpisodeInfo } from "$lib/source";
 	import { type Media, getMedia } from "$lib/anilist";
 	import { SourceSettings } from "$lib/stores/SourceStores";
+	import { Playing } from "$lib/stores/Player";
 
 	import SourcesView from "./sources/SourcesView.svelte";
 	import ResultsView from "./ResultsView.svelte";
@@ -11,6 +13,7 @@
 
 	let sourceResults: Promise<SearchResult[]> | null = $state(null);
 	let episodes: Promise<EpisodeInfo[]> | null = $state(null);
+	let animeId = $state("");
 	let media: Promise<Media | undefined> = $state(getMedia(parseInt(page.params.id)));
 	let currentSource: VideoSource<unknown> | null = $state(null);
 
@@ -26,12 +29,24 @@
 
 	async function getEpisodes(id: string) {
 		if (!currentSource) return;
+		animeId = id;
 
 		const settings = $SourceSettings[currentSource.name] ?? currentSource.defaultSettings;
 		episodes = currentSource.getEpisodes(settings, id);
 	}
 
-	async function playEpisode(episode: EpisodeInfo) {}
+	async function playEpisode(episode: EpisodeInfo) {
+		if (!currentSource) return;
+
+		Playing.set({
+			anilistId: parseInt(page.params.id),
+			source: currentSource.name,
+			animeId: animeId,
+			episode: episode.number,
+		});
+
+		goto("/player");
+	}
 
 	function clearResults() {
 		sourceResults = null;
