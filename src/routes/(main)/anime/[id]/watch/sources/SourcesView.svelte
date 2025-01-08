@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { FAB } from "m3-svelte";
 	import type { VideoSource } from "$lib/source";
-	import { TrustStore, hashSource } from "$lib/stores/SourceStores";
+	import { getScripts, trustScripts, areAllScriptsTrusted, loadScripts } from "$lib/utils/Sources";
 	import { invoke } from "@tauri-apps/api/core";
-	import { fetch as unsafeFetch } from "$lib/tauri";
 	import type { IconifyIcon } from "@iconify/types";
 	import Tooltip from "$lib/ui/Tooltip.svelte";
 
@@ -28,15 +27,7 @@
 	let sources: VideoSource<unknown>[] = $state([]);
 
 	async function openWarning() {
-		const scripts = await invoke<Record<string, string>>("get_sources");
-
-		warningOpen = (
-			await Promise.all(
-				Object.entries(scripts).map(async ([_fileName, script]) => {
-					return Object.hasOwn($TrustStore, await hashSource(script));
-				}),
-			)
-		).includes(false);
+		warningOpen = !await areAllScriptsTrusted();
 
 		if (!warningOpen) {
 			refreshSources();
@@ -45,29 +36,11 @@
 
 	async function refreshSources() {
 		warningOpen = false;
-
 		clearResults();
-		const scripts = await invoke<Record<string, string>>("get_sources");
-		sources = Object.entries(scripts)
-			.map(([_fileName, script]) => {
-				// @ts-ignore
-				window.unsafeFetch = unsafeFetch;
-				return eval(`(() => { ${script} })()`);
-			})
-			.sort((a, b) => a.name.localeCompare(b.name));
 
-		// trust
-
-		let newEntries = Object.fromEntries(
-			await Promise.all(
-				Object.entries(scripts).map(async ([_fileName, script]) => {
-					let scriptHash = await hashSource(script);
-					return [scriptHash, script];
-				}),
-			),
-		);
-
-		TrustStore.update(current => ({ ...current, ...newEntries }));
+		const scripts = await getScripts();
+		sources = await loadScripts(scripts);
+		await trustScripts(scripts);
 	}
 
 	openWarning();
