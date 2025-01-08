@@ -39,13 +39,13 @@
 		previous?: () => void;
 		next?: () => void;
 		children: Snippet<[]>;
+		time: number;
 	}
 
-	let { class: className, videoClass, previous, next, children }: Props = $props();
+	let { class: className, videoClass, previous, next, children, time = $bindable() }: Props = $props();
 
 	let paused = $state(false);
 	let volume = $state(0.5);
-	let time = $state(0);
 	let duration = $state(0);
 	let controlsOpacity = new Tween(0);
 	let win = getCurrentWindow();
@@ -189,6 +189,7 @@
 		style:cursor={controlsOpacity.current === 0 ? "none" : "auto"}
 		onmousemove={handleMove}
 		onmousedown={handleMousedown}
+		onended={next}
 		controls={false}
 		bind:currentTime={time}
 		bind:duration

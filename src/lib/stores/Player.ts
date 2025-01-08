@@ -5,9 +5,15 @@ export const Playing = createStoreLocalStorage("playing", {
 	source: "",
 	animeId: "",
 	episode: 0,
+	episodes: 0,
 });
 
 export const Progress = createStoreLocalStorage<{
-	anilistId: string;
-	current: number;
+	anilistId: number;
+
+	source: string,
+	animeId: string,
+	currentEpisode: number;
+
+	time: number;
 }[]>("progress", []);

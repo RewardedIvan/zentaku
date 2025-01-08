@@ -1,12 +1,14 @@
 <script lang="ts">
 	import Video from "./Video.svelte";
-	import { Playing } from "$lib/stores/Player";
+	import { Playing, Progress } from "$lib/stores/Player";
 	import { SourceSettings } from "$lib/stores/SourceStores";
 	import { type VideoResult } from "$lib/source";
 	import { areAllScriptsTrusted, getScripts, loadScripts } from "$lib/utils/Sources";
+	import { onMount, onDestroy } from "svelte";
+	import { beforeNavigate } from "$app/navigation";
 
-	const video = $state(
-		new Promise<VideoResult[]>(async (resolve, reject) => {
+	function fetchVideo(): Promise<VideoResult[]> {
+		return new Promise(async (resolve, reject) => {
 			const scripts = await getScripts();
 
 			if (!await areAllScriptsTrusted(scripts)) {
@@ -24,11 +26,61 @@
 
 			const settings = $SourceSettings[$Playing.source] ?? currentSource.defaultSettings;
 			resolve(await currentSource.getVideo(settings, $Playing.animeId, $Playing.episode));
-		})
-	);
+		});
+	}
+
+	let video = $state(fetchVideo());
+	let time = $state(0);
+
+	function updateProgress(time: number, episode: number) {
+		Progress.update(p => {
+			let newp = p.filter(e => e.anilistId !== $Playing.anilistId);
+			newp.push({
+				source: $Playing.source,
+				animeId: $Playing.animeId,
+				anilistId: $Playing.anilistId,
+				currentEpisode: episode,
+				time,
+			});
+			return newp;
+		});
+	}
+
+	function switchEpisodeRelative(episode: number) {
+		const newEpisode = Math.min(Math.max($Playing.episode + episode, 0), $Playing.episodes + 1);
+
+		Playing.update(p => {
+			return {
+				...p,
+				episode: newEpisode,
+			}
+		});
+
+		updateProgress(0, newEpisode);
+		video = fetchVideo();
+	}
+
+	onMount(() => {
+		const progress = $Progress.find(p => p.anilistId === $Playing.anilistId);
+		console.log(progress);
+
+		if (progress) {
+			time = progress.time;
+		}
+	});
+
+	const updateProg = () => updateProgress(time, $Playing.episode);
+
+	onDestroy(updateProg);
+	beforeNavigate(updateProg);
 </script>
 
-<Video class="flex-grow">
+<Video
+	bind:time
+	class="flex-grow"
+	previous={() => switchEpisodeRelative(-1)}
+	next={() => switchEpisodeRelative(1)}
+>
 	{#await video then videos}
 		{#each videos as v}
 			{#if v.type === "source"}

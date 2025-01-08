@@ -5,7 +5,7 @@
 	import type { SearchResult, VideoSource, EpisodeInfo } from "$lib/source";
 	import { type Media, getMedia } from "$lib/anilist";
 	import { SourceSettings } from "$lib/stores/SourceStores";
-	import { Playing } from "$lib/stores/Player";
+	import { Playing, Progress } from "$lib/stores/Player";
 
 	import SourcesView from "./sources/SourcesView.svelte";
 	import ResultsView from "./ResultsView.svelte";
@@ -36,17 +36,34 @@
 	}
 
 	async function playEpisode(episode: EpisodeInfo) {
-		if (!currentSource) return;
+		if (!currentSource || !episodes) return;
 
 		Playing.set({
 			anilistId: parseInt(page.params.id),
 			source: currentSource.name,
 			animeId: animeId,
 			episode: episode.number,
+			episodes: (await episodes).length,
 		});
 
 		goto("/player");
 	}
+
+	function continu() {
+		const progress = $Progress.find(p => p.anilistId === $Playing.anilistId);
+		if (progress) {
+			Playing.update(p => {
+				return {
+					...p,
+					source: progress.source,
+					animeId: progress.animeId,
+					episode: progress.currentEpisode,
+				}
+			});
+			goto("/player");
+		}
+	}
+
 
 	function clearResults() {
 		sourceResults = null;
@@ -56,7 +73,7 @@
 
 <div class="flex flex-col flex-grow gap-2 items-center justify-center m-2">
 	<Card type="filled">
-		<SourcesView {search} {clearResults} />
+		<SourcesView {search} {clearResults} {continu} />
 	</Card>
 
 	{#if sourceResults}

@@ -5,6 +5,7 @@
 	import { invoke } from "@tauri-apps/api/core";
 	import type { IconifyIcon } from "@iconify/types";
 	import Tooltip from "$lib/ui/Tooltip.svelte";
+	import { Playing, Progress } from "$lib/stores/Player";
 
 	import PlayIcon from "@ktibow/iconset-material-symbols/play-arrow";
 	import FolderIcon from "@ktibow/iconset-material-symbols/folder";
@@ -18,9 +19,10 @@
 	interface Props {
 		search: (source: VideoSource<unknown>) => void;
 		clearResults: () => void;
+		continu: () => void;
 	}
 
-	const { search, clearResults }: Props = $props();
+	const { search, clearResults, continu }: Props = $props();
 
 	let warningOpen = $state(false);
 	let trustDialogOpen = $state(false);
@@ -63,7 +65,9 @@
 	{@render tooltipFab(TrustIcon, () => (trustDialogOpen = true), "Trusted sources")}
 	{@render tooltipFab(RefreshIcon, openWarning, "Refresh sources")}
 	{@render tooltipFab(FolderIcon, () => invoke("open_source_dir"), "Open sources' directory")}
-	{@render tooltipFab(PlayIcon, () => {}, "Continue")}
+	{#if $Progress.find(p => p.anilistId === $Playing.anilistId) != null}
+		{@render tooltipFab(PlayIcon, continu, "Continue")}
+	{/if}
 </div>
 
 {#snippet tooltipFab(icon: IconifyIcon, onclick: () => void, tooltipText: string)}
