@@ -5,6 +5,7 @@
 	import Dropdown from "$lib/ui/Dropdown.svelte";
 	import Ripple from "$lib/ui/Ripple.svelte";
 	import { goto } from "$app/navigation";
+	import MediaC from "../../Media.svelte";
 	import { Button, Card, CircularProgressIndeterminate, Icon } from "m3-svelte";
 
 	import TVIcon from "@ktibow/iconset-material-symbols/monitor";
@@ -67,7 +68,7 @@
 				<Button type="filled" iconType="left"><Icon icon={EditIcon} /> Edit</Button>
 			</div>
 		</div>
-		<div class="flex flex-col gap-2">
+		<div class="flex flex-col gap-2 overflow-hidden">
 			<span class="text-xl font-afacad-flux underline underline-offset-4">
 				{media.title.english || media.title.romaji}
 				<span class="text-sm text-slate-400">{media.title.romaji}</span>
@@ -131,6 +132,14 @@
 							</Ripple>
 						{/if}
 					</div>
+				{/each}
+			</div>
+
+			<p class="text-3xl font-afacad-flux">Recommendations</p>
+
+			<div class="grid grid-flow-col justify-start overflow-x-auto overflow-y-hidden">
+				{#each media.recommendations.nodes as r}
+					<MediaC media={r.mediaRecommendation} />
 				{/each}
 			</div>
 		</div>

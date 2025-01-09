@@ -67,9 +67,15 @@ export interface Media {
 	characters: {
 		edges: CharacterEdge[];
 	};
+	recommendations: {
+		nodes: {
+			mediaRecommendation: Media;
+		}[];
+	};
 }
 
 interface Title {
+	userPreferred: string;
 	romaji: string;
 	english?: string;
 }
@@ -199,6 +205,20 @@ export async function getMedia(id: number) {
 								}
 								image {
 									medium
+								}
+							}
+						}
+					}
+					recommendations {
+						nodes {
+							mediaRecommendation {
+								id
+								coverImage {
+									large
+								}
+								title {
+									romaji
+									english
 								}
 							}
 						}
