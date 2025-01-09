@@ -96,10 +96,3 @@
 		{/each}
 	{/await}
 </Video>
-
-<style>
-	:global(body) {
-		overflow: hidden;
-		background: black;
-	}
-</style>

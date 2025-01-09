@@ -192,7 +192,7 @@
 
 <svelte:body onkeydown={onKey} />
 
-<div class="relative flex min-h-0 {className}">
+<div class="relative flex min-h-0 bg-black overflow-hidden {className}">
 	<video
 		class="flex-grow min-w-0 min-h-0 {fitStyle} {videoClass}"
 		style:cursor={controlsOpacity.current === 0 ? "none" : "auto"}
