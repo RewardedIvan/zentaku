@@ -7,8 +7,12 @@
 	import { onMount, onDestroy } from "svelte";
 	import { beforeNavigate } from "$app/navigation";
 
+	let loading = $state(true);
+	let time = $state(0);
+
 	function fetchVideo(): Promise<VideoResult[]> {
 		return new Promise(async (resolve, reject) => {
+			loading = true;
 			const scripts = await getScripts();
 
 			if (!await areAllScriptsTrusted(scripts)) {
@@ -26,11 +30,11 @@
 
 			const settings = $SourceSettings[$Playing.source] ?? currentSource.defaultSettings;
 			resolve(await currentSource.getVideo(settings, $Playing.animeId, $Playing.episode));
+			loading = false;
 		});
 	}
 
 	let video = $state(fetchVideo());
-	let time = $state(0);
 
 	function updateProgress(time: number, episode: number) {
 		Progress.update(p => {
@@ -77,6 +81,7 @@
 
 <Video
 	bind:time
+	{loading}
 	class="flex-grow"
 	previous={() => switchEpisodeRelative(-1)}
 	next={() => switchEpisodeRelative(1)}

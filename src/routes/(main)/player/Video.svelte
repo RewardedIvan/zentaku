@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Card, easeEmphasizedAccel, easeEmphasizedDecel, Icon, MenuItem } from "m3-svelte";
+	import { Card, easeEmphasizedAccel, easeEmphasizedDecel, Icon, MenuItem, CircularProgressIndeterminate } from "m3-svelte";
 	import { addSeconds, format } from "date-fns";
 	import { UTCDate } from "@date-fns/utc";
 	import { getCurrentWindow } from "@tauri-apps/api/window";
@@ -40,9 +40,17 @@
 		next?: () => void;
 		children: Snippet<[]>;
 		time: number;
+		loading: boolean;
 	}
 
-	let { class: className, videoClass, previous, next, children, time = $bindable() }: Props = $props();
+	let {
+		class: className,
+		videoClass,
+		previous, next,
+		children,
+		time = $bindable(),
+		loading,
+	}: Props = $props();
 
 	let paused = $state(false);
 	let volume = $state(0.5);
@@ -54,6 +62,7 @@
 	let pointerOnControls = $state(false);
 	let fit = $state<"fill" | "fit" | "zoom">("fill"); // TODO: make settings for the default state of this
 	let fitMenuOpen = $state(false);
+
 	const controlsFadeTimeMs = 3500; // TODO: make settings for this
 
 	let video: HTMLVideoElement | null = $state(null);
@@ -216,6 +225,12 @@
 			<Icon icon={command ?? QuestionMarkIcon} height="24" width="24" />
 		</div>
 	{/key}
+
+	{#if loading} 
+		<div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+			<CircularProgressIndeterminate />
+		</div>
+	{/if}
 
 	<div
 		class="absolute left-0 bottom-0 w-full justify-between flex flex-col p-2 gap-2"
