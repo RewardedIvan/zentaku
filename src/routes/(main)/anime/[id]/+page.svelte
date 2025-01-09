@@ -36,12 +36,10 @@
 
 {#snippet main(media: Media)}
 	<div class="flex flex-row gap-2 relative p-3 flex-grow">
-		<img
-			src={media.bannerImage}
-			alt="banner"
-			draggable={false}
-			class="absolute z-[-1] left-0 top-0 h-full object-cover blur brightness-50"
-		/>
+		<div
+			style:background-image="url({media.bannerImage})"
+			class="absolute z-[-1] left-0 top-0 size-full bg-cover blur brightness-50 animate-sway"
+		></div>
 
 		<div class="flex flex-col gap-2 items-start flex-grow w-full max-w-max">
 			<img src={media.coverImage.large} alt="cover" class="max-w-max" />

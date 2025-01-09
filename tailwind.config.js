@@ -55,6 +55,15 @@ export default {
 			backgroundImage: {
 				radial: "radial-gradient(var(--tw-gradient-stops))",
 			},
+			keyframes: {
+				sway: {
+					"0%, 100%": { "background-position": "top left" },
+					"50%": { "background-position": "bottom right" },
+				},
+			},
+			animation: {
+				sway: "sway 30s ease-in-out infinite",
+			},
 		},
 	},
 	plugins: [],
