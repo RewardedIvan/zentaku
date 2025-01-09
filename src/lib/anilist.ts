@@ -21,6 +21,33 @@ export interface List {
 	}[];
 }
 
+export interface CharacterEdge {
+	role: string;
+	node: {
+		id: number;
+		image: {
+			medium: string;
+		};
+		name: {
+			full: string;
+			native: string;
+			userPreferred: string;
+		};
+	};
+	voiceActors: {
+		languageV2: string;
+		id: number;
+		name: {
+			full: string;
+			native: string;
+			userPreferred: string;
+		};
+		image: {
+			medium: string;
+		};
+	}[];
+}
+
 export interface Media {
 	id: number;
 	bannerImage: string;
@@ -37,6 +64,9 @@ export interface Media {
 	};
 	genres: string[];
 	title: Title;
+	characters: {
+		edges: CharacterEdge[];
+	};
 }
 
 interface Title {
@@ -144,6 +174,34 @@ export async function getMedia(id: number) {
 					nextAiringEpisode {
 						episode
 						airingAt
+					}
+					characters {
+						edges {
+							role
+							node {
+								id
+								image {
+									medium
+								}
+								name {
+									userPreferred
+									native
+									full
+								}
+							}
+							voiceActors {
+								languageV2
+								id
+								name {
+									userPreferred
+									native
+									full
+								}
+								image {
+									medium
+								}
+							}
+						}
 					}
 				}
 			}

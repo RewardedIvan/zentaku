@@ -2,6 +2,8 @@
 	import { page } from "$app/state";
 	import { getMedia, type Media } from "$lib/anilist";
 	import Relative from "$lib/ui/Relative.svelte";
+	import Dropdown from "$lib/ui/Dropdown.svelte";
+	import Ripple from "$lib/ui/Ripple.svelte";
 	import { goto } from "$app/navigation";
 	import { Button, Card, CircularProgressIndeterminate, Icon } from "m3-svelte";
 
@@ -22,6 +24,20 @@
 				return "Hiatus";
 		}
 	}
+
+	function characterRoleToString(role: string) {
+		switch (role) {
+			case "MAIN":
+				return "Main";
+			case "SUPPORTING":
+				return "Supporting";
+			case "BACKGROUND":
+				return "Background";
+		}
+	}
+
+	let voiceActorLanguage = $state("Japanese");
+	const voiceActorLanguages = ["Japanese", "English", "Korean", "Italian", "Spanish", "Portuguese", "French", "German", "Hebrew", "Hungarian", "Chinese", "Arabic", "Filipino", "Catalan", "Finnish", "Turkish", "Dutch", "Swedish", "Thai", "Tagalog", "Malaysian", "Indonesian", "Vietnamese", "Nepali", "Hindi", "Urdu"];
 </script>
 
 {#await getMedia(parseInt(page.params.id))}
@@ -76,6 +92,39 @@
 			<div class="flex flex-row gap-2 items-center">
 				{#each media.genres as genre}
 					<Card type="outlined">{genre}</Card>
+				{/each}
+			</div>
+
+			<div class="w-min">
+				<Dropdown
+					options={voiceActorLanguages}
+					name="voice actor language"
+					bind:value={voiceActorLanguage}
+				/>
+			</div>
+			<div class="flex flex-row gap-2 flex-wrap">
+				{#each media.characters.edges.sort((a, b) => Number(b.role == "MAIN") - 1) as character}
+					{@const voiceActor = character.voiceActors.find(e => e.languageV2 == voiceActorLanguage)}
+
+					<div class="flex flex-row bg-surface-container rounded-md w-[25rem]">
+						<Ripple class="flex flex-row gap-1 flex-grow" onClick={() => goto(`/character/${character.node.id}`)}>
+							<img src={character.node.image.medium} alt="avatar" class="w-24 rounded-md object-cover h-full" />
+							<div class="flex flex-col h-full p-1 justify-between">
+								<p class="text-primary">{character.node.name.full}</p>
+								<p>{characterRoleToString(character.role)}</p>
+							</div>
+						</Ripple>
+
+						{#if voiceActor}
+							<Ripple class="flex flex-row gap-1" onClick={() => goto(`/staff/${character.node.id}`)}>
+								<div class="flex flex-col ml-auto p-1 justify-between h-full">
+									<p class="text-secondary">{voiceActor.name.userPreferred}</p>
+									<p>{voiceActor.languageV2}</p>
+								</div>
+								<img src={voiceActor.image.medium} alt="avatar" class="w-24 rounded-md object-cover h-full" />
+							</Ripple>
+						{/if}
+					</div>
 				{/each}
 			</div>
 		</div>
