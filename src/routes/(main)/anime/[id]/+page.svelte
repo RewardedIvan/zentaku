@@ -75,6 +75,8 @@
 
 			<p class="text-md font-roboto">{@html media.description}</p>
 
+			<p class="text-3xl font-afacad-flux">Anime Status</p>
+
 			<div class="flex flex-row gap-2 items-center">
 				<Card type="filled">{statusToString(media.status)}</Card>
 				{#if media.nextAiringEpisode}
@@ -89,11 +91,15 @@
 				{/if}
 			</div>
 
+			<p class="text-3xl font-afacad-flux">Genres</p>
+
 			<div class="flex flex-row gap-2 items-center">
 				{#each media.genres as genre}
 					<Card type="outlined">{genre}</Card>
 				{/each}
 			</div>
+
+			<p class="text-3xl font-afacad-flux">Characters</p>
 
 			<div class="w-min">
 				<Dropdown
