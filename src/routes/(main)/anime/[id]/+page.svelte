@@ -59,7 +59,7 @@
 		></div>
 
 		<div class="flex flex-col gap-2 items-start flex-grow w-full max-w-max">
-			<img src={media.coverImage.large} alt="cover" class="max-w-max" />
+			<img src={media.coverImage.large} alt="cover" class="max-w-max rounded" />
 
 			<div class="flex flex-col gap-2 w-full">
 				<Button type="filled" iconType="left" on:click={() => goto(`/anime/${media.id}/watch`)}>

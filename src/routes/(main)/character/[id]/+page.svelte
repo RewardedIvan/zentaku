@@ -40,7 +40,7 @@
 {#snippet main(character: Character)}
     <div class="flex flex-col gap-2 bg-surface-container p-2 overflow-hidden">
         <div class="flex flex-row gap-1">
-            <img src={character.image.large} alt={character.name.userPreferred} />
+            <img src={character.image.large} alt={character.name.userPreferred} class="rounded" />
             <div class="flex flex-col w-full">
                 <div class="flex flex-row justify-between">
                     <div class="flex flex-row items-end gap-1">
