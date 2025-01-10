@@ -12,7 +12,7 @@
 </script>
 
 <Tooltip class="entry">
-	<Ripple onClick={() => goto(`/anime/${media.id}`)}>
+	<Ripple onClick={() => goto(`/anime?id=${media.id}`)}>
 		<img class="cover" src={media.coverImage.large} alt="cover" draggable={false} />
 	</Ripple>
 

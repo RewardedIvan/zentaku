@@ -4,7 +4,7 @@
 	import { format } from "date-fns";
 	import { getCharacter, type Character } from "$lib/anilist";
 
-    import MediaC from "../../Media.svelte";
+    import MediaC from "../Media.svelte";
 	import Favourite from "$lib/ui/Favourite.svelte";
 	import Spoiler from "$lib/ui/Spoiler.svelte";
 	import Markdown from "$lib/ui/Markdown.svelte";
@@ -29,7 +29,7 @@
     }
 </script>
 
-{#await getCharacter(parseInt(page.params.id))}
+{#await getCharacter(parseInt(page.url.searchParams.get("id") ?? ""))}
     <CircularProgressIndeterminate />
 {:then character}
     {#if character}
@@ -61,7 +61,7 @@
                     </div>
 
                     <Favourite
-                        id={{ characterId: parseInt(page.params.id) }}
+                        id={{ characterId: parseInt(page.url.searchParams.get("id") ?? "") }}
                         initial={character.isFavourite}
                     />
                 </div>

@@ -5,7 +5,7 @@
 	import Dropdown from "$lib/ui/Dropdown.svelte";
 	import Ripple from "$lib/ui/Ripple.svelte";
 	import { goto } from "$app/navigation";
-	import MediaC from "../../Media.svelte";
+	import MediaC from "../Media.svelte";
 	import { Button, Card, CircularProgressIndeterminate, Icon } from "m3-svelte";
 
 	import TVIcon from "@ktibow/iconset-material-symbols/monitor";
@@ -41,7 +41,7 @@
 	const voiceActorLanguages = ["Japanese", "English", "Korean", "Italian", "Spanish", "Portuguese", "French", "German", "Hebrew", "Hungarian", "Chinese", "Arabic", "Filipino", "Catalan", "Finnish", "Turkish", "Dutch", "Swedish", "Thai", "Tagalog", "Malaysian", "Indonesian", "Vietnamese", "Nepali", "Hindi", "Urdu"];
 </script>
 
-{#await getMedia(parseInt(page.params.id))}
+{#await getMedia(parseInt(page.url.searchParams.get("id") ?? ""))}
 	<CircularProgressIndeterminate />
 {:then media}
 	{#if media}
@@ -62,7 +62,7 @@
 			<img src={media.coverImage.large} alt="cover" class="max-w-max rounded" />
 
 			<div class="flex flex-col gap-2 w-full">
-				<Button type="filled" iconType="left" on:click={() => goto(`/anime/${media.id}/watch`)}>
+				<Button type="filled" iconType="left" on:click={() => goto(`/anime/watch?id=${media.id}`)}>
 					<Icon icon={TVIcon} /> Watch
 				</Button>
 				<Button type="filled" iconType="left"><Icon icon={EditIcon} /> Edit</Button>
@@ -114,7 +114,7 @@
 					{@const voiceActor = character.voiceActors.find(e => e.languageV2 == voiceActorLanguage)}
 
 					<div class="flex flex-row bg-surface-container rounded-md w-[25rem]">
-						<Ripple class="flex flex-row gap-1 flex-grow" onClick={() => goto(`/character/${character.node.id}`)}>
+						<Ripple class="flex flex-row gap-1 flex-grow" onClick={() => goto(`/character?id=${character.node.id}`)}>
 							<img src={character.node.image.medium} alt="avatar" class="w-24 rounded-md object-cover h-full" />
 							<div class="flex flex-col h-full p-1 justify-between">
 								<p class="text-primary">{character.node.name.full}</p>
