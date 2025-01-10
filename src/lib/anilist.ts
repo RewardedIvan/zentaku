@@ -74,6 +74,36 @@ export interface Media {
 	};
 }
 
+export interface Character {
+	age: string;
+	bloodType: any;
+	name: {
+		userPreferred: string;
+		alternative: string[];
+		alternativeSpoiler: string[];
+	};
+	dateOfBirth: {
+		day?: number;
+		month?: number;
+		year?: number;
+	};
+	favourites: number;
+	image: {
+		large: string;
+	};
+	isFavourite: boolean;
+	description: string;
+	siteUrl: string;
+	gender: string;
+	media: {
+		edges: {
+			id: number;
+			characterRole: string;
+			node: Media;
+		}[];
+	};
+}
+
 interface Title {
 	userPreferred: string;
 	romaji: string;
@@ -113,6 +143,7 @@ interface Query {
 		Viewer?: Viewer;
 		MediaListCollection?: MediaListCollection;
 		Media?: Media;
+		Character?: Character;
 		ToggleFavourite: ToggleFavourite;
 	};
 }
@@ -320,4 +351,57 @@ export async function toggleFavourite(id: ToggleFavouriteVariables) {
 	});
 
 	return q.data.ToggleFavourite;
+}
+
+export async function getCharacter(id: number) {
+	const q = await invoke<Query>("graphql", {
+		query: `
+			query($id: Int!) {
+				Character(id: $id) {
+					age
+					bloodType
+					name {
+						userPreferred
+						alternative
+						alternativeSpoiler
+					}
+					dateOfBirth {
+						day
+						month
+						year
+					}
+					favourites
+					image {
+						large
+					}
+					isFavourite
+					description
+					siteUrl
+					gender
+
+					media {
+						edges {
+							id
+							characterRole
+							node {
+								id
+								title {
+									english
+									romaji
+								}
+								coverImage {
+									large
+								}
+							}
+						}
+					}
+				}
+			}
+		`,
+		variables: {
+			id,
+		},
+	});
+
+	return q.data.Character;
 }
