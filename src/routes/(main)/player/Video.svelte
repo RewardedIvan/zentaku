@@ -152,6 +152,8 @@
 			case ".":
 				time = Math.min(time + 1 / 30, duration);
 				break;
+			case "f":
+				fullscreen();
 			default:
 				preventDefault = false;
 				break;
@@ -322,6 +324,7 @@
 								{@render row("SHIFT action", "action 1unit")}
 								<tr><td>other</td></tr>
 								{@render row("SPACE", "Play/Pause")}
+								{@render row("f", "Fullscreen")}
 								{@render row(",", "Rewind 1 frame")}
 								{@render row(".", "Forward 1 frame")}
 							</tbody>
