@@ -80,11 +80,40 @@ interface Title {
 	english?: string;
 }
 
+interface ToggleFavourite {
+	anime: {
+		pageInfo: {
+			total: number;
+		};
+	};
+	manga: {
+		pageInfo: {
+			total: number;
+		};
+	};
+	characters: {
+		pageInfo: {
+			total: number;
+		};
+	};
+	staff: {
+		pageInfo: {
+			total: number;
+		};
+	};
+	studios: {
+		pageInfo: {
+			total: number;
+		};
+	};
+}
+
 interface Query {
 	data: {
 		Viewer?: Viewer;
 		MediaListCollection?: MediaListCollection;
 		Media?: Media;
+		ToggleFavourite: ToggleFavourite;
 	};
 }
 
@@ -232,4 +261,63 @@ export async function getMedia(id: number) {
 	});
 
 	return q.data.Media;
+}
+
+export interface ToggleFavouriteVariables {
+	animeId?: number;
+	mangaId?: number;
+	characterId?: number;
+	staffId?: number;
+	studioId?: number;
+}
+
+export async function toggleFavourite(id: ToggleFavouriteVariables) {
+	const q = await invoke<Query>("graphql", {
+		query: `
+			mutation (
+				$animeId: Int
+				$mangaId: Int
+				$characterId: Int
+				$staffId: Int
+				$studioId: Int
+			) {
+				ToggleFavourite(
+					animeId: $animeId
+					mangaId: $mangaId
+					characterId: $characterId
+					staffId: $staffId
+					studioId: $studioId
+				) {
+					anime {
+						pageInfo {
+							total
+						}
+					}
+					manga {
+						pageInfo {
+							total
+						}
+					}
+					characters {
+						pageInfo {
+							total
+						}
+					}
+					staff {
+						pageInfo {
+							total
+						}
+					}
+					studios {
+						pageInfo {
+							total
+						}
+					}
+				}
+			}
+		`,
+		variables: id
+	});
+
+	return q.data.ToggleFavourite;
 }
