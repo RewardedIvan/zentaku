@@ -1,12 +1,12 @@
 <script lang="ts">
+	import { Button, Card, CircularProgressIndeterminate, Icon } from "m3-svelte";
 	import { page } from "$app/state";
 	import { getMedia, type Media } from "$lib/anilist";
+	import { goto } from "$app/navigation";
 	import Relative from "$lib/ui/Relative.svelte";
 	import Dropdown from "$lib/ui/Dropdown.svelte";
 	import Ripple from "$lib/ui/Ripple.svelte";
-	import { goto } from "$app/navigation";
-	import MediaC from "../Media.svelte";
-	import { Button, Card, CircularProgressIndeterminate, Icon } from "m3-svelte";
+	import MediaScroll from "$lib/ui/MediaScroll.svelte";
 
 	import TVIcon from "@ktibow/iconset-material-symbols/monitor";
 	import EditIcon from "@ktibow/iconset-material-symbols/edit";
@@ -178,11 +178,7 @@
 
 			<p class="text-3xl font-afacad-flux">Recommendations</p>
 
-			<div class="grid grid-flow-col justify-start overflow-x-auto overflow-y-hidden">
-				{#each media.recommendations.nodes as r}
-					<MediaC media={r.mediaRecommendation} />
-				{/each}
-			</div>
+			<MediaScroll medias={media.recommendations.nodes.map(n => n.mediaRecommendation)} />
 		</div>
 	</div>
 {/snippet}

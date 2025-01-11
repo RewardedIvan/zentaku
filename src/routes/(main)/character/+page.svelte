@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { CircularProgressIndeterminate, Icon } from "m3-svelte";
+	import { CircularProgressIndeterminate } from "m3-svelte";
 	import { page } from "$app/state";
 	import { format } from "date-fns";
 	import { getCharacter, type Character } from "$lib/anilist";
 
-	import MediaC from "../Media.svelte";
 	import Favourite from "$lib/ui/Favourite.svelte";
 	import Spoiler from "$lib/ui/Spoiler.svelte";
 	import Markdown from "$lib/ui/Markdown.svelte";
+	import MediaScroll from "$lib/ui/MediaScroll.svelte";
 
 	function formatBirthday(birthday: { year?: number; month?: number; day?: number }) {
 		const date = new Date(birthday.year ?? 0, (birthday.month ?? 0) - 1, birthday.day);
@@ -98,10 +98,6 @@
 
 		<p class="font-afacad-flux text-2xl">Featured in</p>
 
-		<div class="grid grid-flow-col justify-start overflow-x-auto overflow-y-hidden">
-			{#each character.media.edges as r}
-				<MediaC media={r.node} />
-			{/each}
-		</div>
+		<MediaScroll medias={character.media.edges.map(e => e.node)} />
 	</div>
 {/snippet}
