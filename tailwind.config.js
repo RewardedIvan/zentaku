@@ -64,6 +64,15 @@ export default {
 			animation: {
 				sway: "sway 30s ease-in-out infinite",
 			},
+			borderRadius: {
+				none: 0,
+				xs: "var(--m3-util-rounding-extra-small)",
+				sm: "var(--m3-util-rounding-small)",
+				md: "var(--m3-util-rounding-medium)",
+				lg: "var(--m3-util-rounding-large)",
+				xl: "var(--m3-util-rounding-extra-large)",
+				full: "var(--m3-util-rounding-full)",
+			},
 		},
 	},
 	plugins: [],
