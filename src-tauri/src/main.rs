@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    otakuzen_lib::run()
+    zentaku_lib::run()
 }

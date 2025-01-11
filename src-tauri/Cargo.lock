@@ -2288,27 +2288,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "04744f49eae99ab78e0d5c0b603ab218f515ea8cfe5a456d7629ad883a3b6e7d"
 
 [[package]]
-name = "otakuzen"
-version = "0.1.0"
-dependencies = [
- "base64 0.22.1",
- "dotenv_codegen",
- "libaes",
- "open",
- "rand 0.8.5",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tauri-plugin-http",
- "tauri-plugin-oauth",
- "tauri-plugin-store",
- "thiserror 2.0.9",
- "tokio",
- "url",
-]
-
-[[package]]
 name = "pango"
 version = "0.18.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4957,6 +4936,27 @@ dependencies = [
  "quote",
  "syn 2.0.93",
  "synstructure",
+]
+
+[[package]]
+name = "zentaku"
+version = "0.1.0"
+dependencies = [
+ "base64 0.22.1",
+ "dotenv_codegen",
+ "libaes",
+ "open",
+ "rand 0.8.5",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-http",
+ "tauri-plugin-oauth",
+ "tauri-plugin-store",
+ "thiserror 2.0.9",
+ "tokio",
+ "url",
 ]
 
 [[package]]

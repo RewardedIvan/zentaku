@@ -1,8 +1,8 @@
 {
 	"$schema": "https://schema.tauri.app/config/2",
-	"productName": "otakuzen",
-	"version": "0.2.0",
-	"identifier": "me.int4.otakuzen",
+	"productName": "zentaku",
+	"version": "0.3.0",
+	"identifier": "me.int4.zentaku",
 	"build": {
 		"beforeDevCommand": "pnpm run dev",
 		"devUrl": "http://localhost:1420",
@@ -12,8 +12,8 @@
 	"app": {
 		"windows": [
 			{
-				"title": "otakuzen",
-				"width": 800,
+				"title": "zentaku",
+				"width": 1000,
 				"height": 600,
 				"decorations": false
 			}

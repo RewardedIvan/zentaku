@@ -59,7 +59,7 @@
 						<Icon icon={ArrowBackIcon} />
 					</Button>
 				{/if}
-				<span class="font-afacad-flux text-xl">otakuzen</span>
+				<span class="font-afacad-flux text-xl">zentaku</span>
 			</div>
 			<div class="flex flex-row items-center justify-center">
 				{#await getProfile()}
