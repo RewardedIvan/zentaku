@@ -17,7 +17,7 @@
 	{#if episodes && episodes.length}
 		<div class="flex flex-col bg-surface-container-high">
 			{#each episodes as episode, i}
-				<Tooltip placement="right">
+				<Tooltip placement="right" allowedPlacements={["right", "left"]}>
 					<ListItemButton
 						headline={episode.title}
 						supporting={episode.description ?? undefined}

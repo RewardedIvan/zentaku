@@ -333,7 +333,7 @@
 				</Tooltip>
 
 				<Menu bind:open={fitMenuOpen}>
-					<Tooltip placement="left">
+					<Tooltip>
 						<Ripple onClick={() => (fitMenuOpen = !fitMenuOpen)}>
 							<Icon icon={AspectRatioIcon} width="24" height="24" />
 						</Ripple>
