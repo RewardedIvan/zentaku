@@ -1,32 +1,12 @@
 <script lang="ts">
 	import { CircularProgressIndeterminate } from "m3-svelte";
 	import { page } from "$app/state";
-	import { format } from "date-fns";
-	import { getCharacter, type Character } from "$lib/anilist";
+	import { formatDate, getCharacter, type Character } from "$lib/anilist";
 
 	import Favourite from "$lib/ui/Favourite.svelte";
 	import Spoiler from "$lib/ui/Spoiler.svelte";
 	import Markdown from "$lib/ui/Markdown.svelte";
 	import MediaScroll from "$lib/ui/MediaScroll.svelte";
-
-	function formatBirthday(birthday: { year?: number; month?: number; day?: number }) {
-		const date = new Date(birthday.year ?? 0, (birthday.month ?? 0) - 1, birthday.day);
-		let res = "";
-
-		if (birthday.month) {
-			res += format(date, "MMM");
-		}
-		if (birthday.day) {
-			if (res.length) res += " ";
-			res += format(date, "do");
-		}
-		if (birthday.year) {
-			if (res.length) res += " ";
-			res += format(date, "yyyy");
-		}
-
-		return res;
-	}
 </script>
 
 {#await getCharacter(parseInt(page.url.searchParams.get("id") ?? ""))}
@@ -80,7 +60,7 @@
 				{/snippet}
 
 				{#if character.dateOfBirth && !(!character.dateOfBirth.day && !character.dateOfBirth.month && !character.dateOfBirth.year)}
-					{@render stat("Birthday", formatBirthday(character.dateOfBirth))}
+					{@render stat("Birthday", formatDate(character.dateOfBirth))}
 				{/if}
 				{#if character.age}
 					{@render stat("Age", character.age)}

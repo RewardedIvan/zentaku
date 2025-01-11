@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
+import { format } from "date-fns";
 
 interface Viewer {
 	name: string;
@@ -404,4 +405,23 @@ export async function getCharacter(id: number) {
 	});
 
 	return q.data.Character;
+}
+
+export function formatDate(date: { year?: number; month?: number; day?: number }) {
+	const jsDate = new Date(date.year ?? 0, (date.month ?? 0) - 1, date.day ?? 0);
+	let res = "";
+
+	if (date.month) {
+		res += format(jsDate, "MMM");
+	}
+	if (date.day) {
+		if (res.length) res += " ";
+		res += format(jsDate, "do");
+	}
+	if (date.year) {
+		if (res.length) res += " ";
+		res += format(jsDate, "yyyy");
+	}
+
+	return res;
 }
