@@ -5,7 +5,7 @@
 	import "@fontsource/roboto";
 	import "@fontsource/afacad-flux";
 	import "@fontsource/jetbrains-mono";
-	import "../app.css";
+	import "../app.pcss";
 
 	const { children } = $props();
 </script>
