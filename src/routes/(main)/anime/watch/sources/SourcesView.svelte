@@ -30,7 +30,7 @@
 	let progress = $derived($Progress.find(p => p.anilistId === $Playing.anilistId));
 
 	async function openWarning() {
-		warningOpen = !await areAllScriptsTrusted();
+		warningOpen = !(await areAllScriptsTrusted());
 
 		if (!warningOpen) {
 			refreshSources();
@@ -67,7 +67,11 @@
 	{@render tooltipFab(RefreshIcon, openWarning, "Refresh sources")}
 	{@render tooltipFab(FolderIcon, () => invoke("open_source_dir"), "Open sources' directory")}
 	{#if progress != null}
-		{@render tooltipFab(PlayIcon, continu, `Continue (ep${progress.currentEpisode} on "${progress.source}")`)}
+		{@render tooltipFab(
+			PlayIcon,
+			continu,
+			`Continue (ep${progress.currentEpisode} on "${progress.source}")`,
+		)}
 	{/if}
 </div>
 

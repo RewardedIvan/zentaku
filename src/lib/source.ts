@@ -10,16 +10,18 @@ export interface SearchResult {
 }
 
 // gets put into <source>
-export type VideoResult = {
-	type: "source";
-	src: string;
-	mime?: string;
-} | {
-	type: "track";
-	src: string;
-	kind: "captions" | "chapters" | "descriptions" | "metadata" | "subtitles";
-	srclang: string;
-};
+export type VideoResult =
+	| {
+			type: "source";
+			src: string;
+			mime?: string;
+	  }
+	| {
+			type: "track";
+			src: string;
+			kind: "captions" | "chapters" | "descriptions" | "metadata" | "subtitles";
+			srclang: string;
+	  };
 
 export interface EpisodeInfo {
 	description: string | null;

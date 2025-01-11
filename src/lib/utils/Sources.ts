@@ -18,10 +18,10 @@ export async function getScripts(): Promise<ScriptsSource> {
 }
 
 // possible race condition (if you let the function get the sources)
-// let's hope it doesn't happen i mean i'm not sure how you'd 
+// let's hope it doesn't happen i mean i'm not sure how you'd
 // do this without already having FAST access to the filesystem
 export async function areAllScriptsTrusted(ownScripts?: ScriptsSource) {
-	const scripts = ownScripts ?? await invoke<Record<string, string>>("get_sources");
+	const scripts = ownScripts ?? (await invoke<Record<string, string>>("get_sources"));
 
 	const trustStore = get(TrustStore);
 	return !(
@@ -34,7 +34,7 @@ export async function areAllScriptsTrusted(ownScripts?: ScriptsSource) {
 }
 
 export async function loadScripts(ownScripts?: ScriptsSource): Promise<VideoSource<unknown>[]> {
-	const scripts = ownScripts ?? await invoke<Record<string, string>>("get_sources");
+	const scripts = ownScripts ?? (await invoke<Record<string, string>>("get_sources"));
 
 	return Object.entries(scripts)
 		.map(([_fileName, script]) => {
@@ -46,7 +46,7 @@ export async function loadScripts(ownScripts?: ScriptsSource): Promise<VideoSour
 }
 
 export async function trustScripts(ownScripts?: ScriptsSource) {
-	const scripts = ownScripts ?? await invoke<Record<string, string>>("get_sources");
+	const scripts = ownScripts ?? (await invoke<Record<string, string>>("get_sources"));
 
 	const newEntries = Object.fromEntries(
 		await Promise.all(

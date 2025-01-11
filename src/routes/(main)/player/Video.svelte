@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { Card, easeEmphasizedAccel, easeEmphasizedDecel, Icon, MenuItem, CircularProgressIndeterminate } from "m3-svelte";
+	import {
+		Card,
+		easeEmphasizedAccel,
+		easeEmphasizedDecel,
+		Icon,
+		MenuItem,
+		CircularProgressIndeterminate,
+	} from "m3-svelte";
 	import { addSeconds, format } from "date-fns";
 	import { UTCDate } from "@date-fns/utc";
 	import { getCurrentWindow } from "@tauri-apps/api/window";
@@ -46,7 +53,8 @@
 	let {
 		class: className,
 		videoClass,
-		previous, next,
+		previous,
+		next,
 		children,
 		time = $bindable(),
 		loading,
@@ -70,7 +78,11 @@
 	async function handleMove() {
 		await controlsOpacity.set(1, { duration: 100, delay: 0, easing: easeEmphasizedDecel });
 		if (pointerOnControls || fitMenuOpen) return;
-		controlsOpacity.set(0, { duration: 300, delay: controlsFadeTimeMs, easing: easeEmphasizedAccel });
+		controlsOpacity.set(0, {
+			duration: 300,
+			delay: controlsFadeTimeMs,
+			easing: easeEmphasizedAccel,
+		});
 	}
 
 	function handleMousedown(e: MouseEvent) {
@@ -228,7 +240,7 @@
 		</div>
 	{/key}
 
-	{#if loading} 
+	{#if loading}
 		<div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
 			<CircularProgressIndeterminate />
 		</div>

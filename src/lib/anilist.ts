@@ -347,7 +347,7 @@ export async function toggleFavourite(id: ToggleFavouriteVariables) {
 				}
 			}
 		`,
-		variables: id
+		variables: id,
 	});
 
 	return q.data.ToggleFavourite;

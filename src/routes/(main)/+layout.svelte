@@ -55,9 +55,9 @@
 		>
 			<div class="flex flex-row gap-2 items-center">
 				{#if page.url.pathname !== "/"}
-					<Button on:click={goBack} iconType="full" type="text"
-						><Icon icon={ArrowBackIcon} /></Button
-					>
+					<Button on:click={goBack} iconType="full" type="text">
+						<Icon icon={ArrowBackIcon} />
+					</Button>
 				{/if}
 				<span class="font-afacad-flux text-xl">otakuzen</span>
 			</div>
@@ -79,12 +79,15 @@
 				{/await}
 
 				<div class="flex flex-row ml-4">
-					<Ripple onClick={win.minimize}><Icon icon={MinimizeIcon} width="32" height="32" /></Ripple
-					>
-					<Ripple onClick={win.toggleMaximize}
-						><Icon icon={MaximizeIcon} width="32" height="32" /></Ripple
-					>
-					<Ripple onClick={win.close}><Icon icon={XIcon} width="32" height="32" /></Ripple>
+					<Ripple onClick={win.minimize}>
+						<Icon icon={MinimizeIcon} width="32" height="32" />
+					</Ripple>
+					<Ripple onClick={win.toggleMaximize}>
+						<Icon icon={MaximizeIcon} width="32" height="32" />
+					</Ripple>
+					<Ripple onClick={win.close}>
+						<Icon icon={XIcon} width="32" height="32" />
+					</Ripple>
 				</div>
 			</div>
 		</div>

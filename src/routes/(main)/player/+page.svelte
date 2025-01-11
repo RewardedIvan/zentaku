@@ -15,7 +15,7 @@
 			loading = true;
 			const scripts = await getScripts();
 
-			if (!await areAllScriptsTrusted(scripts)) {
+			if (!(await areAllScriptsTrusted(scripts))) {
 				reject("Some sources could not be trusted, please go back to the watch page.");
 				return;
 			}
@@ -57,7 +57,7 @@
 			return {
 				...p,
 				episode: newEpisode,
-			}
+			};
 		});
 
 		updateProgress(0, newEpisode);

@@ -6,10 +6,10 @@
 </script>
 
 <div class="flex flex-col items-center gap-2">
-    <Card type="filled">{page.status} {page.error?.message}</Card>
+	<Card type="filled">{page.status} {page.error?.message}</Card>
 
-    <div class="flex flex-row gap-1">
-        <Button type="text" on:click={() => window.history.back()}>Go back?</Button>
-        <Button type="text" on:click={() => goto("/")}>Go home?</Button>
-    </div>
+	<div class="flex flex-row gap-1">
+		<Button type="text" on:click={() => window.history.back()}>Go back?</Button>
+		<Button type="text" on:click={() => goto("/")}>Go home?</Button>
+	</div>
 </div>

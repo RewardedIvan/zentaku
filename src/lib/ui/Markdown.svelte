@@ -114,7 +114,7 @@
 	let parsed = $derived.by(() => {
 		let tree: Node = { type: "markdown", children: [], parent: null };
 
-		let textModifierStack: (Token["type"])[] = [];
+		let textModifierStack: Token["type"][] = [];
 		// just hope javascript doesn't make a copy
 		let currentBranchRef: BranchNode = tree;
 

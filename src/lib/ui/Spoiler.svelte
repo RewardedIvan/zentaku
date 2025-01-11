@@ -5,58 +5,58 @@
 
 	import Tooltip from "./Tooltip.svelte";
 
-    interface Props {
-        content: Snippet<[boolean]>;
-        shown?: boolean;
-        tooltip?: Snippet<[]>;
-        disableTooltip?: boolean;
-        tooltipPlacement?: Placement,
-        class?: string;
-        [key: string]: any;
-    }
+	interface Props {
+		content: Snippet<[boolean]>;
+		shown?: boolean;
+		tooltip?: Snippet<[]>;
+		disableTooltip?: boolean;
+		tooltipPlacement?: Placement;
+		class?: string;
+		[key: string]: any;
+	}
 
-    let {
-        content,
-        shown: shownProp = $bindable(),
-        tooltip: tooltipProp,
-        tooltipPlacement = "top",
-        disableTooltip = false,
-        class: className,
-        ...rest
-    }: Props = $props();
+	let {
+		content,
+		shown: shownProp = $bindable(),
+		tooltip: tooltipProp,
+		tooltipPlacement = "top",
+		disableTooltip = false,
+		class: className,
+		...rest
+	}: Props = $props();
 
-    let shown = $state(shownProp ?? false);
+	let shown = $state(shownProp ?? false);
 
-    $effect(() => {
-        shown = shownProp ?? false;
-    });
+	$effect(() => {
+		shown = shownProp ?? false;
+	});
 </script>
 
 {#snippet main()}
-    <button
-        class="relative bg-surface-container-lowest"
-        class:bg-surface-container-high={shown}
-        class:bg-surface-container-lowest={!shown}
-        onclick={() => shown = !shown}
-        {...rest}
-    >
-        {@render content(shown)}
+	<button
+		class="relative bg-surface-container-lowest"
+		class:bg-surface-container-high={shown}
+		class:bg-surface-container-lowest={!shown}
+		onclick={() => (shown = !shown)}
+		{...rest}
+	>
+		{@render content(shown)}
 
-        <Layer />
-    </button>
+		<Layer />
+	</button>
 {/snippet}
 
 {#if disableTooltip}
-    {@render main()}
+	{@render main()}
 {:else}
-    {#snippet defaultTooltip()}
-        <span>Spoiler</span>
-    {/snippet}
+	{#snippet defaultTooltip()}
+		<span>Spoiler</span>
+	{/snippet}
 
-    <Tooltip
-        class="w-fit"
-        children={main}
-        tooltip={tooltipProp ?? defaultTooltip}
-        placement={tooltipPlacement}
-    />
+	<Tooltip
+		class="w-fit"
+		children={main}
+		tooltip={tooltipProp ?? defaultTooltip}
+		placement={tooltipPlacement}
+	/>
 {/if}

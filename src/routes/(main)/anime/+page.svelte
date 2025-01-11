@@ -38,7 +38,34 @@
 	}
 
 	let voiceActorLanguage = $state("Japanese");
-	const voiceActorLanguages = ["Japanese", "English", "Korean", "Italian", "Spanish", "Portuguese", "French", "German", "Hebrew", "Hungarian", "Chinese", "Arabic", "Filipino", "Catalan", "Finnish", "Turkish", "Dutch", "Swedish", "Thai", "Tagalog", "Malaysian", "Indonesian", "Vietnamese", "Nepali", "Hindi", "Urdu"];
+	const voiceActorLanguages = [
+		"Japanese",
+		"English",
+		"Korean",
+		"Italian",
+		"Spanish",
+		"Portuguese",
+		"French",
+		"German",
+		"Hebrew",
+		"Hungarian",
+		"Chinese",
+		"Arabic",
+		"Filipino",
+		"Catalan",
+		"Finnish",
+		"Turkish",
+		"Dutch",
+		"Swedish",
+		"Thai",
+		"Tagalog",
+		"Malaysian",
+		"Indonesian",
+		"Vietnamese",
+		"Nepali",
+		"Hindi",
+		"Urdu",
+	];
 </script>
 
 {#await getMedia(parseInt(page.url.searchParams.get("id") ?? ""))}
@@ -84,9 +111,9 @@
 					<Card type="filled">
 						{media.episodes || "No"} episodes total, {media.nextAiringEpisode.episode - 1} released
 					</Card>
-					<Card type="filled"
-						>Next episode airing in <Relative futureUnix={media.nextAiringEpisode.airingAt} /></Card
-					>
+					<Card type="filled">
+						Next episode airing in <Relative futureUnix={media.nextAiringEpisode.airingAt} />
+					</Card>
 				{:else}
 					<Card type="filled">{media.episodes || "No"} episodes</Card>
 				{/if}
@@ -114,8 +141,15 @@
 					{@const voiceActor = character.voiceActors.find(e => e.languageV2 == voiceActorLanguage)}
 
 					<div class="flex flex-row bg-surface-container rounded-md w-[25rem]">
-						<Ripple class="flex flex-row gap-1 flex-grow" onClick={() => goto(`/character?id=${character.node.id}`)}>
-							<img src={character.node.image.medium} alt="avatar" class="w-24 rounded-md object-cover h-full" />
+						<Ripple
+							class="flex flex-row gap-1 flex-grow"
+							onClick={() => goto(`/character?id=${character.node.id}`)}
+						>
+							<img
+								src={character.node.image.medium}
+								alt="avatar"
+								class="w-24 rounded-md object-cover h-full"
+							/>
 							<div class="flex flex-col h-full p-1 justify-between">
 								<p class="text-primary">{character.node.name.full}</p>
 								<p>{characterRoleToString(character.role)}</p>
@@ -123,12 +157,19 @@
 						</Ripple>
 
 						{#if voiceActor}
-							<Ripple class="flex flex-row gap-1" onClick={() => goto(`/staff/${character.node.id}`)}>
+							<Ripple
+								class="flex flex-row gap-1"
+								onClick={() => goto(`/staff/${character.node.id}`)}
+							>
 								<div class="flex flex-col ml-auto p-1 justify-between h-full">
 									<p class="text-secondary">{voiceActor.name.userPreferred}</p>
 									<p>{voiceActor.languageV2}</p>
 								</div>
-								<img src={voiceActor.image.medium} alt="avatar" class="w-24 rounded-md object-cover h-full" />
+								<img
+									src={voiceActor.image.medium}
+									alt="avatar"
+									class="w-24 rounded-md object-cover h-full"
+								/>
 							</Ripple>
 						{/if}
 					</div>

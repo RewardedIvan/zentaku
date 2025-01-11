@@ -14,7 +14,9 @@
 	let sourceResults: Promise<SearchResult[]> | null = $state(null);
 	let episodes: Promise<EpisodeInfo[]> | null = $state(null);
 	let animeId = $state("");
-	let media: Promise<Media | undefined> = $state(getMedia(parseInt(page.url.searchParams.get("id") ?? "")));
+	let media: Promise<Media | undefined> = $state(
+		getMedia(parseInt(page.url.searchParams.get("id") ?? "")),
+	);
 	let currentSource: VideoSource<unknown> | null = $state(null);
 
 	async function search(source: VideoSource<unknown>) {
@@ -58,12 +60,11 @@
 					source: progress.source,
 					animeId: progress.animeId,
 					episode: progress.currentEpisode,
-				}
+				};
 			});
 			goto("/player");
 		}
 	}
-
 
 	function clearResults() {
 		sourceResults = null;
