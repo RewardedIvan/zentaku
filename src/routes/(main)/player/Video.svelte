@@ -234,6 +234,8 @@
 		onmousedown={handleMousedown}
 		onended={next}
 		controls={false}
+		onloadstart={() => (loading = true)}
+		onloadeddata={() => (loading = false)}
 		bind:currentTime={time}
 		bind:duration
 		bind:paused
