@@ -49,12 +49,28 @@ export interface CharacterEdge {
 	}[];
 }
 
+export type MediaFormat =
+	| "TV"
+	| "TV_SHORT"
+	| "MOVIE"
+	| "SPECIAL"
+	| "OVA"
+	| "ONA"
+	| "MUSIC"
+	| "MANGA"
+	| "NOVEL"
+	| "ONE_SHOT";
+export type MediaStatus = "FINISHED" | "RELEASING" | "NOT_YET_RELEASED" | "CANCELLED" | "HIATUS";
+export type MediaType = "ANIME" | "MANGA";
+
 export interface Media {
 	id: number;
+	type: MediaType;
 	bannerImage: string;
 	description: string;
 	episodes: number;
-	status: "FINISHED" | "RELEASING" | "NOT_YET_RELEASED" | "CANCELLED" | "HIATUS";
+	status: MediaStatus;
+	format: MediaFormat;
 	nextAiringEpisode?: {
 		episode: number;
 		airingAt: number;
@@ -405,6 +421,317 @@ export async function getCharacter(id: number) {
 	});
 
 	return q.data.Character;
+}
+
+export interface SearchQuery {
+	anime: {
+		pageInfo: {
+			total: number;
+			currentPage: number;
+			lastPage: number;
+		};
+		results: {
+			id: number;
+			format: MediaFormat;
+			title: {
+				userPreferred: string;
+			};
+			coverImage: {
+				medium: string;
+			};
+			startDate: {
+				month: number;
+				year: number;
+			};
+		}[];
+	};
+	manga: {
+		pageInfo: {
+			total: number;
+			currentPage: number;
+			lastPage: number;
+		};
+		results: {
+			id: number;
+			format: MediaFormat;
+			title: {
+				userPreferred: string;
+			};
+			coverImage: {
+				medium: string;
+			};
+			startDate: {
+				month: number;
+				year: number;
+			};
+		}[];
+	};
+	characters: {
+		pageInfo: {
+			total: number;
+			currentPage: number;
+			lastPage: number;
+		};
+		results: {
+			id: number;
+			name: {
+				userPreferred: string;
+			};
+			image: {
+				medium: string;
+			};
+		}[];
+	};
+	staff: {
+		pageInfo: {
+			total: number;
+			currentPage: number;
+			lastPage: number;
+		};
+		results: {
+			id: number;
+			primaryOccupations: string[];
+			name: {
+				userPreferred: string;
+			};
+			image: {
+				medium: string;
+			};
+		}[];
+	};
+	studios: {
+		pageInfo: {
+			total: number;
+			currentPage: number;
+			lastPage: number;
+		};
+		results: {
+			id: number;
+			name: string;
+		}[];
+	};
+	users: {
+		pageInfo: {
+			total: number;
+			currentPage: number;
+			lastPage: number;
+		};
+		results: {
+			id: number;
+			name: string;
+			avatar: {
+				medium: string;
+			};
+		}[];
+	};
+}
+
+export type ResultType = "anime" | "manga" | "characters" | "staff" | "studios" | "users";
+
+export interface SearchVariables {
+	search?: string;
+	isAdult?: boolean;
+	averageScoreUpperRange?: number;
+	averageScoreBottomRange?: number;
+	chaptersUpperRange?: number;
+	chaptersBottomRange?: number;
+	volumesUpperRange?: number;
+	volumesBottomRange?: number;
+	episodesUpperRange?: number;
+	episodesBottomRange?: number;
+	countryOfOrigin?: string;
+	startDateUpperRange?: number;
+	startDateBottomRange?: number;
+	endDateUpperRange?: number;
+	endDateBottomRange?: number;
+	format?: MediaFormat;
+	status?: MediaStatus;
+	includeAnime: boolean;
+	includeManga: boolean;
+	includeCharacters: boolean;
+	includeStaff: boolean;
+	includeStudios: boolean;
+	includeUsers: boolean;
+	animePage?: number;
+	mangaPage?: number;
+	charactersPage?: number;
+	staffPage?: number;
+	studiosPage?: number;
+	usersPage?: number;
+}
+
+export async function search(params: SearchVariables) {
+	const q = await invoke<{ data: SearchQuery }>("graphql", {
+		query: `
+			query (
+				$search: String,
+				$isAdult: Boolean,
+				$averageScoreUpperRange: Int,
+				$averageScoreBottomRange: Int,
+				$chaptersUpperRange: Int,
+				$chaptersBottomRange: Int,
+				$volumesUpperRange: Int,
+				$volumesBottomRange: Int,
+				$episodesUpperRange: Int,
+				$episodesBottomRange: Int,
+				$countryOfOrigin: CountryCode,
+				$startDateUpperRange: FuzzyDateInt,
+				$startDateBottomRange: FuzzyDateInt,
+				$endDateUpperRange: FuzzyDateInt,
+				$endDateBottomRange: FuzzyDateInt,
+				$format: MediaFormat,
+				$status: MediaStatus,
+				$includeAnime: Boolean!,
+				$includeManga: Boolean!,
+				$includeCharacters: Boolean!,
+				$includeStaff: Boolean!,
+				$includeStudios: Boolean!,
+				$includeUsers: Boolean!,
+				$animePage: Int,
+				$mangaPage: Int,
+				$charactersPage: Int,
+				$staffPage: Int,
+				$studiosPage: Int,
+				$usersPage: Int
+			) {
+				anime: Page(perPage: 8, page: $animePage) @include(if: $includeAnime) {
+					pageInfo {
+						total
+						currentPage
+						lastPage
+					}
+					results: media(
+						type: ANIME,
+						isAdult: $isAdult,
+						search: $search,
+						averageScore_greater: $averageScoreBottomRange,
+						averageScore_lesser: $averageScoreUpperRange,
+						episodes_greater: $episodesBottomRange,
+						episodes_lesser: $episodesUpperRange,
+						countryOfOrigin: $countryOfOrigin,
+						startDate_greater: $startDateBottomRange,
+						startDate_lesser: $startDateUpperRange,
+						endDate_greater: $endDateBottomRange,
+						endDate_lesser: $endDateUpperRange,
+						format: $format,
+						status: $status
+					) {
+						id
+						format
+						title {
+							userPreferred
+						}
+						coverImage {
+							medium
+						}
+						startDate {
+							month
+							year
+						}
+					}
+				}
+				manga: Page(perPage: 8, page: $mangaPage) @include(if: $includeManga) {
+					pageInfo {
+						total
+						currentPage
+						lastPage
+					}
+					results: media(
+						type: MANGA,
+						isAdult: $isAdult,
+						search: $search,
+						averageScore_greater: $averageScoreBottomRange,
+						averageScore_lesser: $averageScoreUpperRange,
+						chapters_greater: $chaptersBottomRange,
+						chapters_lesser: $chaptersUpperRange,
+						volumes_greater: $volumesBottomRange,
+						volumes_lesser: $volumesUpperRange,
+						countryOfOrigin: $countryOfOrigin,
+						startDate_greater: $startDateBottomRange,
+						startDate_lesser: $startDateUpperRange,
+						endDate_greater: $endDateBottomRange,
+						endDate_lesser: $endDateUpperRange,
+						format: $format,
+						status: $status
+					) {
+						id
+						format
+						title {
+							userPreferred
+						}
+						coverImage {
+							medium
+						}
+						startDate {
+							month
+							year
+						}
+					}
+				}
+				characters: Page(perPage: 8, page: $charactersPage) @include(if: $includeCharacters) {
+					pageInfo {
+						total
+						currentPage
+						lastPage
+					}
+					results: characters(search: $search) {
+						id
+						name {
+							userPreferred
+						}
+						image {
+							medium
+						}
+					}
+				}
+				staff: Page(perPage: 8, page: $staffPage) @include(if: $includeStaff) {
+					pageInfo {
+						total
+						currentPage
+						lastPage
+					}
+					results: staff(search: $search) {
+						id
+						primaryOccupations
+						name {
+							userPreferred
+						}
+						image {
+							medium
+						}
+					}
+				}
+				studios: Page(perPage: 13, page: $studiosPage) @include(if: $includeStudios) {
+					pageInfo {
+						total
+						currentPage
+						lastPage
+					}
+					results: studios(search: $search) {
+						id
+						name
+					}
+				}
+				users: Page(perPage: 8, page: $usersPage) @include(if: $includeUsers) {
+					pageInfo {
+						total
+						currentPage
+						lastPage
+					}
+					results: users(search: $search) {
+						id
+						name
+						avatar {
+							medium
+						}
+					}
+				}
+			}
+		`,
+		variables: params,
+	});
+
+	return q.data;
 }
 
 export function formatDate(date: { year?: number; month?: number; day?: number }) {

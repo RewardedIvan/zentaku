@@ -60,9 +60,20 @@ export default {
 					"0%, 100%": { "background-position": "top left" },
 					"50%": { "background-position": "bottom right" },
 				},
+				dialogIn: {
+					"0%": {
+						transform: "translateY(-3rem) scaleY(90%)",
+						"clip-path": "inset(0 0 100% 0 round var(--m3-dialog-shape))",
+					},
+					"100%": {
+						transform: "translateY(0) scaleY(100%)",
+						"clip-path": "inset(0 0 0 0 round var(--m3-dialog-shape))",
+					},
+				},
 			},
 			animation: {
 				sway: "sway 30s ease-in-out infinite",
+				dialogIn: "dialogIn 0.5s cubic-bezier(0.05, 0.7, 0.1, 1)",
 			},
 			borderRadius: {
 				none: 0,
