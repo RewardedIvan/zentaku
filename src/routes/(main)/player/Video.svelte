@@ -1,3 +1,7 @@
+<script lang="ts" module>
+	export { controlButton };
+</script>
+
 <script lang="ts">
 	import {
 		Card,
@@ -48,6 +52,8 @@
 		children: Snippet<[]>;
 		time: number;
 		loading: boolean;
+		controlsRight?: Snippet<[]>;
+		controlsLeft?: Snippet<[]>;
 	}
 
 	let {
@@ -58,6 +64,8 @@
 		children,
 		time = $bindable(),
 		loading,
+		controlsRight,
+		controlsLeft,
 	}: Props = $props();
 
 	let paused = $state(false);
@@ -206,6 +214,18 @@
 
 <svelte:body onkeydown={onKey} />
 
+{#snippet controlButton(onClick: () => void, icon: IconifyIcon, tip: string, placement?: Placement)}
+	<Tooltip {placement}>
+		<Ripple {onClick}>
+			<Icon {icon} height="24" width="24" />
+		</Ripple>
+
+		{#snippet tooltip()}
+			<span>{tip}</span>
+		{/snippet}
+	</Tooltip>
+{/snippet}
+
 <div class="relative flex min-h-0 bg-black overflow-hidden {className}">
 	<video
 		class="flex-grow min-w-0 min-h-0 {fitStyle} {videoClass}"
@@ -266,30 +286,19 @@
 		/>
 
 		<div class="flex flex-row justify-between" draggable={false}>
-			{#snippet button(onClick: () => void, icon: IconifyIcon, tip: string, placement?: Placement)}
-				<Tooltip {placement}>
-					<Ripple {onClick}>
-						<Icon {icon} height="24" width="24" />
-					</Ripple>
-
-					{#snippet tooltip()}
-						<span>{tip}</span>
-					{/snippet}
-				</Tooltip>
-			{/snippet}
-
 			<div class="flex flex-row gap-2 items-center">
 				{#if previous}
-					{@render button(previous, PreviousIcon, "Previous")}
+					{@render controlButton(previous, PreviousIcon, "Previous")}
 				{/if}
-				{@render button(
+				{@render controlButton(
 					() => (paused = !paused),
 					paused ? PlayIcon : PauseIcon,
 					paused ? "Play" : "Pause",
 				)}
 				{#if next}
-					{@render button(next, NextIcon, "Next")}
+					{@render controlButton(next, NextIcon, "Next")}
 				{/if}
+				{@render controlsLeft?.()}
 
 				<M2Slider
 					bind:value={volume}
@@ -344,6 +353,8 @@
 					{/snippet}
 				</Tooltip>
 
+				{@render controlsRight?.()}
+
 				<Menu bind:open={fitMenuOpen}>
 					<Tooltip>
 						<Ripple onClick={() => (fitMenuOpen = !fitMenuOpen)}>
@@ -362,7 +373,7 @@
 					{/snippet}
 				</Menu>
 
-				{@render button(fullscreen, FullscreenIcon, "Fullscreen", "left")}
+				{@render controlButton(fullscreen, FullscreenIcon, "Fullscreen", "left")}
 			</div>
 		</div>
 	</div>
