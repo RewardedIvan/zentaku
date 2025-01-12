@@ -72,6 +72,8 @@ export default {
 				lg: "var(--m3-util-rounding-large)",
 				xl: "var(--m3-util-rounding-extra-large)",
 				full: "var(--m3-util-rounding-full)",
+				"slider-track-out": "0.5rem",
+				"slider-track-in": "0.125rem",
 			},
 		},
 	},
