@@ -170,7 +170,7 @@
 
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions, a11y_click_events_have_key_events -->
 <dialog
-	class="bg-transparent backdrop:bg-scrim/30 backdrop:transition-colors grid grid-cols-3 grid-rows-[auto_1fr_1fr] gap-20 size-full items-start"
+	class="fixed inset-0 bg-transparent backdrop:bg-scrim/30 backdrop:transition-colors grid grid-cols-3 grid-rows-[auto_1fr_1fr] gap-20 size-full items-start"
 	class:invisible={!open}
 	class:pointer-events-none={!open}
 	oncancel={() => (open = false)}
