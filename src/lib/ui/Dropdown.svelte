@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" generics="T">
 	import type { Placement } from "@floating-ui/core";
 	import Menu from "./Menu.svelte";
 	import { Button, MenuItem, TextField } from "m3-svelte";
@@ -6,13 +6,19 @@
 
 	import DownArrow from "@ktibow/iconset-material-symbols/arrow-drop-down";
 
-	interface Props {
+	interface Descriptor<T> {
+		text?: string;
+		value: T;
+		icon?: IconifyIcon;
+	}
+
+	interface Props<T> {
 		type?: "button" | "textfield";
 		name: string;
 		placement?: Placement;
 		closeOnClick?: boolean;
-		options: string[] | { value: string; icon: IconifyIcon }[];
-		value: string;
+		options: (T | Descriptor<T>)[];
+		value: T;
 	}
 
 	let {
@@ -22,26 +28,32 @@
 		closeOnClick = true,
 		options,
 		value = $bindable(),
-	}: Props = $props();
+	}: Props<T> = $props();
 
 	let open = $state(false);
 	let error = $derived.by(() => {
 		return (
 			options.find(e => {
-				if (typeof e == "string") {
-					return e == value;
-				} else {
+				if (typeof e == "object" && e != null && "value" in e) {
 					return e.value == value;
+				} else {
+					return e == value;
 				}
 			}) == undefined
 		);
 	});
 
-	function changeValue(o: string | { value: string; icon: IconifyIcon }) {
-		if (typeof o == "string") {
-			value = o;
+	let val: any = $state(value);
+
+	$effect(() => {
+		value = val;
+	});
+
+	function changeValue(o: T | Descriptor<T>) {
+		if (typeof o == "object" && o != null && "value" in o) {
+			val = o.value;
 		} else {
-			value = o.value;
+			val = o;
 		}
 
 		if (closeOnClick) {
@@ -58,17 +70,17 @@
 			{name}
 			trailingIcon={DownArrow}
 			on:trailingClick={() => (open = !open)}
-			bind:value
+			bind:value={val}
 			{error}
 		/>
 	{/if}
 
 	{#snippet menu()}
 		{#each options as o}
-			{#if typeof o == "string"}
-				<MenuItem on:click={() => changeValue(o)}>{o}</MenuItem>
+			{#if typeof o == "object" && o != null && "value" in o}
+				<MenuItem icon={o.icon} on:click={() => changeValue(o.value)}>{o.text}</MenuItem>
 			{:else}
-				<MenuItem icon={o.icon} on:click={() => changeValue(o)}>{o.value}</MenuItem>
+				<MenuItem on:click={() => changeValue(o)}>{o}</MenuItem>
 			{/if}
 		{/each}
 	{/snippet}
