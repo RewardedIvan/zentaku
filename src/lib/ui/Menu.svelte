@@ -10,9 +10,18 @@
 		menu: Snippet<[]>;
 		placement?: Placement;
 		open: boolean;
+		className?: string;
+		wrapperClassName?: string;
 	}
 
-	let { children, menu, placement = "bottom", open = $bindable() }: Props = $props();
+	let {
+		children,
+		menu,
+		placement = "bottom",
+		open = $bindable(),
+		className,
+		wrapperClassName,
+	}: Props = $props();
 
 	const [floatingRef, floatingContent] = createFloatingActions({
 		strategy: "absolute",
@@ -21,13 +30,13 @@
 	});
 </script>
 
-<div class="flex" use:floatingRef>
+<div class="flex {wrapperClassName}" use:floatingRef>
 	{@render children()}
 </div>
 
 {#if open}
 	<div
-		class="w-max absolute bg-surface-container z-50 grid grid-flow-row rounded py-2 max-h-[300px] overflow-y-auto shadow-lg"
+		class="w-max absolute bg-surface-container z-50 grid grid-flow-row rounded py-2 max-h-[300px] overflow-y-auto shadow-lg {className}"
 		style="left: 0; top: 0;"
 		aria-haspopup="menu"
 		in:slide={{ duration: 200, easing: easeEmphasizedDecel, axis: "y" }}
