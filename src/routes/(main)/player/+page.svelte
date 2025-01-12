@@ -6,6 +6,8 @@
 	import { areAllScriptsTrusted, getScripts, loadScripts } from "$lib/utils/Sources";
 	import { onMount, onDestroy } from "svelte";
 	import { beforeNavigate } from "$app/navigation";
+	import { slide } from "svelte/transition";
+	import { easeEmphasizedAccel, easeEmphasizedDecel } from "m3-svelte";
 
 	import SaveIcon from "@ktibow/iconset-material-symbols/save";
 	import ReloadIcon from "@ktibow/iconset-material-symbols/refresh";
@@ -13,6 +15,18 @@
 
 	let loading = $state(true);
 	let time = $state(0);
+	let showSnack = $state(false);
+	let snackError: string | null = $state(null);
+
+	$effect(() => {
+		if (showSnack) {
+			let timeout = setTimeout(() => {
+				showSnack = false;
+			}, 2000);
+
+			return () => clearTimeout(timeout);
+		}
+	});
 
 	function fetchVideo(useCache = true): Promise<VideoResult[]> {
 		return new Promise(async (resolve, reject) => {
@@ -33,7 +47,8 @@
 			const scripts = await getScripts();
 
 			if (!(await areAllScriptsTrusted(scripts))) {
-				reject("Some sources could not be trusted, please go back to the watch page.");
+				showSnack = true;
+				snackError = "Some sources could not be trusted, please go back to the watch page.";
 				return;
 			}
 
@@ -41,27 +56,38 @@
 			const currentSource = sources.find(s => s.name === $Playing.source);
 
 			if (!currentSource) {
-				reject("Could not find the current source, please go back to the watch page.");
+				snackError = "Could not find the current source, please go back to the watch page.";
+				showSnack = true;
 				return;
 			}
 
 			const settings = $SourceSettings[$Playing.source] ?? currentSource.defaultSettings;
-			let videoResult = await currentSource.getVideo(settings, $Playing.animeId, $Playing.episode);
+			try {
+				let videoResult = await currentSource.getVideo(
+					settings,
+					$Playing.animeId,
+					$Playing.episode,
+				);
 
-			if (videoResult.find(v => v.src.startsWith("blob:")) == null) {
-				videoCache.update(c => {
-					let newC = c.filter(v => !cachePredicate(v));
-					newC.push({
-						source: $Playing.source,
-						animeId: $Playing.animeId,
-						episode: $Playing.episode,
-						video: videoResult,
+				if (videoResult.find(v => v.src.startsWith("blob:")) == null) {
+					videoCache.update(c => {
+						let newC = c.filter(v => !cachePredicate(v));
+						newC.push({
+							source: $Playing.source,
+							animeId: $Playing.animeId,
+							episode: $Playing.episode,
+							video: videoResult,
+						});
+						return newC;
 					});
-					return newC;
-				});
+				}
+
+				resolve(videoResult);
+			} catch (e) {
+				snackError = "Error getting video: " + ((e as Error).message ?? "Unknown error");
+				showSnack = true;
 			}
 
-			resolve(videoResult);
 			loading = false;
 		});
 	}
@@ -84,7 +110,7 @@
 	}
 
 	function switchEpisodeRelative(episode: number) {
-		const newEpisode = Math.min(Math.max($Playing.episode + episode, 0), $Playing.episodes + 1);
+		const newEpisode = Math.min(Math.max($Playing.episode + episode, 1), $Playing.episodes + 1);
 
 		Playing.update(p => {
 			return {
@@ -139,3 +165,15 @@
 		{@render controlButton(updateProg, SaveIcon, "Save progress manually")}
 	{/snippet}
 </Video>
+
+{#if showSnack}
+	<div
+		class="absolute right-0 bottom-0 justify-between flex flex-col p-2 gap-2 bg-inverse-surface text-inverse-on-surface m-2 rounded"
+		in:slide={{ duration: 300, easing: easeEmphasizedDecel }}
+		out:slide={{ duration: 300, easing: easeEmphasizedAccel }}
+	>
+		{#if snackError}
+			<span>Error: {snackError}</span>
+		{/if}
+	</div>
+{/if}
