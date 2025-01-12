@@ -1,11 +1,14 @@
 <script lang="ts">
-	import Video from "./Video.svelte";
 	import { Playing, Progress } from "$lib/stores/Player";
+	import Video, { controlButton } from "./Video.svelte";
 	import { SourceSettings } from "$lib/stores/SourceStores";
 	import { type VideoResult } from "$lib/source";
 	import { areAllScriptsTrusted, getScripts, loadScripts } from "$lib/utils/Sources";
 	import { onMount, onDestroy } from "svelte";
 	import { beforeNavigate } from "$app/navigation";
+
+	import SaveIcon from "@ktibow/iconset-material-symbols/save";
+	import ReloadIcon from "@ktibow/iconset-material-symbols/refresh";
 
 	let loading = $state(true);
 	let time = $state(0);
@@ -95,4 +98,8 @@
 			{/if}
 		{/each}
 	{/await}
+	{#snippet controlsRight()}
+		{@render controlButton(() => (video = fetchVideo()), ReloadIcon, "Refetch video")}
+		{@render controlButton(updateProg, SaveIcon, "Save progress manually")}
+	{/snippet}
 </Video>
