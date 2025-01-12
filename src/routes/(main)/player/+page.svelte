@@ -76,6 +76,7 @@
 				animeId: $Playing.animeId,
 				anilistId: $Playing.anilistId,
 				currentEpisode: episode,
+				episodes: $Playing.episodes,
 				time,
 			});
 			return newp;

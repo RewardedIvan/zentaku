@@ -52,17 +52,16 @@
 	}
 
 	function continu() {
-		const progress = $Progress.find(p => p.anilistId === $Playing.anilistId);
+		const progress = $Progress.find(p => p.anilistId == Number(page.url.searchParams.get("id")));
 		if (progress) {
-			Playing.update(p => {
-				return {
-					...p,
-					source: progress.source,
-					animeId: progress.animeId,
-					episode: progress.currentEpisode,
-				};
+			Playing.set({
+				anilistId: Number(page.url.searchParams.get("id")),
+				source: progress.source,
+				animeId: progress.animeId,
+				episode: progress.currentEpisode,
+				episodes: progress.episodes,
 			});
-			goto("/player");
+			goto(`/player?id=${page.url.searchParams.get("id")}`);
 		}
 	}
 

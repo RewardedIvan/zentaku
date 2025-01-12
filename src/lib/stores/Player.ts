@@ -13,6 +13,7 @@ export const Progress = createStoreLocalStorage<
 	{
 		anilistId: number;
 
+		episodes: number;
 		source: string;
 		animeId: string;
 		currentEpisode: number;

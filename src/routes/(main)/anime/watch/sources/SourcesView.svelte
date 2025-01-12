@@ -5,7 +5,8 @@
 	import { invoke } from "@tauri-apps/api/core";
 	import type { IconifyIcon } from "@iconify/types";
 	import Tooltip from "$lib/ui/Tooltip.svelte";
-	import { Playing, Progress } from "$lib/stores/Player";
+	import { Progress } from "$lib/stores/Player";
+	import { page } from "$app/state";
 
 	import PlayIcon from "@ktibow/iconset-material-symbols/play-arrow";
 	import FolderIcon from "@ktibow/iconset-material-symbols/folder";
@@ -27,7 +28,9 @@
 	let warningOpen = $state(false);
 	let trustDialogOpen = $state(false);
 	let sources: VideoSource<unknown>[] = $state([]);
-	let progress = $derived($Progress.find(p => p.anilistId === $Playing.anilistId));
+	let progress = $derived(
+		$Progress.find(p => p.anilistId == Number(page.url.searchParams.get("id"))),
+	);
 
 	async function openWarning() {
 		warningOpen = !(await areAllScriptsTrusted());
