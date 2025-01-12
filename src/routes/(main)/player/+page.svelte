@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Playing, Progress } from "$lib/stores/Player";
 	import Video, { controlButton } from "./Video.svelte";
+	import { Playing, Progress, videoCache } from "$lib/stores/Player";
 	import { SourceSettings } from "$lib/stores/SourceStores";
 	import { type VideoResult } from "$lib/source";
 	import { areAllScriptsTrusted, getScripts, loadScripts } from "$lib/utils/Sources";
@@ -9,13 +9,27 @@
 
 	import SaveIcon from "@ktibow/iconset-material-symbols/save";
 	import ReloadIcon from "@ktibow/iconset-material-symbols/refresh";
+	import ReloadCacheIcon from "@ktibow/iconset-material-symbols/cached";
 
 	let loading = $state(true);
 	let time = $state(0);
 
-	function fetchVideo(): Promise<VideoResult[]> {
+	function fetchVideo(useCache = true): Promise<VideoResult[]> {
 		return new Promise(async (resolve, reject) => {
 			loading = true;
+
+			const cachePredicate = (v: (typeof $videoCache)[number]) =>
+				v.source === $Playing.source &&
+				v.animeId === $Playing.animeId &&
+				v.episode === $Playing.episode;
+
+			let cache = $videoCache.find(cachePredicate);
+			if (cache && useCache) {
+				resolve(cache.video);
+				loading = false;
+				return;
+			}
+
 			const scripts = await getScripts();
 
 			if (!(await areAllScriptsTrusted(scripts))) {
@@ -32,7 +46,22 @@
 			}
 
 			const settings = $SourceSettings[$Playing.source] ?? currentSource.defaultSettings;
-			resolve(await currentSource.getVideo(settings, $Playing.animeId, $Playing.episode));
+			let videoResult = await currentSource.getVideo(settings, $Playing.animeId, $Playing.episode);
+
+			if (videoResult.find(v => v.src.startsWith("blob:")) == null) {
+				videoCache.update(c => {
+					let newC = c.filter(v => !cachePredicate(v));
+					newC.push({
+						source: $Playing.source,
+						animeId: $Playing.animeId,
+						episode: $Playing.episode,
+						video: videoResult,
+					});
+					return newC;
+				});
+			}
+
+			resolve(videoResult);
 			loading = false;
 		});
 	}
@@ -98,7 +127,13 @@
 			{/if}
 		{/each}
 	{/await}
+
 	{#snippet controlsRight()}
+		{@render controlButton(
+			() => (video = fetchVideo(false)),
+			ReloadCacheIcon,
+			"Refetch video (without cache)",
+		)}
 		{@render controlButton(() => (video = fetchVideo()), ReloadIcon, "Refetch video")}
 		{@render controlButton(updateProg, SaveIcon, "Save progress manually")}
 	{/snippet}

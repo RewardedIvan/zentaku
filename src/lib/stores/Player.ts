@@ -1,3 +1,4 @@
+import type { VideoResult } from "$lib/source";
 import { createStoreLocalStorage } from "./LocalStorage";
 
 export const Playing = createStoreLocalStorage("playing", {
@@ -19,3 +20,12 @@ export const Progress = createStoreLocalStorage<
 		time: number;
 	}[]
 >("progress", []);
+
+export const videoCache = createStoreLocalStorage<
+	{
+		source: string;
+		animeId: string;
+		episode: number;
+		video: VideoResult[];
+	}[]
+>("videoCache", []);
