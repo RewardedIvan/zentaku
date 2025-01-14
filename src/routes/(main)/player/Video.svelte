@@ -54,6 +54,7 @@
 		loading: boolean;
 		controlsRight?: Snippet<[]>;
 		controlsLeft?: Snippet<[]>;
+		video?: HTMLVideoElement;
 	}
 
 	let {
@@ -66,6 +67,7 @@
 		loading,
 		controlsRight,
 		controlsLeft,
+		video = $bindable(),
 	}: Props = $props();
 
 	let paused = $state(false);
@@ -80,8 +82,6 @@
 	let fitMenuOpen = $state(false);
 
 	const controlsFadeTimeMs = 3500; // TODO: make settings for this
-
-	let video: HTMLVideoElement | null = $state(null);
 
 	async function handleMove() {
 		await controlsOpacity.set(1, { duration: 100, delay: 0, easing: easeEmphasizedDecel });

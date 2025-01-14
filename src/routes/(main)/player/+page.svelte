@@ -17,6 +17,7 @@
 	let time = $state(0);
 	let showSnack = $state(false);
 	let snackError: string | null = $state(null);
+	let videoElem: HTMLVideoElement | undefined = $state(undefined);
 
 	$effect(() => {
 		if (showSnack) {
@@ -109,7 +110,7 @@
 		});
 	}
 
-	function switchEpisodeRelative(episode: number) {
+	async function switchEpisodeRelative(episode: number) {
 		const newEpisode = Math.min(Math.max($Playing.episode + episode, 1), $Playing.episodes + 1);
 
 		Playing.update(p => {
@@ -121,11 +122,28 @@
 
 		updateProgress(0, newEpisode);
 		video = fetchVideo();
+		await video;
+		videoElem?.load();
+	}
+
+	async function reload(useCache: boolean) {
+		const backupTime = Number(time);
+
+		video = fetchVideo(useCache);
+		await video;
+
+		videoElem?.load();
+		videoElem?.addEventListener(
+			"loadeddata",
+			() => {
+				time = backupTime;
+			},
+			{ once: true },
+		);
 	}
 
 	onMount(() => {
 		const progress = $Progress.find(p => p.anilistId === $Playing.anilistId);
-		console.log(progress);
 
 		if (progress) {
 			time = progress.time;
@@ -144,6 +162,7 @@
 	class="flex-grow"
 	previous={() => switchEpisodeRelative(-1)}
 	next={() => switchEpisodeRelative(1)}
+	bind:video={videoElem}
 >
 	{#await video then videos}
 		{#each videos as v}
@@ -156,12 +175,8 @@
 	{/await}
 
 	{#snippet controlsRight()}
-		{@render controlButton(
-			() => (video = fetchVideo(false)),
-			ReloadCacheIcon,
-			"Refetch video (without cache)",
-		)}
-		{@render controlButton(() => (video = fetchVideo()), ReloadIcon, "Refetch video")}
+		{@render controlButton(() => reload(false), ReloadCacheIcon, "Refetch video (without cache)")}
+		{@render controlButton(() => reload(true), ReloadIcon, "Refetch video")}
 		{@render controlButton(updateProg, SaveIcon, "Save progress manually")}
 	{/snippet}
 </Video>
