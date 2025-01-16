@@ -1,5 +1,7 @@
 <script lang="ts">
 	import Spoiler from "./Spoiler.svelte";
+	import Tooltip from "./Tooltip.svelte";
+
 	// https://html.spec.whatwg.org/entities.json
 	import htmlEntities from "$lib/htmlEntities.json";
 
@@ -13,7 +15,15 @@
 	// did i waant to? yes.
 
 	interface Token {
-		type: "text" | "bold" | "italic" | "newline" | "spoiler" | "htmlentity";
+		type:
+			| "text"
+			| "bold"
+			| "italic"
+			| "newline"
+			| "spoiler"
+			| "htmlentity"
+			| "linktext"
+			| "linkurl";
 		value: string;
 		index: number;
 	}
@@ -45,6 +55,8 @@
 				newline: /^ {0,}\n/,
 				spoiler: /^(~!|!~)/,
 				htmlentity: /^&#?[a-zA-Z0-9]+;/,
+				linktext: /^(\[|\])/,
+				linkurl: /^\(([^\)]+)\)/,
 				text: /$a/, // will never match, i handle it later
 			};
 
@@ -92,7 +104,14 @@
 	}
 
 	interface ModifierNode {
-		type: "bold" | "italic" | "spoiler";
+		type: "bold" | "italic" | "spoiler" | "linktext";
+		children: Node[];
+		parent: BranchNode;
+	}
+
+	interface LinkNode {
+		type: "link";
+		link: string;
 		children: Node[];
 		parent: BranchNode;
 	}
@@ -106,7 +125,7 @@
 		text: string;
 	}
 
-	type BranchNode = MarkdownNode | ModifierNode;
+	type BranchNode = MarkdownNode | ModifierNode | LinkNode;
 	type Node = BranchNode | NewlineNode | TextNode;
 
 	let parsed = $derived.by(() => {
@@ -122,7 +141,12 @@
 					type: "text",
 					text: t.value,
 				});
-			} else if (t.type == "bold" || t.type == "italic" || t.type == "spoiler") {
+			} else if (
+				t.type == "bold" ||
+				t.type == "italic" ||
+				t.type == "spoiler" ||
+				t.type == "linktext"
+			) {
 				const lastTextModifier = textModifierStack[textModifierStack.length - 1];
 				if (lastTextModifier == t.type) {
 					textModifierStack.pop();
@@ -140,6 +164,30 @@
 					// pray that javascript doesn't make a copy while pushing too
 					currentBranchRef.children.push(newNode);
 					currentBranchRef = newNode;
+				}
+			} else if (t.type == "linkurl") {
+				const children = currentBranchRef.children;
+				if (children.length > 1) {
+					const last = children[children.length - 1];
+
+					if (last.type == "linktext") {
+						currentBranchRef.children.push({
+							type: "link",
+							link: t.value.substring(1, t.value.length - 1),
+							children: [currentBranchRef.children.pop() as Node],
+							parent: currentBranchRef,
+						});
+					} else {
+						currentBranchRef.children.push({
+							type: "text",
+							text: t.value,
+						});
+					}
+				} else {
+					currentBranchRef.children.push({
+						type: "text",
+						text: t.value,
+					});
 				}
 			} else if (t.type == "htmlentity") {
 				let char = "";
@@ -192,6 +240,26 @@
 				</span>
 			{/snippet}
 		</Spoiler>
+	{:else if node.type == "link"}
+		{@const link = node.link.replace(/.*anilist.*\/character\/(\d+)\/?.*/, "/character?id=$1")}
+
+		<Tooltip class="inline-flex">
+			<a href={link} class="text-blue-500" target={link.startsWith("http") ? "_blank" : "_self"}>
+				{#each node.children as child}
+					{@render renderNode(child)}
+				{/each}
+			</a>
+
+			{#snippet tooltip()}
+				<span>{node.link}</span>
+			{/snippet}
+		</Tooltip>
+	{:else if node.type == "linktext"}
+		<span>
+			{#each node.children as child}
+				{@render renderNode(child)}
+			{/each}
+		</span>
 	{:else if node.type == "text"}
 		<span>{node.text}</span>
 	{:else if node.type == "newline"}
