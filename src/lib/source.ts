@@ -9,19 +9,21 @@ export interface SearchResult {
 	episodes?: number;
 }
 
-// gets put into <source>
-export type VideoResult =
-	| {
-			type: "source";
-			src: string;
-			mime?: string;
-	  }
-	| {
-			type: "track";
-			src: string;
-			kind: "captions" | "chapters" | "descriptions" | "metadata" | "subtitles";
-			srclang: string;
-	  };
+interface SourceVideoResult {
+	type: "source";
+	src: string;
+	mime?: string;
+}
+
+interface TrackVideoResult {
+	type: "track";
+	src: string;
+	kind: "captions" | "chapters" | "descriptions" | "metadata" | "subtitles";
+	srclang: string;
+}
+
+// gets put into <video>
+export type VideoResult = SourceVideoResult | TrackVideoResult;
 
 export interface EpisodeInfo {
 	description: string | null;
