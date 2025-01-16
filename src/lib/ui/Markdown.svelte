@@ -1,5 +1,7 @@
 <script lang="ts">
 	import Spoiler from "./Spoiler.svelte";
+	// https://html.spec.whatwg.org/entities.json
+	import htmlEntities from "$lib/htmlEntities.json";
 
 	interface Props {
 		md: string;
@@ -11,7 +13,7 @@
 	// did i waant to? yes.
 
 	interface Token {
-		type: "text" | "bold" | "italic" | "newline" | "spoiler";
+		type: "text" | "bold" | "italic" | "newline" | "spoiler" | "htmlentity";
 		value: string;
 		index: number;
 	}
@@ -37,21 +39,12 @@
 		};
 
 		while (i < md.length) {
-			const ifMatched = (regex: RegExp, fn: (matched: string) => Token | undefined) => {
-				const match = md.substring(i).match(regex);
-
-				if (!match) {
-					return undefined;
-				}
-
-				return fn(match[0]);
-			};
-
 			const regexes: Record<TokenType, RegExp> = {
 				bold: /^(__|\*\*)/,
 				italic: /^(_|\*)/,
-				newline: /^( {0,}\n)/,
+				newline: /^ {0,}\n/,
 				spoiler: /^(~!|!~)/,
+				htmlentity: /^&#?[a-zA-Z0-9]+;/,
 				text: /$a/, // will never match, i handle it later
 			};
 
@@ -59,14 +52,19 @@
 
 			Object.entries(regexes).forEach(([type, regex]) => {
 				if (!matched) {
-					matched = ifMatched(regex, m => {
-						i += m.length;
-						return {
-							value: m,
-							type: type as TokenType,
-							index: i - m.length,
-						};
-					});
+					const match = md.substring(i).match(regex);
+
+					if (!match) {
+						return;
+					}
+
+					const m = match[0];
+					i += m.length;
+					matched = {
+						value: m,
+						type: type as TokenType,
+						index: i - m.length,
+					};
 				}
 			});
 
@@ -143,6 +141,21 @@
 					currentBranchRef.children.push(newNode);
 					currentBranchRef = newNode;
 				}
+			} else if (t.type == "htmlentity") {
+				let char = "";
+
+				if (t.value in htmlEntities) {
+					const key = t.value as keyof typeof htmlEntities;
+					char = htmlEntities[key].characters;
+				} else if (t.value.startsWith("&#")) {
+					const code = parseInt(t.value.substring(2, t.value.length - 1));
+					char = String.fromCodePoint(code);
+				}
+
+				currentBranchRef.children.push({
+					type: "text",
+					text: char,
+				});
 			} else if (t.type == "newline") {
 				currentBranchRef.children.push({
 					type: "newline",
