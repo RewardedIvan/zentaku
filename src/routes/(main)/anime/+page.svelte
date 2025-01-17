@@ -38,34 +38,6 @@
 	}
 
 	let voiceActorLanguage = $state("Japanese");
-	const voiceActorLanguages = [
-		"Japanese",
-		"English",
-		"Korean",
-		"Italian",
-		"Spanish",
-		"Portuguese",
-		"French",
-		"German",
-		"Hebrew",
-		"Hungarian",
-		"Chinese",
-		"Arabic",
-		"Filipino",
-		"Catalan",
-		"Finnish",
-		"Turkish",
-		"Dutch",
-		"Swedish",
-		"Thai",
-		"Tagalog",
-		"Malaysian",
-		"Indonesian",
-		"Vietnamese",
-		"Nepali",
-		"Hindi",
-		"Urdu",
-	];
 </script>
 
 {#await getMedia(parseInt(page.url.searchParams.get("id") ?? ""))}
@@ -131,7 +103,11 @@
 
 			<div class="w-min">
 				<Dropdown
-					options={voiceActorLanguages}
+					options={[
+						...new Set(
+							media.characters.edges.map(e => e.voiceActors.map(e => e.languageV2)).flat(),
+						),
+					]}
 					name="voice actor language"
 					bind:value={voiceActorLanguage}
 				/>
