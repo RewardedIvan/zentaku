@@ -45,7 +45,7 @@
 	}
 </script>
 
-<div class="flex flex-col h-screen">
+<div class="flex flex-col min-h-screen">
 	{#if !$Topbar.hidden}
 		<div
 			class="h-[40px] sticky top-0 z-[99999] bg-surface-container-highest"
