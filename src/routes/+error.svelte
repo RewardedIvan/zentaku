@@ -11,5 +11,6 @@
 	<div class="flex flex-row gap-1">
 		<Button type="text" on:click={() => window.history.back()}>Go back?</Button>
 		<Button type="text" on:click={() => goto("/")}>Go home?</Button>
+		<Button type="text" on:click={() => window.location.reload()}>Reload?</Button>
 	</div>
 </div>
