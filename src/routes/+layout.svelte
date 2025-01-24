@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { StyleFromScheme } from "m3-svelte";
-	import { scheme } from "$lib/stores/theme";
+	import { Settings } from "$lib/stores/Settings";
 
 	import "@fontsource/roboto";
 	import "@fontsource/afacad-flux";
@@ -10,5 +10,5 @@
 	const { children } = $props();
 </script>
 
-<StyleFromScheme {...$scheme} />
+<StyleFromScheme {...$Settings.theme.serialized} />
 {@render children()}

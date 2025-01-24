@@ -29,6 +29,9 @@ importers:
       '@ktibow/iconset-material-symbols':
         specifier: ^0.0.1733470085
         version: 0.0.1733470085
+      '@material/material-color-utilities':
+        specifier: ^0.3.0
+        version: 0.3.0
       '@tauri-apps/api':
         specifier: ^2
         version: 2.1.1

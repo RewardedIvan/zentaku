@@ -17,6 +17,7 @@
 		type SearchVariables,
 	} from "$lib/anilist";
 	import { goto } from "$app/navigation";
+	import { Settings } from "$lib/stores/Settings";
 
 	import SearchIcon from "@ktibow/iconset-material-symbols/search";
 	import MenuIcon from "@ktibow/iconset-material-symbols/menu";
@@ -41,32 +42,6 @@
 	let debounceTimeout: number | undefined = $state(undefined);
 	let results: Promise<SearchQuery> | null = $state(null);
 
-	// TODO: save in settings
-	let filters /*: SearchVariables*/ = $state({
-		isAdult: false,
-		averageScoreUpperRange: 100,
-		averageScoreBottomRange: 0,
-		episodesUpperRange: 150,
-		episodesBottomRange: 0,
-		chaptersUpperRange: 500,
-		chaptersBottomRange: 0,
-		volumesUpperRange: 50,
-		volumesBottomRange: 0,
-		countryOfOrigin: undefined,
-		startDateUpperRange: 20260000,
-		startDateBottomRange: 19400000,
-		endDateUpperRange: 20260000,
-		endDateBottomRange: 19400000,
-		format: undefined,
-		status: undefined,
-		includeAnime: true,
-		includeManga: true,
-		includeCharacters: true,
-		includeStaff: true,
-		includeStudios: true,
-		includeUsers: true,
-	});
-
 	$effect(() => {
 		if (!dialog) return;
 
@@ -80,13 +55,13 @@
 	function searc() {
 		results = search({
 			search: query.length ? query : undefined,
-			...filters,
+			...$Settings.lastUsedFilters,
 		});
 	}
 
 	$effect(() => {
 		query;
-		filters;
+		$Settings.lastUsedFilters;
 		debounceTimeout = setTimeout(() => {
 			if (query != "") {
 				searc();
@@ -147,7 +122,10 @@
 		// @ts-ignore
 		let newPage = resul[type].pageInfo.currentPage + pageRelative;
 		if (newPage < resul[type].pageInfo.lastPage && newPage != 0) {
-			let vars = { search: query.length ? query : undefined, ...filters };
+			let vars = {
+				search: query.length ? query : undefined,
+				...$Settings.lastUsedFilters,
+			};
 
 			// @ts-ignore
 			vars[type + "Page"] = newPage;
@@ -221,42 +199,42 @@
 				{#snippet menu()}
 					<div class="grid grid-cols-2 auto-rows-auto gap-6 p-2 items-center justify-center">
 						<span>Adult</span>
-						<label for={null}> <Switch bind:checked={filters.isAdult} /> </label>
+						<label for={null}> <Switch bind:checked={$Settings.lastUsedFilters.isAdult} /> </label>
 
 						<span>Average Score</span>
 						<RangeSlider
-							bind:bottom={filters.averageScoreBottomRange}
-							bind:upper={filters.averageScoreUpperRange}
+							bind:bottom={$Settings.lastUsedFilters.averageScoreBottomRange}
+							bind:upper={$Settings.lastUsedFilters.averageScoreUpperRange}
 							min={0}
 							max={100}
 						/>
 						<span>Episodes</span>
 						<RangeSlider
-							bind:bottom={filters.episodesBottomRange}
-							bind:upper={filters.episodesUpperRange}
+							bind:bottom={$Settings.lastUsedFilters.episodesBottomRange}
+							bind:upper={$Settings.lastUsedFilters.episodesUpperRange}
 							min={0}
 							max={150}
 						/>
 
 						<span>Chapters</span>
 						<RangeSlider
-							bind:bottom={filters.chaptersBottomRange}
-							bind:upper={filters.chaptersUpperRange}
+							bind:bottom={$Settings.lastUsedFilters.chaptersBottomRange}
+							bind:upper={$Settings.lastUsedFilters.chaptersUpperRange}
 							min={0}
 							max={500}
 						/>
 
 						<span>Volumes</span>
 						<RangeSlider
-							bind:bottom={filters.volumesBottomRange}
-							bind:upper={filters.volumesUpperRange}
+							bind:bottom={$Settings.lastUsedFilters.volumesBottomRange}
+							bind:upper={$Settings.lastUsedFilters.volumesUpperRange}
 							min={0}
 							max={50}
 						/>
 
 						<span>Country of Origin</span>
 						<Dropdown
-							bind:value={filters.countryOfOrigin}
+							bind:value={$Settings.lastUsedFilters.countryOfOrigin}
 							type="textfield"
 							name="Country of Origin"
 							placement="bottom-start"
@@ -271,19 +249,31 @@
 
 						<span>Start Date</span>
 						<div class="flex flex-row">
-							<DatePicker name="From" bind:fuzzyDateInt={filters.startDateBottomRange} />
-							<DatePicker name="To" bind:fuzzyDateInt={filters.startDateUpperRange} />
+							<DatePicker
+								name="From"
+								bind:fuzzyDateInt={$Settings.lastUsedFilters.startDateBottomRange}
+							/>
+							<DatePicker
+								name="To"
+								bind:fuzzyDateInt={$Settings.lastUsedFilters.startDateUpperRange}
+							/>
 						</div>
 
 						<span>End Date</span>
 						<div class="flex flex-row">
-							<DatePicker name="From" bind:fuzzyDateInt={filters.endDateBottomRange} />
-							<DatePicker name="To" bind:fuzzyDateInt={filters.endDateUpperRange} />
+							<DatePicker
+								name="From"
+								bind:fuzzyDateInt={$Settings.lastUsedFilters.endDateBottomRange}
+							/>
+							<DatePicker
+								name="To"
+								bind:fuzzyDateInt={$Settings.lastUsedFilters.endDateUpperRange}
+							/>
 						</div>
 
 						<span>Format</span>
 						<Dropdown
-							bind:value={filters.format}
+							bind:value={$Settings.lastUsedFilters.format}
 							type="textfield"
 							name="Format"
 							placement="bottom-start"
@@ -304,7 +294,7 @@
 
 						<span>Status</span>
 						<Dropdown
-							bind:value={filters.status}
+							bind:value={$Settings.lastUsedFilters.status}
 							type="textfield"
 							name="Status"
 							placement="bottom-start"
@@ -320,17 +310,41 @@
 
 						<span>Include</span>
 						<SegmentedButtonContainer>
-							<input type="checkbox" id="sgi-0" bind:checked={filters.includeAnime} />
+							<input
+								type="checkbox"
+								id="sgi-0"
+								bind:checked={$Settings.lastUsedFilters.includeAnime}
+							/>
 							<SegmentedButtonItem input="sgi-0">Anime</SegmentedButtonItem>
-							<input type="checkbox" id="sgi-1" bind:checked={filters.includeManga} />
+							<input
+								type="checkbox"
+								id="sgi-1"
+								bind:checked={$Settings.lastUsedFilters.includeManga}
+							/>
 							<SegmentedButtonItem input="sgi-1">Manga</SegmentedButtonItem>
-							<input type="checkbox" id="sgi-2" bind:checked={filters.includeCharacters} />
+							<input
+								type="checkbox"
+								id="sgi-2"
+								bind:checked={$Settings.lastUsedFilters.includeCharacters}
+							/>
 							<SegmentedButtonItem input="sgi-2">Characters</SegmentedButtonItem>
-							<input type="checkbox" id="sgi-3" bind:checked={filters.includeStaff} />
+							<input
+								type="checkbox"
+								id="sgi-3"
+								bind:checked={$Settings.lastUsedFilters.includeStaff}
+							/>
 							<SegmentedButtonItem input="sgi-3">Staff</SegmentedButtonItem>
-							<input type="checkbox" id="sgi-4" bind:checked={filters.includeStudios} />
+							<input
+								type="checkbox"
+								id="sgi-4"
+								bind:checked={$Settings.lastUsedFilters.includeStudios}
+							/>
 							<SegmentedButtonItem input="sgi-4">Studios</SegmentedButtonItem>
-							<input type="checkbox" id="sgi-5" bind:checked={filters.includeUsers} />
+							<input
+								type="checkbox"
+								id="sgi-5"
+								bind:checked={$Settings.lastUsedFilters.includeUsers}
+							/>
 							<SegmentedButtonItem input="sgi-5">Users</SegmentedButtonItem>
 						</SegmentedButtonContainer>
 					</div>

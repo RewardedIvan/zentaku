@@ -2,6 +2,7 @@
 	import Video, { controlButton } from "./Video.svelte";
 	import { Playing, Progress, videoCache } from "$lib/stores/Player";
 	import { SourceSettings } from "$lib/stores/SourceStores";
+	import { Settings } from "$lib/stores/Settings";
 	import { type VideoResult } from "$lib/source";
 	import { areAllScriptsTrusted, getScripts, loadScripts } from "$lib/utils/Sources";
 	import { onMount, onDestroy } from "svelte";
@@ -23,7 +24,7 @@
 		if (showSnack) {
 			let timeout = setTimeout(() => {
 				showSnack = false;
-			}, 2000);
+			}, $Settings.playerSettings.snackTimeout);
 
 			return () => clearTimeout(timeout);
 		}

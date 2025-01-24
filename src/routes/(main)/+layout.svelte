@@ -15,6 +15,7 @@
 	import { getCurrentWindow } from "@tauri-apps/api/window";
 	import { slide } from "svelte/transition";
 	import { Topbar } from "$lib/stores/Topbar";
+	import { goto } from "$app/navigation";
 
 	import ArrowBackIcon from "@ktibow/iconset-material-symbols/arrow-back";
 	import MaximizeIcon from "@ktibow/iconset-material-symbols/open-in-full-rounded";
@@ -92,7 +93,7 @@
 
 					{#snippet menu()}
 						<MenuItem>Profile</MenuItem>
-						<MenuItem>Settings</MenuItem>
+						<MenuItem on:click={() => goto("/settings")}>Settings</MenuItem>
 						<MenuItem>Logout</MenuItem>
 					{/snippet}
 				</Menu>

@@ -20,6 +20,7 @@
 	import { linear } from "svelte/easing";
 	import { Tween } from "svelte/motion";
 	import { Topbar } from "$lib/stores/Topbar";
+	import { Settings, type PlayerSizeMode } from "$lib/stores/Settings";
 
 	import Ripple from "$lib/ui/Ripple.svelte";
 	import Tooltip from "$lib/ui/Tooltip.svelte";
@@ -71,24 +72,20 @@
 	}: Props = $props();
 
 	let paused = $state(false);
-	let volume = $state(0.5);
 	let duration = $state(0);
 	let controlsOpacity = new Tween(0);
 	let win = getCurrentWindow();
 	let command: IconifyIcon | null = $state(null);
 	let playbackRate = $state(1);
 	let pointerOnControls = $state(false);
-	let fit = $state<"fill" | "fit" | "zoom">("fill"); // TODO: make settings for the default state of this
 	let fitMenuOpen = $state(false);
-
-	const controlsFadeTimeMs = 3500; // TODO: make settings for this
 
 	async function handleMove() {
 		await controlsOpacity.set(1, { duration: 100, delay: 0, easing: easeEmphasizedDecel });
 		if (pointerOnControls || fitMenuOpen) return;
 		controlsOpacity.set(0, {
 			duration: 300,
-			delay: controlsFadeTimeMs,
+			delay: $Settings.playerSettings.controlsTimeout,
 			easing: easeEmphasizedAccel,
 		});
 	}
@@ -118,66 +115,69 @@
 	function onKey(e: KeyboardEvent) {
 		let preventDefault = true;
 
-		let units = 10;
-		if (e.shiftKey) units = 1;
-		if (e.ctrlKey) units = 5;
-		if (e.altKey) units = 30;
+		$Settings.playerKeybinds.forEach(k => {
+			if (k.keybind == e.key) {
+				if ((k.whenAlt ?? false) != e.altKey) return;
+				if ((k.whenShift ?? false) != e.shiftKey) return;
+				if ((k.whenCtrl ?? false) != e.ctrlKey) return;
 
-		switch (e.key) {
-			case " ":
-				paused = !paused;
-				command = paused ? PlayIcon : PauseIcon;
-				break;
-			case "ArrowLeft":
-				time = Math.max(time - units, 0);
+				switch (k.action) {
+					case "time":
+						time = Math.max(time + (k.units ?? 10), 0);
+						switch (k.units) {
+							case -5:
+								command = Rewind5Icon;
+								break;
+							case -10:
+								command = Rewind10Icon;
+								break;
+							case -30:
+								command = Rewind30Icon;
+								break;
+							case 5:
+								command = Forward5Icon;
+								break;
+							case 10:
+								command = Forward10Icon;
+								break;
+							case 30:
+								command = Forward30Icon;
+								break;
+							default:
+								command = Math.sign(k.units ?? 0) == -1 ? RewindIcon : ForwardIcon;
+								break;
+						}
+						break;
+					case "volume":
+						$Settings.playerSettings.volume = Math.max(
+							Math.min($Settings.playerSettings.volume + (k.units ?? 10) / 100, 1),
+							0,
+						);
 
-				if (units == 5) {
-					command = Rewind5Icon;
-				} else if (units == 30) {
-					command = Rewind30Icon;
-				} else if (units == 10) {
-					command = Rewind10Icon;
-				} else if (units == 1) {
-					command = RewindIcon;
+						command = Math.sign(k.units ?? 0) == -1 ? VolumeDownIcon : VolumeUpIcon;
+
+						break;
+					case "play":
+						paused = false;
+						command = PlayIcon;
+						break;
+					case "pause":
+						paused = true;
+						command = PauseIcon;
+						break;
+					case "togglepause":
+						paused = !paused;
+						command = paused ? PauseIcon : PlayIcon;
+						break;
+					case "fullscreen":
+						fullscreen();
+						command = FullscreenIcon;
+						break;
 				}
-				break;
 
-			case "ArrowRight":
-				time = Math.min(time + units, duration);
-
-				if (units == 5) {
-					command = Forward5Icon;
-				} else if (units == 30) {
-					command = Forward30Icon;
-				} else if (units == 10) {
-					command = Forward10Icon;
-				} else if (units == 1) {
-					command = ForwardIcon;
-				}
-
-				break;
-			case "ArrowUp":
-				volume = Math.min(volume + units / 100, 1);
-				command = VolumeUpIcon;
-
-				break;
-			case "ArrowDown":
-				volume = Math.max(volume - units / 100, 0);
-				command = VolumeDownIcon;
-
-				break;
-			case ",":
-				time = Math.max(time - 1 / 30, 0);
-				break;
-			case ".":
-				time = Math.min(time + 1 / 30, duration);
-				break;
-			case "f":
-				fullscreen();
-			default:
 				preventDefault = false;
-				break;
-		}
+			}
+		});
 
 		if (preventDefault) {
 			e.preventDefault();
@@ -185,8 +185,17 @@
 	}
 
 	onMount(async () => {
-		paused = true;
-		command = PauseIcon;
+		if ($Settings.playerSettings.autoFullscreen) {
+			fullscreen();
+		}
+
+		if ($Settings.playerSettings.autoPlay) {
+			paused = false;
+			command = PauseIcon;
+		} else {
+			paused = true;
+			command = PlayIcon;
+		}
 	});
 
 	async function fullscreen() {
@@ -196,7 +205,7 @@
 	}
 
 	let fitStyle = $derived.by(() => {
-		switch (fit) {
+		switch ($Settings.playerSettings.sizeMode) {
 			case "fill":
 				return "object-fill";
 			case "fit":
@@ -206,8 +215,8 @@
 		}
 	});
 
-	function setSizeMode(mode: typeof fit) {
-		fit = mode;
+	function setSizeMode(mode: PlayerSizeMode) {
+		$Settings.playerSettings.sizeMode = mode;
 		fitMenuOpen = false;
 	}
 </script>
@@ -239,7 +248,7 @@
 		bind:currentTime={time}
 		bind:duration
 		bind:paused
-		bind:volume
+		bind:volume={$Settings.playerSettings.volume}
 		bind:playbackRate
 		bind:this={video}
 	>
@@ -303,7 +312,7 @@
 				{@render controlsLeft?.()}
 
 				<M2Slider
-					bind:value={volume}
+					bind:value={$Settings.playerSettings.volume}
 					min={0}
 					max={1}
 					tooltip="hover"
@@ -316,45 +325,6 @@
 				</span>
 			</div>
 			<div class="flex flex-row gap-2">
-				<!-- TODO: replace with keybind system -->
-				<Tooltip>
-					<span>controls</span>
-
-					{#snippet tooltip()}
-						<table>
-							<tbody>
-								{#snippet row(key: string, tip: string)}
-									<tr>
-										<td class="px-1">
-											<kbd class="bg-black text-white font-jetbrains-mono">
-												{key}
-											</kbd>
-										</td>
-										<td class="px-1 text-end">
-											{tip}
-										</td>
-									</tr>
-								{/snippet}
-
-								<tr><td>actions</td></tr>
-								{@render row("←", "Rewind")}
-								{@render row("→", "Forward")}
-								{@render row("↑", "Volume Up")}
-								{@render row("↓", "Volume Down")}
-								<tr><td>modifiers</td></tr>
-								{@render row("ALT action", "action 30units")}
-								{@render row("CTRL action", "action 5units")}
-								{@render row("SHIFT action", "action 1unit")}
-								<tr><td>other</td></tr>
-								{@render row("SPACE", "Play/Pause")}
-								{@render row("f", "Fullscreen")}
-								{@render row(",", "Rewind 1 frame")}
-								{@render row(".", "Forward 1 frame")}
-							</tbody>
-						</table>
-					{/snippet}
-				</Tooltip>
-
 				{@render controlsRight?.()}
 
 				<Menu bind:open={fitMenuOpen}>
