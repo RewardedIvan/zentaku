@@ -1,6 +1,9 @@
 import { type Writable, type Subscriber, type Updater } from "svelte/store";
 
-export function createStoreLocalStorage<T>(name: string, defaultValue: T): Writable<T> {
+export function createStoreLocalStorage<T>(
+	name: string,
+	defaultValue: T,
+): Writable<T> & { defaultValue: T } {
 	let subscribers: Set<[Subscriber<T>, (() => void) | undefined]> = new Set();
 
 	const inform = (v: T) => {
@@ -34,5 +37,7 @@ export function createStoreLocalStorage<T>(name: string, defaultValue: T): Writa
 				subscribers.delete([s, invalidate]);
 			};
 		},
+
+		defaultValue,
 	};
 }
