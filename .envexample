@@ -1,5 +1,0 @@
-CLIENT_ID=00000
-API_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-# 32 bytes for AES 256
-# also i know im stupid you don't have to tell me
-TOKEN_ENCRYPT_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

@@ -25,6 +25,16 @@ Zen-taku (zen-otaku) is an anilist client and anime player (and future manga rea
 git clone https://github.com/RewardedIvan/zentaku
 ```
 
+- Make a .env file (in the root directory of the project)
+
+```bash
+# AniList app; This is the zentaku one
+CLIENT_ID=23320
+# 32 bytes for AES 256
+# Also I know I'm stupid, you don't have to tell me
+TOKEN_ENCRYPT_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
 - Compile and run dev server
 
 ```bash
