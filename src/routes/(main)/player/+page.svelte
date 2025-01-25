@@ -1,5 +1,8 @@
 <script lang="ts">
 	import Video, { controlButton } from "./Video.svelte";
+	import Snackbar from "./Snackbar.svelte";
+	import ConfirmProgressUpdateDialog from "./ConfirmProgressUpdateDialog.svelte";
+
 	import { Playing, Progress, videoCache } from "$lib/stores/Player";
 	import { SourceSettings } from "$lib/stores/SourceStores";
 	import { Settings } from "$lib/stores/Settings";
@@ -7,8 +10,12 @@
 	import { areAllScriptsTrusted, getScripts, loadScripts } from "$lib/utils/Sources";
 	import { onMount, onDestroy } from "svelte";
 	import { beforeNavigate } from "$app/navigation";
-	import { slide } from "svelte/transition";
-	import { easeEmphasizedAccel, easeEmphasizedDecel } from "m3-svelte";
+	import {
+		changeProgress,
+		type ChangeProgress,
+		getPausedStatus,
+		getPlayingStatus,
+	} from "$lib/anilist";
 
 	import SaveIcon from "@ktibow/iconset-material-symbols/save";
 	import ReloadIcon from "@ktibow/iconset-material-symbols/refresh";
@@ -16,19 +23,12 @@
 
 	let loading = $state(true);
 	let time = $state(0);
+	let snackProgress: Promise<ChangeProgress> | null = $state(null);
 	let showSnack = $state(false);
+	let showConfirmProgressUpdate = $state(false);
+	let onConfirm = $state(() => {});
 	let snackError: string | null = $state(null);
 	let videoElem: HTMLVideoElement | undefined = $state(undefined);
-
-	$effect(() => {
-		if (showSnack) {
-			let timeout = setTimeout(() => {
-				showSnack = false;
-			}, $Settings.playerSettings.snackTimeout);
-
-			return () => clearTimeout(timeout);
-		}
-	});
 
 	function fetchVideo(useCache = true): Promise<VideoResult[]> {
 		return new Promise(async (resolve, reject) => {
@@ -96,7 +96,12 @@
 
 	let video = $state(fetchVideo());
 
-	function updateProgress(time: number, episode: number) {
+	async function updateProgress(
+		command: "play" | "pause",
+		time: number,
+		episode: number,
+		atEnd: boolean,
+	) {
 		Progress.update(p => {
 			let newp = p.filter(e => e.anilistId !== $Playing.anilistId);
 			newp.push({
@@ -109,22 +114,58 @@
 			});
 			return newp;
 		});
+
+		if (command == "pause" && !$Settings.playerSettings.pauseOnLeave) {
+			return;
+		}
+
+		let [newPlayingStatus, newRepeatCount, isRepeating] = await getPlayingStatus(
+			$Playing.anilistId,
+			atEnd,
+		);
+
+		onConfirm = async () => {
+			snackProgress = changeProgress(
+				$Playing.anilistId,
+				command == "play" ? newPlayingStatus : await getPausedStatus($Playing.anilistId),
+				$Playing.episode,
+				atEnd && isRepeating ? newRepeatCount : undefined,
+			);
+
+			if ($Settings.playerSettings.showSnackbarOnProgressChange) {
+				await snackProgress;
+				showSnack = true;
+			}
+		};
+
+		if ($Settings.playerSettings.promptBeforeProgressChange) {
+			showConfirmProgressUpdate = true;
+		} else {
+			onConfirm();
+		}
 	}
 
 	async function switchEpisodeRelative(episode: number) {
-		const newEpisode = Math.min(Math.max($Playing.episode + episode, 1), $Playing.episodes + 1);
+		const newEpisode = Math.min(Math.max($Playing.episode + episode, 1), $Playing.episodes);
 
-		Playing.update(p => {
-			return {
-				...p,
-				episode: newEpisode,
-			};
-		});
+		// console.log(
+		// 	`current episode: ${$Playing.episode}/${$Playing.episodes}, relative ${episode}, atEnd: ${$Playing.episode + episode > $Playing.episodes}`,
+		// );
 
-		updateProgress(0, newEpisode);
-		video = fetchVideo();
-		await video;
-		videoElem?.load();
+		updateProgress("play", 0, newEpisode, $Playing.episode + episode > $Playing.episodes);
+
+		if (newEpisode != $Playing.episode) {
+			Playing.update(p => {
+				return {
+					...p,
+					episode: newEpisode,
+				};
+			});
+
+			video = fetchVideo();
+			await video;
+			videoElem?.load();
+		}
 	}
 
 	async function reload(useCache: boolean) {
@@ -149,12 +190,35 @@
 		if (progress) {
 			time = progress.time;
 		}
+
+		onConfirm = async () => {
+			snackProgress = changeProgress(
+				$Playing.anilistId,
+				(await getPlayingStatus($Playing.anilistId, false))[0],
+				$Playing.episode,
+			);
+
+			if ($Settings.playerSettings.showSnackbarOnProgressChange) {
+				await snackProgress;
+				showSnack = true;
+			}
+		};
+
+		if ($Settings.playerSettings.promptBeforeProgressChange) {
+			showConfirmProgressUpdate = true;
+		} else {
+			onConfirm();
+		}
 	});
 
-	const updateProg = () => updateProgress(time, $Playing.episode);
-
-	onDestroy(updateProg);
-	beforeNavigate(updateProg);
+	onDestroy(() => updateProgress("pause", time, $Playing.episode, false));
+	beforeNavigate(async e => {
+		if (e.to?.url.pathname !== "/player") {
+			updateProgress("pause", time, $Playing.episode, false);
+		} else {
+			updateProgress("play", time, $Playing.episode, false);
+		}
+	});
 </script>
 
 <!-- again with the hardcoding -->
@@ -179,18 +243,13 @@
 	{#snippet controlsRight()}
 		{@render controlButton(() => reload(false), ReloadCacheIcon, "Refetch video (without cache)")}
 		{@render controlButton(() => reload(true), ReloadIcon, "Refetch video")}
-		{@render controlButton(updateProg, SaveIcon, "Save progress manually")}
+		{@render controlButton(
+			() => updateProgress("play", time, $Playing.episode, false),
+			SaveIcon,
+			"Save progress",
+		)}
 	{/snippet}
 </Video>
 
-{#if showSnack}
-	<div
-		class="absolute right-0 bottom-0 justify-between flex flex-col p-2 gap-2 bg-inverse-surface text-inverse-on-surface m-2 rounded"
-		in:slide={{ duration: 300, easing: easeEmphasizedDecel }}
-		out:slide={{ duration: 300, easing: easeEmphasizedAccel }}
-	>
-		{#if snackError}
-			<span>Error: {snackError}</span>
-		{/if}
-	</div>
-{/if}
+<Snackbar bind:showSnack {snackError} {snackProgress} />
+<ConfirmProgressUpdateDialog bind:open={showConfirmProgressUpdate} {onConfirm} />

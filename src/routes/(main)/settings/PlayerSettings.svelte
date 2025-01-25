@@ -60,6 +60,36 @@
 	</div>
 	<Divider />
 	<div class="flex flex-row justify-between items-center">
+		{@render name("Prompt before progress change", "Ask before updating your progress on AniList.")}
+
+		<label for={null}>
+			<Switch bind:checked={$Settings.playerSettings.promptBeforeProgressChange} />
+		</label>
+	</div>
+	<Divider />
+	<div class="flex flex-row justify-between items-center">
+		{@render name(
+			"Show snackbar on progress change",
+			"Show a snackbar when your AniList progress gets updated.",
+		)}
+
+		<label for={null}>
+			<Switch bind:checked={$Settings.playerSettings.showSnackbarOnProgressChange} />
+		</label>
+	</div>
+	<Divider />
+	<div class="flex flex-row justify-between items-center">
+		{@render name(
+			"Pause on leave",
+			"Set the status on AniList to paused when you leave the player.",
+		)}
+
+		<label for={null}>
+			<Switch bind:checked={$Settings.playerSettings.pauseOnLeave} />
+		</label>
+	</div>
+	<Divider />
+	<div class="flex flex-row justify-between items-center">
 		{@render name("Controls timeout", "How long the controls should be visible for.")}
 		<Slider
 			bind:value={$Settings.playerSettings.controlsTimeout}

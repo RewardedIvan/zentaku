@@ -62,6 +62,13 @@ export type MediaFormat =
 	| "ONE_SHOT";
 export type MediaStatus = "FINISHED" | "RELEASING" | "NOT_YET_RELEASED" | "CANCELLED" | "HIATUS";
 export type MediaType = "ANIME" | "MANGA";
+export type MediaListStatus =
+	| "CURRENT"
+	| "PLANNING"
+	| "COMPLETED"
+	| "DROPPED"
+	| "PAUSED"
+	| "REPEATING";
 
 export interface Media {
 	id: number;
@@ -751,4 +758,160 @@ export function formatDate(date: { year?: number; month?: number; day?: number }
 	}
 
 	return res;
+}
+
+export function statusToString(status: MediaListStatus) {
+	switch (status) {
+		case "CURRENT":
+			return "Watching";
+		case "PLANNING":
+			return "Planning";
+		case "COMPLETED":
+			return "Completed";
+		case "DROPPED":
+			return "Dropped";
+		case "PAUSED":
+			return "Paused";
+		case "REPEATING":
+			return "Repeating";
+	}
+}
+
+export interface ChangeProgress {
+	status: MediaListStatus;
+	progress: number;
+	repeat: number;
+	media: {
+		episodes: number;
+		title: {
+			userPreferred: string;
+		};
+		coverImage: {
+			large: string;
+		};
+	};
+}
+
+export async function changeProgress(
+	id: number,
+	status: MediaListStatus,
+	progress: number,
+	repeat?: number,
+	// finishedDate?: { day: number; month: number; year: number },
+): Promise<ChangeProgress> {
+	// console.debug(id, status, progress, repeat);
+
+	const q = await invoke<any>("graphql", {
+		query: `
+			mutation(
+				$mediaId: Int!,
+				$progress: Int!,
+				$completedAt: FuzzyDateInput,
+				$status: MediaListStatus,
+				$repeat: Int,
+			) {
+				SaveMediaListEntry(
+					mediaId: $mediaId,
+					progress: $progress,
+					completedAt: $completedAt,
+					status: $status,
+					repeat: $repeat,
+				) {
+					status
+					progress
+					repeat
+					media {
+						episodes
+						title {
+							userPreferred
+						}
+						coverImage {
+							large
+						}
+					}
+				}
+			}
+		`,
+		variables: {
+			mediaId: id,
+			status,
+			progress,
+			repeat,
+			// completedAt: finishedDate,
+		},
+	});
+
+	return q.data.SaveMediaListEntry;
+}
+
+// returns [newStatus, newRepeatCount, isRepeating]
+export async function getPlayingStatus(
+	id: number,
+	atEnd: boolean,
+): Promise<[MediaListStatus, number, boolean]> {
+	const q = await invoke<any>("graphql", {
+		query: `
+			query($id: Int!) {
+				Media(id: $id) {
+					mediaListEntry {
+						status
+						repeat
+						completedAt {
+							year
+							month
+							day
+						}
+					}
+				}
+			}
+		`,
+		variables: {
+			id,
+		},
+	});
+
+	const ml: {
+		status: MediaListStatus;
+		repeat: number;
+		completedAt: {
+			year?: number;
+			month?: number;
+			day?: number;
+		};
+	} = q.data.Media.mediaListEntry;
+
+	const isRepeating =
+		ml.status === "REPEATING" ||
+		ml.status === "COMPLETED" ||
+		ml.repeat > 0 ||
+		ml.completedAt.year != null ||
+		ml.completedAt.month != null ||
+		ml.completedAt.day != null;
+
+	if (atEnd) {
+		return ["COMPLETED", isRepeating ? ml.repeat + 1 : ml.repeat, isRepeating];
+	} else if (isRepeating) {
+		return ["REPEATING", ml.repeat, isRepeating];
+	} else {
+		return ["CURRENT", ml.repeat, isRepeating];
+	}
+}
+
+export async function getPausedStatus(id: number) {
+	const q = await invoke<any>("graphql", {
+		query: `
+			query($id: Int!) {
+				Media(id: $id) {
+					mediaListEntry {
+						status
+					}
+				}
+			}
+		`,
+		variables: {
+			id,
+		},
+	});
+
+	return q.data.Media.mediaListEntry.status == "COMPLETED" ? "COMPLETED" : "PAUSED";
 }

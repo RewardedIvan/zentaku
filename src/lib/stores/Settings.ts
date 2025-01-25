@@ -24,6 +24,9 @@ export const Settings = createStoreLocalStorage<{
 		autoFullscreen: boolean;
 		autoPlay: boolean;
 		snackTimeout: number;
+		showSnackbarOnProgressChange: boolean;
+		pauseOnLeave: boolean;
+		promptBeforeProgressChange: boolean;
 		controlsTimeout: number;
 	};
 	playerKeybinds: Keybind<PlayerAction>[];
@@ -44,7 +47,7 @@ export const Settings = createStoreLocalStorage<{
 		};
 	};
 }>("settings", {
-	version: 1.0,
+	version: 2.0,
 	lastUsedFilters: {
 		isAdult: false,
 		averageScoreUpperRange: 100,
@@ -75,6 +78,9 @@ export const Settings = createStoreLocalStorage<{
 		autoFullscreen: false,
 		autoPlay: false,
 		snackTimeout: 2000,
+		showSnackbarOnProgressChange: true,
+		pauseOnLeave: false,
+		promptBeforeProgressChange: true,
 		controlsTimeout: 3500,
 	},
 	playerKeybinds: [
