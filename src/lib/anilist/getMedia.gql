@@ -1,0 +1,64 @@
+query ($id: Int!) {
+	Media(id: $id) {
+		id
+		bannerImage
+		description
+		episodes
+		status
+		genres
+		coverImage {
+			large
+			color
+		}
+		title {
+			romaji
+			english
+		}
+		nextAiringEpisode {
+			episode
+			airingAt
+		}
+		characters {
+			edges {
+				role
+				node {
+					id
+					image {
+						medium
+					}
+					name {
+						userPreferred
+						native
+						full
+					}
+				}
+				voiceActors {
+					languageV2
+					id
+					name {
+						userPreferred
+						native
+						full
+					}
+					image {
+						medium
+					}
+				}
+			}
+		}
+		recommendations {
+			nodes {
+				mediaRecommendation {
+					id
+					coverImage {
+						large
+					}
+					title {
+						romaji
+						english
+					}
+				}
+			}
+		}
+	}
+}

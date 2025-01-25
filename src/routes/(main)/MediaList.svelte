@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { ListItemButton, Icon } from "m3-svelte";
 	import { slide } from "svelte/transition";
-	import type { List } from "$lib/anilist";
+	import type { MediaList } from "$lib/anilist";
 	import MediaScroll from "$lib/ui/MediaScroll.svelte";
 
 	import ExpandMore from "@ktibow/iconset-material-symbols/expand-more";
 	import ExpandLess from "@ktibow/iconset-material-symbols/expand-less";
 
 	interface Props {
-		list: List;
+		list: MediaList;
 	}
 
 	const { list }: Props = $props();

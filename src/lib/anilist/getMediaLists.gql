@@ -1,0 +1,21 @@
+query ($type: MediaType!, $userId: Int!) {
+	MediaListCollection(type: $type, userId: $userId) {
+		lists {
+			name
+			entries {
+				id
+				media {
+					id
+					coverImage {
+						large
+						color
+					}
+					title {
+						romaji
+						english
+					}
+				}
+			}
+		}
+	}
+}

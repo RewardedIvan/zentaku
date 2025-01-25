@@ -1,0 +1,28 @@
+mutation (
+	$mediaId: Int!
+	$progress: Int!
+	$completedAt: FuzzyDateInput
+	$status: MediaListStatus
+	$repeat: Int
+) {
+	SaveMediaListEntry(
+		mediaId: $mediaId
+		progress: $progress
+		completedAt: $completedAt
+		status: $status
+		repeat: $repeat
+	) {
+		status
+		progress
+		repeat
+		media {
+			episodes
+			title {
+				userPreferred
+			}
+			coverImage {
+				large
+			}
+		}
+	}
+}
