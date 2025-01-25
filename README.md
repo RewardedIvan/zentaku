@@ -35,6 +35,12 @@ CLIENT_ID=23320
 TOKEN_ENCRYPT_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
+- Install pnpm dependencies
+
+```bash
+pnpm install
+```
+
 - Compile and run dev server
 
 ```bash
