@@ -79,15 +79,15 @@
 			{@render category("Player keybinds")}
 		</div>
 		<div class="flex flex-col gap-2 overflow-auto flex-grow">
-			{#snippet category(name: string)}
+			{#snippet categorytitle(name: string)}
 				<span class="text-3xl font-afacad-flux font-bold" id={name.toLowerCase()}>{name}</span>
 			{/snippet}
 
-			{@render category("Theme")}
+			{@render categorytitle("Theme")}
 			<Theme />
-			{@render category("Player")}
+			{@render categorytitle("Player")}
 			<PlayerSettings />
-			{@render category("Player keybinds")}
+			{@render categorytitle("Player keybinds")}
 			<PlayerKeybinds />
 		</div>
 	</div>
