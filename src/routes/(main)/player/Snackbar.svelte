@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { easeEmphasizedAccel, easeEmphasizedDecel } from "m3-svelte";
 	import { slide } from "svelte/transition";
-	import { type ChangeProgress, type MediaListStatus, statusToString } from "$lib/anilist";
+	import { type ChangeProgress, listStatusToString } from "$lib/anilist";
 	import { Settings } from "$lib/stores/Settings";
 
 	interface Props {
@@ -47,7 +47,7 @@
 					<div class="flex flex-col flex-grow justify-start">
 						<span class="font-afacad-flux text-2xl">{progress.media.title.userPreferred}</span>
 						<span class="text-md">
-							{statusToString(progress.status)} episode
+							{listStatusToString(progress.status)} episode
 							{progress.progress}/{progress.media.episodes}
 						</span>
 						<span class="text-md">Repeats: {progress.repeat}</span>

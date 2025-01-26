@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { statusToString, type Media } from "$lib/anilist";
+	import { listStatusToString, type Media } from "$lib/anilist";
 	import Ripple from "$lib/ui/Ripple.svelte";
 	import Tooltip from "$lib/ui/Tooltip.svelte";
 	import Relative from "./Relative.svelte";
@@ -23,7 +23,7 @@
 		</span>
 		<p class="font-afacad-flux text-md">
 			{#if media.mediaListEntry}
-				{statusToString(media.mediaListEntry.status)}
+				{listStatusToString(media.mediaListEntry.status)}
 				{#if media.episodes}
 					{media.mediaListEntry.progress}/{media.episodes}
 				{/if}

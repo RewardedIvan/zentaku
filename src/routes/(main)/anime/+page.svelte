@@ -1,7 +1,13 @@
 <script lang="ts">
 	import { Button, Card, CircularProgressIndeterminate, Icon } from "m3-svelte";
 	import { page } from "$app/state";
-	import { getMedia, relationTypeToString, type Media } from "$lib/anilist";
+	import {
+		getMedia,
+		listStatusToString,
+		mediaStatusToString,
+		relationTypeToString,
+		type Media,
+	} from "$lib/anilist";
 	import { goto } from "$app/navigation";
 	import Relative from "$lib/ui/Relative.svelte";
 	import Dropdown from "$lib/ui/Dropdown.svelte";
@@ -10,21 +16,6 @@
 
 	import TVIcon from "@ktibow/iconset-material-symbols/monitor";
 	import EditIcon from "@ktibow/iconset-material-symbols/edit";
-
-	function statusToString(status: Media["status"]) {
-		switch (status) {
-			case "FINISHED":
-				return "Finished";
-			case "RELEASING":
-				return "Releasing";
-			case "NOT_YET_RELEASED":
-				return "Not released yet";
-			case "CANCELLED":
-				return "Cancelled";
-			case "HIATUS":
-				return "Hiatus";
-		}
-	}
 
 	function characterRoleToString(role: string) {
 		switch (role) {
@@ -77,7 +68,7 @@
 			<p class="text-3xl font-afacad-flux">Anime Status</p>
 
 			<div class="flex flex-row gap-2 items-center">
-				<Card type="filled">{statusToString(media.status)}</Card>
+				<Card type="filled">{mediaStatusToString(media.status)}</Card>
 				{#if media.nextAiringEpisode}
 					<Card type="filled">
 						{media.episodes || "No"} episodes total, {media.nextAiringEpisode.episode - 1} released

@@ -121,7 +121,7 @@ export async function getMedia(id: number) {
 	return q.data.Media;
 }
 
-export function statusToString(status: MediaListStatus) {
+export function listStatusToString(status: MediaListStatus) {
 	switch (status) {
 		case "CURRENT":
 			return "Watching";
@@ -135,6 +135,21 @@ export function statusToString(status: MediaListStatus) {
 			return "Paused";
 		case "REPEATING":
 			return "Repeating";
+	}
+}
+
+export function mediaStatusToString(status: MediaStatus) {
+	switch (status) {
+		case "FINISHED":
+			return "Finished";
+		case "RELEASING":
+			return "Releasing";
+		case "NOT_YET_RELEASED":
+			return "Not released yet";
+		case "CANCELLED":
+			return "Cancelled";
+		case "HIATUS":
+			return "Hiatus";
 	}
 }
 
