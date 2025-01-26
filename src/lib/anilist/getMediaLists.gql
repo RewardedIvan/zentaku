@@ -6,13 +6,23 @@ query ($type: MediaType!, $userId: Int!) {
 				id
 				media {
 					id
+					episodes
+					status
+					nextAiringEpisode {
+						episode
+						airingAt
+					}
 					coverImage {
 						large
 						color
 					}
 					title {
-						romaji
-						english
+						userPreferred
+					}
+					mediaListEntry {
+						status
+						progress
+						repeat
 					}
 				}
 			}

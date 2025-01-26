@@ -60,6 +60,8 @@ export interface Media {
 	episodes: number;
 	status: MediaStatus;
 	format: MediaFormat;
+	chapters: number;
+	volumes: number;
 	nextAiringEpisode?: {
 		episode: number;
 		airingAt: number;
@@ -77,6 +79,11 @@ export interface Media {
 		nodes: {
 			mediaRecommendation: Media;
 		}[];
+	};
+	mediaListEntry: {
+		status: MediaListStatus;
+		progress: number;
+		repeat: number;
 	};
 }
 

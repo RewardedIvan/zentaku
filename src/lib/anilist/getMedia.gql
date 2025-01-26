@@ -6,6 +6,8 @@ query ($id: Int!) {
 		episodes
 		status
 		genres
+		volumes
+		chapters
 		coverImage {
 			large
 			color
@@ -50,12 +52,22 @@ query ($id: Int!) {
 			nodes {
 				mediaRecommendation {
 					id
+					episodes
+					status
+					nextAiringEpisode {
+						episode
+						airingAt
+					}
 					coverImage {
 						large
 					}
 					title {
-						romaji
-						english
+						userPreferred
+					}
+					mediaListEntry {
+						status
+						progress
+						repeat
 					}
 				}
 			}

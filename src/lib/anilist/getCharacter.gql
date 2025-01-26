@@ -27,12 +27,24 @@ query ($id: Int!) {
 				characterRole
 				node {
 					id
-					title {
-						english
-						romaji
+					episodes
+					status
+					volumes
+					chapters
+					nextAiringEpisode {
+						episode
+						airingAt
 					}
 					coverImage {
 						large
+					}
+					title {
+						userPreferred
+					}
+					mediaListEntry {
+						status
+						progress
+						repeat
 					}
 				}
 			}

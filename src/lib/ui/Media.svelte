@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import type { Media } from "$lib/anilist";
+	import { statusToString, type Media } from "$lib/anilist";
 	import Ripple from "$lib/ui/Ripple.svelte";
 	import Tooltip from "$lib/ui/Tooltip.svelte";
+	import Relative from "./Relative.svelte";
 
 	interface Props {
 		media: Media;
@@ -18,10 +19,34 @@
 
 	{#snippet tooltip()}
 		<span class="font-afacad-flux text-xl">
-			{media.title.english || media.title.romaji}
+			{media.title.userPreferred}
 		</span>
 		<p class="font-afacad-flux text-md">
-			{media.title.romaji}
+			{#if media.mediaListEntry}
+				{statusToString(media.mediaListEntry.status)}
+				{#if media.episodes}
+					{media.mediaListEntry.progress}/{media.episodes}
+				{/if}
+				{#if media.chapters}
+					{media.mediaListEntry.progress}/{media.chapters}
+				{/if}
+			{:else if media.episodes}
+				{media.episodes} episodes
+			{:else if media.chapters}
+				{media.chapters} chapters
+			{:else if media.volumes}
+				{media.volumes} volumes
+			{/if}
+
+			{#if media.nextAiringEpisode}
+				({media.nextAiringEpisode.episode - 1} released, next episode in
+				<Relative futureUnix={media.nextAiringEpisode.airingAt} truncate={6} short />)
+			{:else if !media.episodes && !media.chapters && !media.volumes}
+				{#if media.mediaListEntry}
+					<br />
+				{/if}
+				Not released yet
+			{/if}
 		</p>
 		<div class="flex flex-row justify-center">
 			<img src={media.coverImage.large} alt="cover" draggable={false} />
