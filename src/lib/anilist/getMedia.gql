@@ -13,8 +13,7 @@ query ($id: Int!) {
 			color
 		}
 		title {
-			romaji
-			english
+			userPreferred
 		}
 		nextAiringEpisode {
 			episode

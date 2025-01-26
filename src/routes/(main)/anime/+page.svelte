@@ -68,9 +68,8 @@
 			</div>
 		</div>
 		<div class="flex flex-col gap-2 overflow-hidden">
-			<span class="text-xl font-afacad-flux underline underline-offset-4">
-				{media.title.english || media.title.romaji}
-				<span class="text-sm text-slate-400">{media.title.romaji}</span>
+			<span class="text-4xl font-afacad-flux underline underline-offset-4 text-primary">
+				{media.title.userPreferred}
 			</span>
 
 			<p class="text-md font-roboto">{@html media.description}</p>
