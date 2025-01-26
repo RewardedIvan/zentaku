@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, Card, CircularProgressIndeterminate, Icon } from "m3-svelte";
 	import { page } from "$app/state";
-	import { getMedia, type Media } from "$lib/anilist";
+	import { getMedia, relationTypeToString, type Media } from "$lib/anilist";
 	import { goto } from "$app/navigation";
 	import Relative from "$lib/ui/Relative.svelte";
 	import Dropdown from "$lib/ui/Dropdown.svelte";
@@ -95,6 +95,27 @@
 			<div class="flex flex-row gap-2 items-center">
 				{#each media.genres as genre}
 					<Card type="outlined">{genre}</Card>
+				{/each}
+			</div>
+
+			<p class="text-3xl font-afacad-flux">Relations</p>
+
+			<div class="flex flex-row gap-2 items-center">
+				{#each media.relations.edges as relation}
+					<Ripple
+						class="flex flex-row gap-1 flex-grow bg-surface-container max-w-[25rem] h-32 rounded-md"
+						onClick={() => goto(`/anime?id=${relation.node.id}`)}
+					>
+						<img
+							src={relation.node.coverImage.large}
+							alt="avatar"
+							class="w-24 rounded-md object-cover h-full"
+						/>
+						<div class="flex flex-col h-full p-1 justify-between flex-grow">
+							<p class="text-primary">{relation.node.title.userPreferred}</p>
+							<p class="text-secondary">{relationTypeToString(relation.relationType)}</p>
+						</div>
+					</Ripple>
 				{/each}
 			</div>
 

@@ -18,6 +18,20 @@ export type MediaListStatus =
 	| "DROPPED"
 	| "PAUSED"
 	| "REPEATING";
+export type MediaRelation =
+	| "ADAPTATION"
+	| "PREQUEL"
+	| "SEQUEL"
+	| "PARENT"
+	| "SIDE_STORY"
+	| "CHARACTER"
+	| "SUMMARY"
+	| "ALTERNATIVE"
+	| "SPIN_OFF"
+	| "OTHER"
+	| "SOURCE"
+	| "COMPILATION"
+	| "CONTAINS";
 
 interface MediaTitle {
 	userPreferred: string;
@@ -85,6 +99,12 @@ export interface Media {
 		progress: number;
 		repeat: number;
 	};
+	relations: {
+		edges: {
+			relationType: MediaRelation;
+			node: Media;
+		}[];
+	};
 }
 
 import { invoke } from "@tauri-apps/api/core";
@@ -115,5 +135,36 @@ export function statusToString(status: MediaListStatus) {
 			return "Paused";
 		case "REPEATING":
 			return "Repeating";
+	}
+}
+
+export function relationTypeToString(relationType: MediaRelation) {
+	switch (relationType) {
+		case "ADAPTATION":
+			return "Adaptation";
+		case "PREQUEL":
+			return "Prequel";
+		case "SEQUEL":
+			return "Sequel";
+		case "PARENT":
+			return "Parent";
+		case "SIDE_STORY":
+			return "Side story";
+		case "CHARACTER":
+			return "Character";
+		case "SUMMARY":
+			return "Summary";
+		case "ALTERNATIVE":
+			return "Alternative";
+		case "SPIN_OFF":
+			return "Spin off";
+		case "OTHER":
+			return "Other";
+		case "SOURCE":
+			return "Source";
+		case "COMPILATION":
+			return "Compilation";
+		case "CONTAINS":
+			return "Contains";
 	}
 }

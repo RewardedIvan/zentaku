@@ -8,6 +8,21 @@ query ($id: Int!) {
 		genres
 		volumes
 		chapters
+		relations {
+			edges {
+				relationType
+				node {
+					id
+					coverImage {
+						large
+						color
+					}
+					title {
+						userPreferred
+					}
+				}
+			}
+		}
 		coverImage {
 			large
 			color
