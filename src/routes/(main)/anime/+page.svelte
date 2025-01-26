@@ -39,6 +39,9 @@
 					<Icon icon={TVIcon} /> Watch
 				</Button>
 				<Button type="filled" iconType="left"><Icon icon={EditIcon} /> Edit</Button>
+
+				<p class="text-3xl font-afacad-flux">Info</p>
+				<Info {media} class="w-full" />
 			</div>
 		</div>
 		<div class="flex flex-col gap-2 overflow-hidden">
@@ -47,7 +50,6 @@
 			</span>
 
 			<p class="text-md font-roboto">{@html media.description}</p>
-			<Info {media} />
 
 			<p class="text-3xl font-afacad-flux">Relations</p>
 			<Relations {media} />
