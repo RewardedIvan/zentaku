@@ -39,7 +39,7 @@
 <div
 	class="flex {className}"
 	use:floatingRef
-	onpointermove={() => (show = true)}
+	onpointerenter={() => (show = true)}
 	onpointerleave={() => (show = false)}
 	{...rest}
 >
