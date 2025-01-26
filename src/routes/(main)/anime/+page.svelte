@@ -4,6 +4,7 @@
 	import { followingWatched, getMedia, type Media } from "$lib/anilist";
 	import { goto } from "$app/navigation";
 	import MediaScroll from "$lib/ui/MediaScroll.svelte";
+	import Favourite from "$lib/ui/Favourite.svelte";
 
 	import TVIcon from "@ktibow/iconset-material-symbols/monitor";
 	import EditIcon from "@ktibow/iconset-material-symbols/edit";
@@ -45,9 +46,13 @@
 			</div>
 		</div>
 		<div class="flex flex-col gap-2 overflow-hidden">
-			<span class="text-4xl font-afacad-flux underline underline-offset-4 text-primary">
-				{media.title.userPreferred}
-			</span>
+			<div class="flex flex-row gap-2 w-full justify-between">
+				<span class="text-4xl font-afacad-flux underline underline-offset-4 text-primary">
+					{media.title.userPreferred}
+				</span>
+
+				<Favourite id={{ animeId: media.id }} initial={media.isFavourite} />
+			</div>
 
 			<p class="text-md font-roboto">{@html media.description}</p>
 

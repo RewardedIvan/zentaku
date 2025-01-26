@@ -76,6 +76,7 @@ export interface Media {
 	format: MediaFormat;
 	chapters: number;
 	volumes: number;
+	isFavourite: boolean;
 	nextAiringEpisode?: {
 		episode: number;
 		airingAt: number;
