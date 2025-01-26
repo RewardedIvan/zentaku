@@ -1,7 +1,15 @@
 <script lang="ts">
-	import { Button, Card, CircularProgressIndeterminate, Icon } from "m3-svelte";
+	import {
+		Button,
+		Card,
+		CircularProgressIndeterminate,
+		Divider,
+		Icon,
+		ListItemButton,
+	} from "m3-svelte";
 	import { page } from "$app/state";
 	import {
+		followingWatched,
 		getMedia,
 		listStatusToString,
 		mediaStatusToString,
@@ -162,6 +170,41 @@
 					</div>
 				{/each}
 			</div>
+
+			<p class="text-3xl font-afacad-flux">Following</p>
+
+			{#await followingWatched(media.id)}
+				<CircularProgressIndeterminate />
+			{:then followingWatched}
+				<div class="flex flex-col">
+					{#each followingWatched!.mediaList as following, i}
+						<div class="flex flex-col bg-surface-container-high">
+							<ListItemButton
+								headline={following.user.name}
+								on:click={() => goto(`/user?id=${following.user.id}`)}
+							>
+								{#snippet leading()}
+									<img
+										src={following.user.avatar.large}
+										alt="avatar"
+										class="object-cover w-8 h-8"
+									/>
+								{/snippet}
+								{#snippet trailing()}
+									<span class="text-secondary">
+										{listStatusToString(following.status)}
+										{following.progress}/{media.episodes}
+									</span>
+								{/snippet}
+							</ListItemButton>
+						</div>
+
+						{#if i != followingWatched!.mediaList.length - 1}
+							<Divider />
+						{/if}
+					{/each}
+				</div>
+			{/await}
 
 			<p class="text-3xl font-afacad-flux">Recommendations</p>
 
