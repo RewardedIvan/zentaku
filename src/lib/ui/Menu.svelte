@@ -6,19 +6,21 @@
 	import { slide } from "svelte/transition";
 
 	interface Props {
-		children: Snippet<[]>;
+		children?: Snippet<[]>;
+		content?: Snippet<[(open: boolean) => void, boolean]>; // (setOpen, open)
 		menu: Snippet<[]>;
 		placement?: Placement;
-		open: boolean;
+		open?: boolean;
 		className?: string;
 		wrapperClassName?: string;
 	}
 
 	let {
 		children,
+		content,
 		menu,
 		placement = "bottom",
-		open = $bindable(),
+		open = $bindable(false),
 		className,
 		wrapperClassName,
 	}: Props = $props();
@@ -31,7 +33,8 @@
 </script>
 
 <div class="flex {wrapperClassName}" use:floatingRef>
-	{@render children()}
+	{@render children?.()}
+	{@render content?.(v => (open = v), open)}
 </div>
 
 {#if open}
