@@ -1,0 +1,3 @@
+mutation ($mediaId: Int, $tagId: Int, $vote: Int) {
+	SaveMediaTagVote(mediaId: $mediaId, tagId: $tagId, vote: $vote)
+}

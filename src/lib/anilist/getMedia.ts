@@ -77,6 +77,13 @@ export interface Media {
 	chapters: number;
 	volumes: number;
 	isFavourite: boolean;
+	tags: {
+		id: number;
+		name: string;
+		rank: number;
+		category: string;
+		isMediaSpoiler: boolean;
+	}[];
 	nextAiringEpisode?: {
 		episode: number;
 		airingAt: number;

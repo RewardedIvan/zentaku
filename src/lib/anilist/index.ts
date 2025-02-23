@@ -8,6 +8,7 @@ export * from "./search";
 export * from "./toggleFavourite";
 export * from "./changeProgress";
 export * from "./followingWatched";
+export * from "./mediaTagVote";
 
 import { format } from "date-fns";
 export function formatDate(date: { year?: number; month?: number; day?: number }) {
