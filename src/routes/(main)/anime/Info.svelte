@@ -15,7 +15,7 @@
 	let { media, class: className }: Props = $props();
 </script>
 
-<div class="bg-surface-container p-2 rounded {className}">
+<div class="bg-surface-container-high p-2 rounded {className}">
 	<div class="flex flex-col">
 		<span class="underline text-primary">Status</span>
 		<span class="text-secondary">{mediaStatusToString(media.status)}</span>
