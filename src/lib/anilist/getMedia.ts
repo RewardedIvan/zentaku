@@ -117,14 +117,26 @@ export interface Media {
 
 import { invoke } from "@tauri-apps/api/core";
 import getMediaQuery from "./getMedia.gql?raw";
+import { LSCache } from "$lib/stores/Cache";
+import { findCache } from "$lib/utils/Cache";
 
 export async function getMedia(id: number) {
+	const cached = findCache("media", "mediaClearAgeHours", id);
+	if (cached) return cached.media;
+
 	const q = await invoke<{ data: { Media?: Media } }>("graphql", {
 		query: getMediaQuery,
 		variables: {
 			id,
 		},
 	});
+
+	if (!q.data.Media) return null;
+
+	LSCache.update(v => ({
+		...v,
+		media: { ...v.media, [id]: { media: q.data.Media!, timestamp: Date.now() } },
+	}));
 
 	return q.data.Media;
 }

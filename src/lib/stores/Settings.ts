@@ -46,8 +46,15 @@ export const Settings = createStoreLocalStorage<{
 			darkScheme: SerializedScheme;
 		};
 	};
+	cache: {
+		mediaClearAgeHours: number;
+		mediaListCollectionClearAgeHours: number;
+		viewerClearAgeHours: number;
+		characterClearAgeHours: number;
+		videoUrlClearAgeHours: number;
+	};
 }>("settings", {
-	version: 2.0,
+	version: 3.0,
 	lastUsedFilters: {
 		isAdult: false,
 		averageScoreUpperRange: 100,
@@ -287,5 +294,12 @@ export const Settings = createStoreLocalStorage<{
 				surfaceTint: 4288465915,
 			},
 		},
+	},
+	cache: {
+		mediaClearAgeHours: 24,
+		viewerClearAgeHours: 24,
+		characterClearAgeHours: 24,
+		videoUrlClearAgeHours: 2,
+		mediaListCollectionClearAgeHours: 10 / 60,
 	},
 });

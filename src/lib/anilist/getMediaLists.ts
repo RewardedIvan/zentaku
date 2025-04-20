@@ -29,7 +29,13 @@ export async function getUserId() {
 
 import getMediaListsQuery from "./getMediaLists.gql?raw";
 import { invoke } from "@tauri-apps/api/core";
+import { LSCache } from "$lib/stores/Cache";
+import { findCache } from "$lib/utils/Cache";
+
 export async function getMediaLists(type: "anime" | "manga") {
+	const cached = findCache("mediaListCollection", "mediaListCollectionClearAgeHours", type);
+	if (cached) return cached.collection.lists;
+
 	const q = await invoke<{ data: { MediaListCollection?: MediaListCollection } }>("graphql", {
 		query: getMediaListsQuery,
 		variables: {
@@ -37,6 +43,16 @@ export async function getMediaLists(type: "anime" | "manga") {
 			userId: await getUserId(),
 		},
 	});
+
+	if (!q.data.MediaListCollection) return null;
+
+	LSCache.update(v => ({
+		...v,
+		mediaListCollection: {
+			...v.mediaListCollection,
+			[type]: { collection: q.data.MediaListCollection!, timestamp: Date.now() },
+		},
+	}));
 
 	return q.data.MediaListCollection?.lists;
 }

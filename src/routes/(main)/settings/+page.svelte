@@ -11,6 +11,7 @@
 	import PlayerSettings from "./PlayerSettings.svelte";
 	import PlayerKeybinds from "./PlayerKeybinds.svelte";
 	import Theme from "./Theme.svelte";
+	import Cache from "./Cache.svelte";
 
 	let versionMismatchDialogOpen = $state(false);
 	let scrollSection = $state("");
@@ -77,6 +78,7 @@
 			{@render category("Theme")}
 			{@render category("Player")}
 			{@render category("Player keybinds")}
+			{@render category("Cache")}
 		</div>
 		<div class="flex flex-col gap-2 overflow-auto flex-grow">
 			{#snippet categorytitle(name: string)}
@@ -89,6 +91,8 @@
 			<PlayerSettings />
 			{@render categorytitle("Player keybinds")}
 			<PlayerKeybinds />
+			{@render categorytitle("Cache")}
+			<Cache />
 		</div>
 	</div>
 {/if}

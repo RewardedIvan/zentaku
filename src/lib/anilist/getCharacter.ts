@@ -33,13 +33,24 @@ export interface Character {
 import { invoke } from "@tauri-apps/api/core";
 
 import getCharacterQuery from "./getCharacter.gql?raw";
+import { findCache } from "$lib/utils/Cache";
+import { LSCache } from "$lib/stores/Cache";
+
 export async function getCharacter(id: number) {
+	const cached = findCache("character", "characterClearAgeHours", id);
+	if (cached) return cached.character;
+
 	const q = await invoke<{ data: { Character?: Character } }>("graphql", {
 		query: getCharacterQuery,
 		variables: {
 			id,
 		},
 	});
+
+	LSCache.update(v => ({
+		...v,
+		character: { ...v.character, [id]: { character: q.data.Character!, timestamp: Date.now() } },
+	}));
 
 	return q.data.Character;
 }

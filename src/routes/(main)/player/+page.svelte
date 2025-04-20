@@ -3,10 +3,11 @@
 	import Snackbar from "./Snackbar.svelte";
 	import ConfirmProgressUpdateDialog from "./ConfirmProgressUpdateDialog.svelte";
 
-	import { Playing, Progress, videoCache } from "$lib/stores/Player";
+	import { Playing, Progress } from "$lib/stores/Player";
 	import { SourceSettings } from "$lib/stores/SourceStores";
 	import { Settings } from "$lib/stores/Settings";
 	import { type VideoResult } from "$lib/source";
+	import { LSCache } from "$lib/stores/Cache";
 	import { areAllScriptsTrusted, getScripts, loadScripts } from "$lib/utils/Sources";
 	import { onMount, onDestroy } from "svelte";
 	import { beforeNavigate } from "$app/navigation";
@@ -34,12 +35,12 @@
 		return new Promise(async (resolve, reject) => {
 			loading = true;
 
-			const cachePredicate = (v: (typeof $videoCache)[number]) =>
+			const cachePredicate = (v: (typeof $LSCache.videos)[number]) =>
 				v.source === $Playing.source &&
 				v.animeId === $Playing.animeId &&
 				v.episode === $Playing.episode;
 
-			let cache = $videoCache.find(cachePredicate);
+			let cache = Object.values($LSCache.videos).find(cachePredicate);
 			if (cache && useCache) {
 				resolve(cache.video);
 				loading = false;
@@ -72,16 +73,21 @@
 				);
 
 				if (videoResult.find(v => v.src.startsWith("blob:")) == null) {
-					videoCache.update(c => {
-						let newC = c.filter(v => !cachePredicate(v));
-						newC.push({
-							source: $Playing.source,
-							animeId: $Playing.animeId,
-							episode: $Playing.episode,
-							video: videoResult,
-						});
-						return newC;
-					});
+					LSCache.update(cache => ({
+						...cache,
+						videos: {
+							...Object.fromEntries(
+								Object.entries(cache.videos).filter(([_, v]) => !cachePredicate(v)),
+							),
+							[Date.now()]: {
+								source: $Playing.source,
+								animeId: $Playing.animeId,
+								episode: $Playing.episode,
+								video: videoResult,
+								timestamp: Date.now(),
+							},
+						},
+					}));
 				}
 
 				resolve(videoResult);
