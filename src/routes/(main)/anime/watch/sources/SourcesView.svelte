@@ -80,7 +80,7 @@
 
 {#snippet tooltipFab(icon: IconifyIcon, onclick: () => void, tooltipText: string)}
 	<Tooltip>
-		<FAB {icon} size="small" on:click={onclick} />
+		<FAB {icon} size="small" {onclick} />
 		{#snippet tooltip()}
 			<span>{tooltipText}</span>
 		{/snippet}

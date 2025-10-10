@@ -29,7 +29,7 @@
 	</div>
 
 	{#snippet buttons()}
-		<Button type="outlined" on:click={() => (open = false)}>Cancel</Button>
-		<Button type="filled" on:click={refreshSources}>Refresh and trust all</Button>
+		<Button variant="outlined" onclick={() => (open = false)}>Cancel</Button>
+		<Button variant="filled" onclick={refreshSources}>Refresh and trust all</Button>
 	{/snippet}
 </Dialog>

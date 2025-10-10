@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ListItemButton, Icon } from "m3-svelte";
+	import { Icon, ListItem } from "m3-svelte";
 	import { slide } from "svelte/transition";
 	import type { MediaList } from "$lib/anilist";
 	import MediaScroll from "$lib/ui/MediaScroll.svelte";
@@ -16,7 +16,7 @@
 	let open = $state(true);
 </script>
 
-<ListItemButton on:click={() => (open = !open)} headline={list.name}>
+<ListItem onclick={() => (open = !open)} headline={list.name} lines={1}>
 	{#snippet leading()}
 		{#key open}
 			<div in:slide>
@@ -27,7 +27,7 @@
 	{#snippet trailing()}
 		{list.entries.length}
 	{/snippet}
-</ListItemButton>
+</ListItem>
 
 {#if open}
 	<MediaScroll medias={list.entries.map(e => e.media)} />

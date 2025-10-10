@@ -22,14 +22,14 @@
 
 <div class="flex flex-col h-screen">
 	<div class="flex flex-grow flex-col items-center justify-center">
-		<Card type="filled">
+		<Card variant="filled">
 			<div class="flex flex-col gap-2 justify-center">
-				<Button type="tonal" on:click={login}>
+				<Button variant="tonal" onclick={login}>
 					{data.loggedIn ? "Refresh AniList login" : "Login with AniList"}
 				</Button>
 
 				{#if data.loggedIn}
-					<Button type="tonal" on:click={() => goto("/")}>Home</Button>
+					<Button variant="tonal" onclick={() => goto("/")}>Home</Button>
 					<span class="text-center">Already logged in...</span>
 				{/if}
 
@@ -38,7 +38,7 @@
 						<span class="text-center">Check your browser.</span>
 						<LinearProgressIndeterminate />
 					{:then}
-						<Button type="tonal" on:click={() => goto("/")}>Home</Button>
+						<Button variant="tonal" onclick={() => goto("/")}>Home</Button>
 						<span class="text-center">Logged in!</span>
 					{/await}
 				{/if}

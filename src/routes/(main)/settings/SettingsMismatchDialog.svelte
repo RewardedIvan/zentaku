@@ -39,21 +39,21 @@
 
 	{#snippet buttons()}
 		<Tooltip>
-			<Button type="text" on:click={close}>Don't care</Button>
+			<Button variant="text" onclick={close}>Don't care</Button>
 
 			{#snippet tooltip()}
 				<span>Does nothing</span>
 			{/snippet}
 		</Tooltip>
 		<Tooltip>
-			<Button type="tonal" on:click={reset}>Reset</Button>
+			<Button variant="tonal" onclick={reset}>Reset</Button>
 
 			{#snippet tooltip()}
 				<span>Reset settings to defaults</span>
 			{/snippet}
 		</Tooltip>
 		<Tooltip>
-			<Button type="tonal" on:click={bumpVersion}>Trust me bro</Button>
+			<Button variant="tonal" onclick={bumpVersion}>Trust me bro</Button>
 
 			{#snippet tooltip()}
 				<span>Bumps the version number</span>
@@ -61,7 +61,7 @@
 		</Tooltip>
 		{#if $Settings.version < Settings.defaultValue.version}
 			<Tooltip>
-				<Button type="filled" on:click={update}>Update</Button>
+				<Button variant="filled" onclick={update}>Update</Button>
 
 				{#snippet tooltip()}
 					<span>Fills in the new settings with the new defaults</span>

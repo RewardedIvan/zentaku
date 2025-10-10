@@ -14,7 +14,7 @@
 	let sourceResults: Promise<SearchResult[]> | null = $state(null);
 	let episodes: Promise<EpisodeInfo[]> | null = $state(null);
 	let animeId = $state("");
-	let media: Promise<Media | undefined> = $state(
+	let media: Promise<Media | null> = $state(
 		getMedia(parseInt(page.url.searchParams.get("id") ?? "")),
 	);
 	let currentSource: VideoSource<unknown> | null = $state(null);
@@ -72,18 +72,18 @@
 </script>
 
 <div class="flex flex-col flex-grow gap-2 items-center justify-center m-2">
-	<Card type="filled">
+	<Card variant="filled">
 		<SourcesView {search} {clearResults} {continu} />
 	</Card>
 
 	{#if sourceResults}
-		<Card type="filled">
+		<Card variant="filled">
 			<ResultsView {sourceResults} {getEpisodes} />
 		</Card>
 	{/if}
 
 	{#if episodes}
-		<Card type="filled">
+		<Card variant="filled">
 			<EpisodesView {episodes} {playEpisode} />
 		</Card>
 	{/if}

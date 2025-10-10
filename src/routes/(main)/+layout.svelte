@@ -4,11 +4,12 @@
 	import Ripple from "$lib/ui/Ripple.svelte";
 	import {
 		MenuItem,
-		CircularProgressIndeterminate,
 		Button,
 		Icon,
 		easeEmphasizedDecel,
 		easeEmphasizedAccel,
+		LoadingIndicator,
+		CircularProgressEstimate,
 	} from "m3-svelte";
 	import { getProfile } from "$lib/anilist";
 	import { page } from "$app/state";
@@ -62,7 +63,7 @@
 
 {#snippet menu()}
 	<div
-		class="flex flex-row items-center justify-between px-2"
+		class="flex flex-row items-center justify-between px-2 h-full"
 		onmousedown={dragMouseDown}
 		bind:this={dragDiv}
 		role="menubar"
@@ -70,7 +71,7 @@
 	>
 		<div class="flex flex-row gap-2 items-center">
 			{#if page.url.pathname !== "/"}
-				<Button on:click={goBack} iconType="full" type="text">
+				<Button onclick={goBack} iconType="full" variant="text">
 					<Icon icon={ArrowBackIcon} />
 				</Button>
 			{/if}
@@ -78,9 +79,9 @@
 		</div>
 		<div class="flex flex-row items-center justify-center">
 			{#await getProfile()}
-				<CircularProgressIndeterminate />
+				<CircularProgressEstimate />
 			{:then profile}
-				<Button type="text" iconType="full" on:click={() => (searchDialogOpen = true)}>
+				<Button variant="text" iconType="full" onclick={() => (searchDialogOpen = true)}>
 					<Icon icon={SearchIcon} />
 				</Button>
 
@@ -92,22 +93,22 @@
 					</Ripple>
 
 					{#snippet menu()}
-						<MenuItem>Profile</MenuItem>
-						<MenuItem on:click={() => goto("/settings")}>Settings</MenuItem>
-						<MenuItem>Logout</MenuItem>
+						<MenuItem onclick={() => {}}>Profile</MenuItem>
+						<MenuItem onclick={() => goto("/settings")}>Settings</MenuItem>
+						<MenuItem onclick={() => {}}>Logout</MenuItem>
 					{/snippet}
 				</Menu>
 			{/await}
 
 			<div class="flex flex-row ml-2">
 				<Ripple onClick={win.minimize}>
-					<Icon icon={MinimizeIcon} width="32" height="32" />
+					<Icon icon={MinimizeIcon} size={32} />
 				</Ripple>
 				<Ripple onClick={win.toggleMaximize}>
-					<Icon icon={MaximizeIcon} width="32" height="32" />
+					<Icon icon={MaximizeIcon} size={32} />
 				</Ripple>
 				<Ripple onClick={win.close}>
-					<Icon icon={XIcon} width="32" height="32" />
+					<Icon icon={XIcon} size={32} />
 				</Ripple>
 			</div>
 		</div>

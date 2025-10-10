@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, CircularProgressIndeterminate, Icon } from "m3-svelte";
+	import { Button, Icon, LinearProgressEstimate } from "m3-svelte";
 	import { page } from "$app/state";
 	import { followingWatched, getMedia, type Media } from "$lib/anilist";
 	import { goto } from "$app/navigation";
@@ -16,7 +16,7 @@
 </script>
 
 {#await getMedia(parseInt(page.url.searchParams.get("id") ?? ""))}
-	<CircularProgressIndeterminate />
+	<LinearProgressEstimate />
 {:then media}
 	{#if media}
 		{@render main(media)}
@@ -36,10 +36,14 @@
 			<img src={media.coverImage.large} alt="cover" class="max-w-max rounded" />
 
 			<div class="flex flex-col gap-2 w-full">
-				<Button type="filled" iconType="left" on:click={() => goto(`/anime/watch?id=${media.id}`)}>
+				<Button
+					variant="filled"
+					iconType="left"
+					onclick={() => goto(`/anime/watch?id=${media.id}`)}
+				>
 					<Icon icon={TVIcon} /> Watch
 				</Button>
-				<Button type="filled" iconType="left"><Icon icon={EditIcon} /> Edit</Button>
+				<Button variant="filled" iconType="left"><Icon icon={EditIcon} /> Edit</Button>
 
 				<p class="text-3xl font-afacad-flux">Info</p>
 				<Info {media} class="w-full" />
@@ -64,7 +68,7 @@
 
 			<p class="text-3xl font-afacad-flux">Following</p>
 			{#await followingWatched(media.id)}
-				<CircularProgressIndeterminate />
+				<LinearProgressEstimate />
 			{:then followingWatched}
 				<FollowingWatched {media} {followingWatched} />
 			{/await}

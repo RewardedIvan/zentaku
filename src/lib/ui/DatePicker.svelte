@@ -25,25 +25,23 @@
 		},
 	};
 
-	function changeDate(e: CustomEvent<any>) {
-		if (!e.detail) return;
-		date.value = new UTCDate(e.detail);
-
+	function changeDate(val: string) {
+		date.value = new UTCDate(val);
 		open = false;
 	}
 </script>
 
 <Menu bind:open>
-	<Button type="tonal" on:click={() => (open = !open)}>
+	<Button variant="tonal" onclick={() => (open = !open)}>
 		{name}
 		{date.value.toLocaleDateString()}
 	</Button>
 
 	{#snippet menu()}
 		<DatePickerDocked
-			on:setDate={changeDate}
+			setDate={changeDate}
 			clearable={false}
-			on:close={() => (open = false)}
+			close={() => (open = false)}
 			focusedMonth={date.value.getMonth()}
 			focusedYear={date.value.getFullYear()}
 		/>

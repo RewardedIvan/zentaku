@@ -5,11 +5,11 @@
 <script lang="ts">
 	import {
 		Card,
+		CircularProgressEstimate,
 		easeEmphasizedAccel,
 		easeEmphasizedDecel,
 		Icon,
 		MenuItem,
-		CircularProgressIndeterminate,
 	} from "m3-svelte";
 	import { addSeconds, format } from "date-fns";
 	import { UTCDate } from "@date-fns/utc";
@@ -226,7 +226,7 @@
 {#snippet controlButton(onClick: () => void, icon: IconifyIcon, tip: string, placement?: Placement)}
 	<Tooltip {placement}>
 		<Ripple {onClick}>
-			<Icon {icon} height="24" width="24" />
+			<Icon {icon} size={24} />
 		</Ripple>
 
 		{#snippet tooltip()}
@@ -267,13 +267,13 @@
 			in:commandAnim={{ duration: 500 }}
 			onintroend={a => a.currentTarget.remove()}
 		>
-			<Icon icon={command ?? QuestionMarkIcon} height="24" width="24" />
+			<Icon icon={command ?? QuestionMarkIcon} size={24} />
 		</div>
 	{/key}
 
 	{#if loading}
 		<div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-			<CircularProgressIndeterminate />
+			<CircularProgressEstimate />
 		</div>
 	{/if}
 
@@ -330,7 +330,7 @@
 				<Menu bind:open={fitMenuOpen}>
 					<Tooltip>
 						<Ripple onClick={() => (fitMenuOpen = !fitMenuOpen)}>
-							<Icon icon={AspectRatioIcon} width="24" height="24" />
+							<Icon icon={AspectRatioIcon} size={24} />
 						</Ripple>
 
 						{#snippet tooltip()}
@@ -339,9 +339,9 @@
 					</Tooltip>
 
 					{#snippet menu()}
-						<MenuItem on:click={() => setSizeMode("fill")}>Fill (stretched)</MenuItem>
-						<MenuItem on:click={() => setSizeMode("fit")}>Fit (black bars)</MenuItem>
-						<MenuItem on:click={() => setSizeMode("zoom")}>Zoom (zoomed in)</MenuItem>
+						<MenuItem onclick={() => setSizeMode("fill")}>Fill (stretched)</MenuItem>
+						<MenuItem onclick={() => setSizeMode("fit")}>Fit (black bars)</MenuItem>
+						<MenuItem onclick={() => setSizeMode("zoom")}>Zoom (zoomed in)</MenuItem>
 					{/snippet}
 				</Menu>
 

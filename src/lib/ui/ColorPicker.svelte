@@ -80,12 +80,12 @@
 	{@render preview?.(hex, () => (open = !open))}
 
 	{#snippet menu()}
+		<!-- extraWrapperOptions={{ style: "display: flex; --items: 2; margin-top: -0.5rem;" }} -->
 		<Tabs
 			items={[
 				{ value: "huecircle", name: "Hue Circle" },
 				{ value: "rgba", name: "RGBA" },
 			]}
-			extraWrapperOptions={{ style: "display: flex; --items: 2; margin-top: -0.5rem;" }}
 			bind:tab
 		/>
 

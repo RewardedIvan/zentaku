@@ -29,7 +29,7 @@
 		options={[
 			...new Set(media.characters.edges.map(e => e.voiceActors.map(e => e.languageV2)).flat()),
 		]}
-		name="voice actor language"
+		label="voice actor language"
 		bind:value={voiceActorLanguage}
 	/>
 </div>

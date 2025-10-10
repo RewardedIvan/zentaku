@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CircularProgressIndeterminate } from "m3-svelte";
+	import { LinearProgressEstimate } from "m3-svelte";
 	import { page } from "$app/state";
 	import { formatDate, getCharacter, type Character } from "$lib/anilist";
 
@@ -10,7 +10,7 @@
 </script>
 
 {#await getCharacter(parseInt(page.url.searchParams.get("id") ?? ""))}
-	<CircularProgressIndeterminate />
+	<LinearProgressEstimate />
 {:then character}
 	{#if character}
 		{@render main(character)}

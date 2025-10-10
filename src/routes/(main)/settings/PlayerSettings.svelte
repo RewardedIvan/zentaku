@@ -21,7 +21,7 @@
 		<Dropdown
 			bind:value={$Settings.playerSettings.sizeMode}
 			type="textfield"
-			name="Size Mode"
+			label="Size Mode"
 			options={[
 				{ value: "fill", text: "Fill (stretched)" },
 				{ value: "fit", text: "Fit (black bars)" },

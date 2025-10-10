@@ -43,8 +43,8 @@
 	</div>
 
 	{#snippet buttons()}
-		<Button type="outlined" on:click={() => (open = false)}>Close</Button>
-		<Button type="tonal" on:click={reset}>Reset</Button>
-		<Button type="filled" on:click={save}>Save</Button>
+		<Button variant="outlined" onclick={() => (open = false)}>Close</Button>
+		<Button variant="tonal" onclick={reset}>Reset</Button>
+		<Button variant="filled" onclick={save}>Save</Button>
 	{/snippet}
 </Dialog>

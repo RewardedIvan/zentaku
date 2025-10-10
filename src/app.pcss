@@ -1,9 +1,16 @@
+@import "m3-svelte/misc/styles.css";
+@import "m3-svelte/misc/recommended-styles.css";
+@import "m3-svelte/misc/tailwind-styles.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
 	font-family: "Roboto", sans-serif;
+	--m3-font: "Roboto", system-ui;
+	background-color: rgb(var(--m3-scheme-background));
+	color: rgb(var(--m3-scheme-on-background));
 }
 
 ::-webkit-scrollbar {

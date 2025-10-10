@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { slide } from "svelte/transition";
 	import {
-		CardClickable,
-		CircularProgressIndeterminate,
+		Card,
 		easeEmphasizedAccel,
 		easeEmphasizedDecel,
 		FAB,
+		LinearProgressEstimate,
 	} from "m3-svelte";
 	import Tooltip from "$lib/ui/Tooltip.svelte";
 	import type { SearchResult } from "$lib/source";
@@ -24,7 +24,7 @@
 </script>
 
 {#await sourceResults}
-	<CircularProgressIndeterminate />
+	<LinearProgressEstimate />
 {:then results}
 	{#if results && results.length}
 		<div class="w-[90dvw]"></div>
@@ -36,7 +36,7 @@
 			>
 				{#each results as result}
 					<Tooltip>
-						<CardClickable type="filled" on:click={() => getEpisodes(result.id)}>
+						<Card variant="filled" onclick={() => getEpisodes(result.id)}>
 							<span class="font-afacad-flux text-md text-wrap w-[90px]">{result.title}</span>
 							{#if result.episodes}
 								<span class="font-afacad-flux text-sm">{result.episodes} episodes</span>
@@ -44,7 +44,7 @@
 							{#if result.coverUrl}
 								<img src={result.coverUrl} alt="cover" width={128} class="self-center rounded-md" />
 							{/if}
-						</CardClickable>
+						</Card>
 
 						{#snippet tooltip()}
 							<span>Click for episodes</span>
@@ -58,7 +58,7 @@
 			<FAB
 				icon={resultsExpanded ? ExpandLess : ExpandMore}
 				size="small"
-				on:click={() => (resultsExpanded = !resultsExpanded)}
+				onclick={() => (resultsExpanded = !resultsExpanded)}
 			/>
 		</div>
 	{:else}

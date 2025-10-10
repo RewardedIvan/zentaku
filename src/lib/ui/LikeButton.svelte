@@ -65,7 +65,7 @@
 	</svg>
 {/snippet}
 
-<Button type="text" iconType="full" on:click={click}>
+<Button variant="text" iconType="full" onclick={click}>
 	{#if icon == "thumb"}
 		{#if value}
 			{@render AnimatedIcon(ThumbsUpIcon)}

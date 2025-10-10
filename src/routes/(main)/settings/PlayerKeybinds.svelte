@@ -7,7 +7,7 @@
 		easeEmphasizedAccel,
 		easeEmphasizedDecel,
 		Icon,
-		ListItemButton,
+		ListItem,
 		TextField,
 	} from "m3-svelte";
 	import { slide } from "svelte/transition";
@@ -66,10 +66,10 @@
 					{#snippet chip(name: string, key: "whenAlt" | "whenShift" | "whenCtrl")}
 						{#if (editingKeybind != i && $Settings.playerKeybinds[i][key]) || editingKeybind == i}
 							<Chip
-								type="input"
+								variant="input"
 								disabled={editingKeybind != i}
 								selected={$Settings.playerKeybinds[i][key]}
-								on:click={() =>
+								onclick={() =>
 									($Settings.playerKeybinds[i][key] = !$Settings.playerKeybinds[i][key])}
 							>
 								{name}
@@ -94,20 +94,22 @@
 					{/if}
 
 					{#if editingKeybind != i}
-						<Chip disabled selected type="input">
+						<Chip disabled={true} selected variant="input" onclick={() => {}}>
 							{$Settings.playerKeybinds[i].keybind.replace(/^$/, "INVALID").replace(/^ $/, "Space")}
 						</Chip>
 					{:else}
 						<TextField
 							bind:value={$Settings.playerKeybinds[i].keybind}
-							name="Keybind"
-							trailingIcon={capturingKey == i ? XIcon : KeyboardIcon}
-							on:trailingClick={() => (capturingKey = capturingKey == i ? -1 : i)}
+							label="Keybind"
+							trailing={{
+								icon: capturingKey == i ? XIcon : KeyboardIcon,
+								onclick: () => (capturingKey = capturingKey == i ? -1 : i),
+							}}
 						/>
 						<Dropdown
 							bind:value={$Settings.playerKeybinds[i].action}
 							type="textfield"
-							name="Action"
+							label="Action"
 							options={[
 								{ value: "time", text: "Forward/Rewind" },
 								{ value: "volume", text: "Volume up/down" },
@@ -117,17 +119,13 @@
 								{ value: "fullscreen", text: "Fullscreen" },
 							]}
 						/>
-						<TextField
-							bind:value={$Settings.playerKeybinds[i].units}
-							name="Units"
-							extraOptions={{ type: "number" }}
-						/>
+						<TextField bind:value={$Settings.playerKeybinds[i].units} label="Units" type="number" />
 					{/if}
 				</div>
 
 				<div class="flex flex-row items-center">
 					{#if editingKeybind == i}
-						<TextField bind:value={$Settings.playerKeybinds[i].description} name="Description" />
+						<TextField bind:value={$Settings.playerKeybinds[i].description} label="Description" />
 					{:else}
 						<span>{$Settings.playerKeybinds[i].description}</span>
 					{/if}
@@ -137,14 +135,14 @@
 					<Button
 						type="text"
 						iconType="full"
-						on:click={() => (editingKeybind = editingKeybind == i ? -1 : i)}
+						onclick={() => (editingKeybind = editingKeybind == i ? -1 : i)}
 					>
 						<Icon icon={EditIcon} />
 					</Button>
 					<Button
 						type="text"
 						iconType="full"
-						on:click={() =>
+						onclick={() =>
 							($Settings.playerKeybinds = $Settings.playerKeybinds.filter((_, t) => t != i))}
 					>
 						<Icon icon={DeleteIcon} />
@@ -153,8 +151,8 @@
 			</div>
 			<Divider />
 		{/each}
-		<ListItemButton
-			on:click={() =>
+		<ListItem
+			onclick={() =>
 				($Settings.playerKeybinds = [
 					...$Settings.playerKeybinds,
 					{
@@ -168,6 +166,6 @@
 			{#snippet leading()}
 				<Icon icon={AddIcon} />
 			{/snippet}
-		</ListItemButton>
+		</ListItem>
 	</div>
 </div>

@@ -47,7 +47,7 @@
 	</label>
 
 	{#snippet buttons()}
-		<Button type="text" on:click={close}>No</Button>
-		<Button type="filled" on:click={confirm}>Yes</Button>
+		<Button variant="text" onclick={close}>No</Button>
+		<Button variant="filled" onclick={confirm}>Yes</Button>
 	{/snippet}
 </Dialog>

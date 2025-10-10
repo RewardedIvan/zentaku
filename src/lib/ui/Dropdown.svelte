@@ -14,7 +14,7 @@
 
 	interface Props<T> {
 		type?: "button" | "textfield";
-		name: string;
+		label: string;
 		placement?: Placement;
 		closeOnClick?: boolean;
 		options: (T | Descriptor<T>)[];
@@ -23,7 +23,7 @@
 
 	let {
 		type = "textfield",
-		name,
+		label,
 		placement = "bottom-end",
 		closeOnClick = true,
 		options,
@@ -64,13 +64,13 @@
 
 <Menu bind:open {placement}>
 	{#if type == "button"}
-		<Button type="filled" on:click={() => (open = !open)}>{name}</Button>
+		<Button variant="filled" onclick={() => (open = !open)}>{label}</Button>
 	{:else if type == "textfield"}
 		<TextField
-			{name}
-			trailingIcon={DownArrow}
-			on:trailingClick={() => (open = !open)}
+			{label}
+			trailing={{ icon: DownArrow, onclick: () => (open = !open) }}
 			bind:value={val}
+			autocomplete="off"
 			{error}
 		/>
 	{/if}
@@ -78,9 +78,9 @@
 	{#snippet menu()}
 		{#each options as o}
 			{#if typeof o == "object" && o != null && "value" in o}
-				<MenuItem icon={o.icon} on:click={() => changeValue(o.value)}>{o.text}</MenuItem>
+				<MenuItem icon={o.icon} onclick={() => changeValue(o.value)}>{o.text}</MenuItem>
 			{:else}
-				<MenuItem on:click={() => changeValue(o)}>{o}</MenuItem>
+				<MenuItem onclick={() => changeValue(o)}>{o}</MenuItem>
 			{/if}
 		{/each}
 	{/snippet}

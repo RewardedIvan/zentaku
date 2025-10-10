@@ -32,7 +32,7 @@
 	{#snippet trailing()}
 		<div class="flex flex-row gap-2 ml-auto">
 			<Tooltip>
-				<Button type="filled" iconType="full" on:click={() => (settingsOpen = true)}>
+				<Button variant="filled" iconType="full" onclick={() => (settingsOpen = true)}>
 					<Icon icon={SettingsIcon} />
 				</Button>
 				{#snippet tooltip()}
@@ -40,7 +40,7 @@
 				{/snippet}
 			</Tooltip>
 			<Tooltip>
-				<Button type="filled" iconType="full" on:click={() => search(source)}>
+				<Button variant="filled" iconType="full" onclick={() => search(source)}>
 					<Icon icon={SearchIcon} />
 				</Button>
 				{#snippet tooltip()}

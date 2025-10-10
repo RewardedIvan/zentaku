@@ -60,7 +60,7 @@
 
 					{#snippet menu()}
 						{#snippet vb(label: string, v: number)}
-							<MenuItem on:click={() => mediaTagVote(media.id, tag.id, v)}>{label}</MenuItem>
+							<MenuItem onclick={() => mediaTagVote(media.id, tag.id, v)}>{label}</MenuItem>
 						{/snippet}
 
 						{@render vb("Main Theme", 5)}

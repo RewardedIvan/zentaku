@@ -35,7 +35,7 @@
 {#if typeof value === "string"}
 	{#if defaultSettings[`_${key}_regex`] !== undefined}
 		<TextField
-			name={keyFormatted}
+			label={keyFormatted}
 			bind:value
 			error={!defaultSettings[`_${key}_regex`].test(value)}
 		/>
@@ -45,7 +45,7 @@
 			</span>
 		{/if}
 	{:else}
-		<TextField name={key} bind:value />
+		<TextField label={key} bind:value />
 	{/if}
 {:else if typeof value === "number"}
 	{#if defaultSettings[`_${key}_range`] !== undefined}
@@ -61,7 +61,7 @@
 			{/key}
 		</div>
 	{:else}
-		<TextField name={keyFormatted} bind:value extraOptions={{ type: "number" }} />
+		<TextField label={keyFormatted} bind:value={value as unknown as string} type="number" />
 	{/if}
 {:else if typeof value === "boolean"}
 	<div class="flex flex-row items-center">

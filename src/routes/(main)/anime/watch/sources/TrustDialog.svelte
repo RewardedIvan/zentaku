@@ -34,7 +34,7 @@
 				{#snippet trailing()}
 					<div class="flex flex-row gap-2 ml-8">
 						<Tooltip>
-							<Button type="filled" iconType="full" on:click={() => untrust(key)}>
+							<Button variant="filled" iconType="full" onclick={() => untrust(key)}>
 								<Icon icon={XIcon} />
 							</Button>
 							{#snippet tooltip()}
@@ -55,7 +55,7 @@
 	</div>
 
 	{#snippet buttons()}
-		<Button type="outlined" on:click={() => (open = false)}>Close</Button>
-		<Button type="filled" on:click={untrustAll}>Untrust all</Button>
+		<Button variant="outlined" onclick={() => (open = false)}>Close</Button>
+		<Button variant="filled" onclick={untrustAll}>Untrust all</Button>
 	{/snippet}
 </Dialog>

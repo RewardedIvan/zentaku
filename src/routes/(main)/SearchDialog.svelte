@@ -1,12 +1,11 @@
 <script lang="ts">
 	import {
 		Button,
-		CircularProgressIndeterminate,
-		DatePickerDocked,
+		CircularProgressEstimate,
 		Icon,
-		SegmentedButtonContainer,
-		SegmentedButtonItem,
+		ConnectedButtons,
 		Switch,
+		TogglePrimitive,
 	} from "m3-svelte";
 	import {
 		formatDate,
@@ -168,12 +167,10 @@
             "
 		>
 			{#await results}
-				<CircularProgressIndeterminate
-					extraOptions={{ style: "display: inline-flex; width: 1.5em; height: 1.5em" }}
-				/>
+				<CircularProgressEstimate size={24} />
 			{:then _}
 				<Ripple class="size-6 flex items-center justify-center" onClick={searc}>
-					<Icon icon={SearchIcon} width="1.5em" height="2em" />
+					<Icon icon={SearchIcon} size={32} />
 				</Ripple>
 			{/await}
 
@@ -193,7 +190,7 @@
 					class="size-6 flex items-center justify-center"
 					onClick={() => (filterMenuOpen = !filterMenuOpen)}
 				>
-					<Icon icon={MenuIcon} width="1.5em" height="2em" />
+					<Icon icon={MenuIcon} size={32} />
 				</Ripple>
 
 				{#snippet menu()}
@@ -236,7 +233,7 @@
 						<Dropdown
 							bind:value={$Settings.lastUsedFilters.countryOfOrigin}
 							type="textfield"
-							name="Country of Origin"
+							label="Country of Origin"
 							placement="bottom-start"
 							options={[
 								{ value: undefined, text: "Any" },
@@ -275,7 +272,7 @@
 						<Dropdown
 							bind:value={$Settings.lastUsedFilters.format}
 							type="textfield"
-							name="Format"
+							label="Format"
 							placement="bottom-start"
 							options={[
 								{ value: undefined, text: "Any" },
@@ -296,7 +293,7 @@
 						<Dropdown
 							bind:value={$Settings.lastUsedFilters.status}
 							type="textfield"
-							name="Status"
+							label="Status"
 							placement="bottom-start"
 							options={[
 								{ value: undefined, text: "Any" },
@@ -309,44 +306,26 @@
 						/>
 
 						<span>Include</span>
-						<SegmentedButtonContainer>
-							<input
-								type="checkbox"
-								id="sgi-0"
-								bind:checked={$Settings.lastUsedFilters.includeAnime}
-							/>
-							<SegmentedButtonItem input="sgi-0">Anime</SegmentedButtonItem>
-							<input
-								type="checkbox"
-								id="sgi-1"
-								bind:checked={$Settings.lastUsedFilters.includeManga}
-							/>
-							<SegmentedButtonItem input="sgi-1">Manga</SegmentedButtonItem>
-							<input
-								type="checkbox"
-								id="sgi-2"
-								bind:checked={$Settings.lastUsedFilters.includeCharacters}
-							/>
-							<SegmentedButtonItem input="sgi-2">Characters</SegmentedButtonItem>
-							<input
-								type="checkbox"
-								id="sgi-3"
-								bind:checked={$Settings.lastUsedFilters.includeStaff}
-							/>
-							<SegmentedButtonItem input="sgi-3">Staff</SegmentedButtonItem>
-							<input
-								type="checkbox"
-								id="sgi-4"
-								bind:checked={$Settings.lastUsedFilters.includeStudios}
-							/>
-							<SegmentedButtonItem input="sgi-4">Studios</SegmentedButtonItem>
-							<input
-								type="checkbox"
-								id="sgi-5"
-								bind:checked={$Settings.lastUsedFilters.includeUsers}
-							/>
-							<SegmentedButtonItem input="sgi-5">Users</SegmentedButtonItem>
-						</SegmentedButtonContainer>
+						<ConnectedButtons>
+							<TogglePrimitive bind:toggle={$Settings.lastUsedFilters.includeAnime}
+								>Anime</TogglePrimitive
+							>
+							<TogglePrimitive bind:toggle={$Settings.lastUsedFilters.includeManga}
+								>Manga</TogglePrimitive
+							>
+							<TogglePrimitive bind:toggle={$Settings.lastUsedFilters.includeCharacters}
+								>Characters</TogglePrimitive
+							>
+							<TogglePrimitive bind:toggle={$Settings.lastUsedFilters.includeStaff}
+								>Staff</TogglePrimitive
+							>
+							<TogglePrimitive bind:toggle={$Settings.lastUsedFilters.includeStudios}
+								>Studios</TogglePrimitive
+							>
+							<TogglePrimitive bind:toggle={$Settings.lastUsedFilters.includeUsers}
+								>Users</TogglePrimitive
+							>
+						</ConnectedButtons>
 					</div>
 				{/snippet}
 			</Menu>
@@ -391,13 +370,13 @@
 				<div class="flex flex-row justify-between">
 					<span class="font-afacad-flux text-2xl">{capitalizeFirstLetter(type)}</span>
 					<div class="flex flex-row gap-2 items-center">
-						<Button type="text" on:click={() => pagination(type, -1)} iconType="full">
+						<Button variant="text" onclick={() => pagination(type, -1)} iconType="full">
 							<Icon icon={PrevIcon} />
 						</Button>
 
 						<span>{results[type].pageInfo.currentPage}</span>
 
-						<Button type="text" on:click={() => pagination(type, 1)} iconType="full">
+						<Button variant="text" onclick={() => pagination(type, 1)} iconType="full">
 							<Icon icon={NextIcon} />
 						</Button>
 					</div>
