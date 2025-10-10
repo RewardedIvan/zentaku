@@ -1,7 +1,9 @@
 <script lang="ts" generics="T">
 	import type { Placement } from "@floating-ui/core";
+	import { CurrentDropdown } from "$lib/stores/App";
 	import Menu from "./Menu.svelte";
 	import { Button, MenuItem, TextField } from "m3-svelte";
+	import { get } from "svelte/store";
 	import type { IconifyIcon } from "@iconify/types";
 
 	import DownArrow from "@ktibow/iconset-material-symbols/arrow-drop-down";
@@ -30,23 +32,36 @@
 		value = $bindable(),
 	}: Props<T> = $props();
 
+	const id = $props.id();
 	let open = $state(false);
 	let error = $derived.by(() => {
-		return (
-			options.find(e => {
-				if (typeof e == "object" && e != null && "value" in e) {
-					return e.value == value;
-				} else {
-					return e == value;
-				}
-			}) == undefined
-		);
+		return options.every(e => {
+			if (typeof e == "object" && e != null && "value" in e) {
+				return e.value != value;
+			} else {
+				return e != value;
+			}
+		});
 	});
 
 	let val: any = $state(value);
 
 	$effect(() => {
 		value = val;
+	});
+
+	$effect(() => {
+		if (open) {
+			CurrentDropdown.set(id);
+		} else if (get(CurrentDropdown) == id) {
+			CurrentDropdown.set("");
+		}
+	});
+
+	CurrentDropdown.subscribe(v => {
+		if (v != id) {
+			open = false;
+		}
 	});
 
 	function changeValue(o: T | Descriptor<T>) {
