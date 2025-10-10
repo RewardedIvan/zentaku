@@ -13,7 +13,7 @@
 	{#snippet clearCache(key: keyof typeof LSCache.defaultValue)}
 		<Tooltip>
 			<Button
-				type="text"
+				variant="text"
 				iconType="full"
 				onclick={() => LSCache.update(v => ({ ...v, [key]: {} }))}
 			>
@@ -30,7 +30,7 @@
 
 		<div class="flex flex-row items-center gap-2">
 			{@render clearCache("media")}
-			<TextField bind:value={$Settings.cache.mediaClearAgeHours} label="Age in hours" />
+			<TextField bind:value={$Settings.cache.mediaClearAgeHours as any} label="Age in hours" />
 		</div>
 	</div>
 	<Divider />
@@ -43,7 +43,7 @@
 		<div class="flex flex-row items-center gap-2">
 			{@render clearCache("mediaListCollection")}
 			<TextField
-				bind:value={$Settings.cache.mediaListCollectionClearAgeHours}
+				bind:value={$Settings.cache.mediaListCollectionClearAgeHours as any}
 				label="Age in hours"
 			/>
 		</div>
@@ -54,7 +54,7 @@
 
 		<div class="flex flex-row items-center gap-2">
 			{@render clearCache("viewer")}
-			<TextField bind:value={$Settings.cache.viewerClearAgeHours} label="Age in hours" />
+			<TextField bind:value={$Settings.cache.viewerClearAgeHours as any} label="Age in hours" />
 		</div>
 	</div>
 	<Divider />
@@ -63,7 +63,7 @@
 
 		<div class="flex flex-row items-center gap-2">
 			{@render clearCache("character")}
-			<TextField bind:value={$Settings.cache.characterClearAgeHours} label="Age in hours" />
+			<TextField bind:value={$Settings.cache.characterClearAgeHours as any} label="Age in hours" />
 		</div>
 	</div>
 	<Divider />
@@ -81,7 +81,7 @@
 
 		<div class="flex flex-row items-center gap-2">
 			{@render clearCache("videos")}
-			<TextField bind:value={$Settings.cache.videoUrlClearAgeHours} label="Age in hours" />
+			<TextField bind:value={$Settings.cache.videoUrlClearAgeHours as any} label="Age in hours" />
 		</div>
 	</div>
 </div>

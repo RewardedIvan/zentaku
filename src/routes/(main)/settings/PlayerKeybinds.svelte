@@ -119,7 +119,11 @@
 								{ value: "fullscreen", text: "Fullscreen" },
 							]}
 						/>
-						<TextField bind:value={$Settings.playerKeybinds[i].units} label="Units" type="number" />
+						<TextField
+							bind:value={$Settings.playerKeybinds[i].units as any}
+							label="Units"
+							type="number"
+						/>
 					{/if}
 				</div>
 
@@ -133,14 +137,14 @@
 					<div class="w-2"></div>
 
 					<Button
-						type="text"
+						variant="text"
 						iconType="full"
 						onclick={() => (editingKeybind = editingKeybind == i ? -1 : i)}
 					>
 						<Icon icon={EditIcon} />
 					</Button>
 					<Button
-						type="text"
+						variant="text"
 						iconType="full"
 						onclick={() =>
 							($Settings.playerKeybinds = $Settings.playerKeybinds.filter((_, t) => t != i))}

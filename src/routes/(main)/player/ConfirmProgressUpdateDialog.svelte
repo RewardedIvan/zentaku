@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, CheckboxAnim, Dialog } from "m3-svelte";
+	import { Button, Checkbox, Dialog } from "m3-svelte";
 
 	interface Props {
 		open: boolean;
@@ -40,9 +40,9 @@
 <Dialog headline="Confirm progress update" bind:open>
 	<p>Update progress on AniList?</p>
 	<label class="flex flex-row gap-2 items-center mt-4">
-		<CheckboxAnim>
+		<Checkbox>
 			<input type="checkbox" bind:checked={dontAskAgain} />
-		</CheckboxAnim>
+		</Checkbox>
 		<span class="ml-2">Don't ask again (until you exit this page)</span>
 	</label>
 
