@@ -10,7 +10,7 @@
 		tooltip: Snippet<[]>;
 		placement?: Placement;
 		allowedPlacements?: Placement[];
-		cardType?: "filled" | "outlined" | "elevated";
+		cardType?: "filled" | "outlined" | "elevated" | "none";
 		class?: string;
 		tooltipPointerEvents?: boolean;
 		[key: string]: any;
@@ -48,7 +48,9 @@
 
 {#if show}
 	<div
-		class="w-max absolute bg-inverse-surface text-inverse-on-surface p-2 rounded-xl z-[999]"
+		class="w-max absolute {cardType != 'none'
+			? 'bg-inverse-surface text-inverse-on-surface p-2 rounded-xl'
+			: ''} z-[999]"
 		style="left: 0; top: 0; pointer-events: {tooltipPointerEvents ? 'auto' : 'none'};"
 		aria-haspopup="menu"
 		in:slide={{ duration: 200, easing: easeEmphasizedDecel, axis: "y" }}
