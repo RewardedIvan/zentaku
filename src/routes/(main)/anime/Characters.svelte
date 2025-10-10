@@ -37,9 +37,9 @@
 	{#each media.characters.edges.sort((a, b) => Number(b.role == "MAIN") - 1) as character}
 		{@const voiceActor = character.voiceActors.find(e => e.languageV2 == voiceActorLanguage)}
 
-		<div class="flex flex-row bg-surface-container rounded-md w-[25rem]">
+		<div class="flex flex-row w-[25rem] gap-1">
 			<Ripple
-				class="flex flex-row gap-1 flex-grow"
+				class="flex flex-row gap-1 flex-grow bg-surface-container rounded-r-xs rounded-l-md"
 				onClick={() => goto(`/character?id=${character.node.id}`)}
 			>
 				<img
@@ -54,7 +54,10 @@
 			</Ripple>
 
 			{#if voiceActor}
-				<Ripple class="flex flex-row gap-1" onClick={() => goto(`/staff/${character.node.id}`)}>
+				<Ripple
+					class="flex flex-row gap-1 bg-surface-container rounded-l-xs rounded-r-md"
+					onClick={() => goto(`/staff/${character.node.id}`)}
+				>
 					<div class="flex flex-col ml-auto p-1 justify-between h-full">
 						<p class="text-secondary">{voiceActor.name.userPreferred}</p>
 						<p>{voiceActor.languageV2}</p>
