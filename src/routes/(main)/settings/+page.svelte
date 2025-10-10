@@ -62,8 +62,7 @@
 
 {#if !versionMismatchDialogOpen}
 	<div class="flex flex-row gap-2 px-4 pt-4">
-		<!-- this is kinda hardcoded, well so is the topbar.. TODO: add to tailwind -->
-		<div class="flex flex-col sticky overflow-auto top-[56px] h-[calc(100vh-56px)] w-40">
+		<div class="flex flex-col sticky overflow-auto top-topbar h-availscreen w-40">
 			{#snippet category(name: string)}
 				{@const selected = scrollSection == name.toLowerCase()}
 

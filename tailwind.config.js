@@ -86,6 +86,10 @@ export default {
 				"slider-track-out": "0.5rem",
 				"slider-track-in": "0.125rem",
 			},
+			spacing: {
+				availscreen: "calc(100vh - 40px)",
+				topbar: "40px",
+			},
 		},
 	},
 	plugins: [],

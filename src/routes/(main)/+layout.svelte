@@ -50,7 +50,7 @@
 <div class="flex flex-col min-h-screen">
 	{#if !$Topbar.hidden}
 		<div
-			class="h-[40px] sticky top-0 z-[99999] bg-surface-container-highest"
+			class="h-topbar sticky top-0 z-[99999] bg-surface-container-highest"
 			in:slide={{ duration: 300, easing: easeEmphasizedDecel }}
 			out:slide={{ duration: 300, easing: easeEmphasizedAccel }}
 		>

@@ -227,11 +227,10 @@
 	});
 </script>
 
-<!-- again with the hardcoding -->
 <Video
 	bind:time
 	{loading}
-	class="flex-grow h-[calc(100vh-40px)]"
+	class="flex-grow h-availscreen"
 	previous={() => switchEpisodeRelative(-1)}
 	next={() => switchEpisodeRelative(1)}
 	bind:video={videoElem}

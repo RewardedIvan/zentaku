@@ -28,7 +28,6 @@
 	);
 </script>
 
-<!-- <StyleFromScheme {...$Settings.theme.serialized} /> -->
 {@render children()}
 
 <!-- @html doesnt work because postcss parses it for some reason -->
