@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CircularProgressEstimate, MenuItem, NavCMLX, NavCMLXItem } from "m3-svelte";
+	import { LinearProgressEstimate, MenuItem, NavCMLX, NavCMLXItem } from "m3-svelte";
 	import { getProfile, getMediaLists } from "$lib/anilist";
 	import MediaList from "./MediaList.svelte";
 	import type { IconifyIcon } from "@iconify/types";
@@ -51,9 +51,7 @@
 			<!-- TODO -->
 		{:else}
 			{#await getMediaLists(tab)}
-				<div class="flex justify-center items-center h-full">
-					<CircularProgressEstimate />
-				</div>
+				<LinearProgressEstimate />
 			{:then mediaLists}
 				{#if mediaLists}
 					{#each mediaLists as list}
