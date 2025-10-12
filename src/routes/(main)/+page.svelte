@@ -25,7 +25,7 @@
 	let tab: Tab = fromUrl() ?? "anime";
 </script>
 
-<div class="flex flex-row h-availscreen w-full overflow-hidden gap-4">
+<div class="flex flex-row size-full overflow-hidden gap-4">
 	{#snippet _tab(name: typeof tab, icon: IconifyIcon, iconS: IconifyIcon)}
 		{@const selected = tab == name}
 		<NavCMLXItem
@@ -39,7 +39,7 @@
 	{/snippet}
 
 	<NavCMLX variant="compact">
-		<div class="flex flex-col px-2">
+		<div class="flex flex-col px-2 h-availscreen">
 			{@render _tab("anime", AnimeIcon, AnimeIconOutline)}
 			{@render _tab("manga", BookIcon, BookIconOutline)}
 			{@render _tab("feed", FeedIcon, FeedIconOutline)}
