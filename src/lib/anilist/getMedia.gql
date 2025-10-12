@@ -37,6 +37,8 @@ query ($id: Int!) {
 		}
 		title {
 			userPreferred
+			english
+			romaji
 		}
 		nextAiringEpisode {
 			episode

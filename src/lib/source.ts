@@ -31,12 +31,18 @@ export interface EpisodeInfo {
 	title: string;
 }
 
-export interface VideoSource<S> {
+export type VideoSource<S> = {
 	name: string; // names should be unique
 	icon: string;
 	url: string;
 	defaultSettings: S;
-	search: (settings: S, anilistMedia: Media) => Promise<SearchResult[]>;
 	getEpisodes: (settings: S, id: string) => Promise<EpisodeInfo[]>;
 	getVideo: (settings: S, id: string, episode: number) => Promise<VideoResult[]>;
-}
+} & (
+	| {
+			search: (settings: S, anilistMedia: Media) => Promise<SearchResult[]>;
+	  }
+	| {
+			searchText: (settings: S, query: string) => Promise<SearchResult[]>;
+	  }
+);

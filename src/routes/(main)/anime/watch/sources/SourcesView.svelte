@@ -36,13 +36,13 @@
 		warningOpen = !(await areAllScriptsTrusted());
 
 		if (!warningOpen) {
-			refreshSources();
+			refreshSources(true);
 		}
 	}
 
-	async function refreshSources() {
+	async function refreshSources(retainResults: boolean = false) {
 		warningOpen = false;
-		clearResults();
+		if (!retainResults) clearResults();
 
 		const scripts = await getScripts();
 		sources = await loadScripts(scripts);

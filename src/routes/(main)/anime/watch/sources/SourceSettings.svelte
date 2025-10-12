@@ -33,12 +33,9 @@
 </script>
 
 <Dialog bind:open headline="Source Settings">
-	<div class="flex flex-col gap-1 bg-surface-container-high flex-grow">
-		{#each copyFiltered as [key, value], i}
+	<div class="flex flex-col gap-2 bg-surface-container-high flex-grow">
+		{#each copyFiltered as [key, value]}
 			<SettingControl {key} {value} {defaultSettings} onChange={(k, v) => (copy[k] = v)} {open} />
-			{#if i != copyFiltered.length - 1}
-				<Divider />
-			{/if}
 		{/each}
 	</div>
 

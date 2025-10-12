@@ -1,15 +1,20 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import { page } from "$app/state";
-	import { Card } from "m3-svelte";
+	import { untrack } from "svelte";
+	import { Button, Icon, LinearProgressEstimate, sharedAxisTransition, TextField } from "m3-svelte";
 	import type { SearchResult, VideoSource, EpisodeInfo } from "$lib/source";
 	import { type Media, getMedia } from "$lib/anilist";
 	import { SourceSettings } from "$lib/stores/SourceStores";
 	import { Playing, Progress } from "$lib/stores/Player";
 
+	import NextIcon from "@ktibow/iconset-material-symbols/arrow-right-alt-rounded";
+	import PrevIcon from "@ktibow/iconset-material-symbols/arrow-left-alt-rounded";
+
 	import SourcesView from "./sources/SourcesView.svelte";
 	import ResultsView from "./ResultsView.svelte";
 	import EpisodesView from "./EpisodesView.svelte";
+	import { autoFocus } from "$lib/utils/Autofocus";
 
 	let sourceResults: Promise<SearchResult[]> | null = $state(null);
 	let episodes: Promise<EpisodeInfo[]> | null = $state(null);
@@ -18,15 +23,53 @@
 		getMedia(parseInt(page.url.searchParams.get("id") ?? "")),
 	);
 	let currentSource: VideoSource<unknown> | null = $state(null);
+	let step = $state(0);
+	let hasNext = $derived.by(() => [sourceResults != null, episodes != null, false]);
+	let rightSeam = $state(false);
+	let query = $state("");
+
+	const stepTexts = ["Source", "Results", "Episodes"];
+
+	function prevStep() {
+		rightSeam = false;
+		step--;
+	}
+	function nextStep() {
+		rightSeam = true;
+		step++;
+	}
 
 	async function search(source: VideoSource<unknown>) {
 		currentSource = source;
 		episodes = null;
 
-		let m = await media;
-		if (!m) return;
+		searchCurrentSource();
+	}
 
-		sourceResults = source.search($SourceSettings[source.name] ?? currentSource.defaultSettings, m);
+	async function searchCurrentSource(useMedia: boolean = true, useQuery: boolean = false) {
+		if (!currentSource) return;
+
+		const s = $SourceSettings[currentSource.name] ?? currentSource.defaultSettings;
+
+		let m = await media;
+		if (!m) throw "no media";
+
+		if (!("search" in currentSource) && !("searchText" in currentSource))
+			throw "no search functions";
+
+		if (useMedia && "search" in currentSource) {
+			sourceResults = currentSource.search(s, m);
+		} else if ("searchText" in currentSource) {
+			if (!useQuery) {
+				query = m.title.romaji ?? m.title.english ?? m.title.userPreferred;
+			}
+			sourceResults = currentSource.searchText(s, query);
+		}
+
+		await sourceResults;
+		if (step == 0) {
+			nextStep();
+		}
 	}
 
 	async function getEpisodes(id: string) {
@@ -35,6 +78,8 @@
 
 		const settings = $SourceSettings[currentSource.name] ?? currentSource.defaultSettings;
 		episodes = currentSource.getEpisodes(settings, id);
+		await episodes;
+		nextStep();
 	}
 
 	async function playEpisode(episode: EpisodeInfo) {
@@ -69,22 +114,75 @@
 		sourceResults = null;
 		episodes = null;
 	}
+
+	let debouceTimer = 0;
+	const debounce = (v: string) => {
+		clearTimeout(debouceTimer);
+		debouceTimer = setTimeout(() => {
+			searchCurrentSource(false, true);
+		}, 750);
+	};
+
+	$effect(() => {
+		query;
+	});
 </script>
 
-<div class="flex flex-col flex-grow gap-2 items-center justify-center m-2">
-	<Card variant="filled">
-		<SourcesView {search} {clearResults} {continu} />
-	</Card>
+<div class="flex flex-col items-center justify-center h-availscreen w-dvw overflow-hidden">
+	<div class="bg-background absolute flex flex-col gap-1 top-topbar w-dvw">
+		{#await sourceResults}
+			<LinearProgressEstimate />
+		{/await}
+		{#await episodes}
+			<LinearProgressEstimate />
+		{/await}
+	</div>
 
-	{#if sourceResults}
-		<Card variant="filled">
-			<ResultsView {sourceResults} {getEpisodes} />
-		</Card>
-	{/if}
+	{#key step}
+		<div
+			class="relative"
+			in:sharedAxisTransition={{
+				direction: "X",
+				rightSeam: !rightSeam,
+			}}
+			out:sharedAxisTransition={{
+				direction: "X",
+				rightSeam,
+			}}
+		>
+			<div
+				class="bg-background absolute -translate-x-1/2 -translate-y-1/2 flex flex-col gap-2 items-center overflow-hidden"
+			>
+				<div class="flex flex-row justify-between w-[70dvw] bg-background">
+					<Button iconType="full" variant="tonal" onclick={prevStep} disabled={step == 0}
+						><Icon icon={PrevIcon} /></Button
+					>
+					<span class="text-2xl">{stepTexts[step]}</span>
+					<Button iconType="full" variant="tonal" onclick={nextStep} disabled={!hasNext[step]}
+						><Icon icon={NextIcon} /></Button
+					>
+				</div>
 
-	{#if episodes}
-		<Card variant="filled">
-			<EpisodesView {episodes} {playEpisode} />
-		</Card>
-	{/if}
+				{#if step == 0}
+					<SourcesView {search} {clearResults} {continu} />
+				{/if}
+
+				{#if step == 1}
+					{#if currentSource && "searchText" in currentSource}
+						<TextField
+							bind:value={query}
+							onkeyup={({ target }) => debounce((target as HTMLInputElement).value)}
+							label="Search"
+							{@attach autoFocus}
+						/>
+					{/if}
+					<ResultsView {sourceResults} {getEpisodes} />
+				{/if}
+
+				{#if step == 2 && episodes}
+					<EpisodesView {episodes} {playEpisode} />
+				{/if}
+			</div>
+		</div>
+	{/key}
 </div>
