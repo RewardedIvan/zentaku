@@ -24,6 +24,8 @@
 		"@ktibow/iconset-material-symbols": "^0.0.1733470085",
 		"@material/material-color-utilities": "^0.3.0",
 		"@tauri-apps/api": "^2.8.0",
+		"@tauri-apps/plugin-dialog": "~2",
+		"@tauri-apps/plugin-fs": "~2.4.2",
 		"date-fns": "^4.1.0",
 		"m3-svelte": "^5.9.0",
 		"svelte-floating-ui": "^1.6.2"

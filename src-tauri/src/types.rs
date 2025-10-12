@@ -1,8 +1,8 @@
-use tauri_plugin_http::reqwest;
+use libaes::Cipher;
 use reqwest::Client as RqClient;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use libaes::Cipher;
+use tauri_plugin_http::reqwest;
 
 pub type Json = HashMap<String, serde_json::Value>;
 
@@ -34,7 +34,7 @@ pub enum FetchMethod {
     PUT,
     DELETE,
     OPTIONS,
-    PATCH
+    PATCH,
 }
 
 impl FetchMethod {

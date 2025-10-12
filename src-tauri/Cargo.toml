@@ -32,4 +32,6 @@ open = "5.3.1"
 url = { version = "2", features = ["serde"] }
 tokio = { version = "1", features = ["full"] }
 dotenv_codegen = "0.15.0"
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
 

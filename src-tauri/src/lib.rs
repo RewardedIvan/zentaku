@@ -1,16 +1,16 @@
+mod commands;
 mod error;
 mod types;
-mod commands;
 
 use error::AppError;
 use tauri::Manager;
 use tauri_plugin_http::reqwest;
 use tauri_plugin_store::StoreExt;
 
+use base64::prelude::{Engine, BASE64_STANDARD};
+use libaes::{Cipher, AES_256_KEY_LEN};
 use reqwest::Client as RqClient;
 use tokio::sync::Mutex;
-use libaes::{Cipher, AES_256_KEY_LEN};
-use base64::prelude::{BASE64_STANDARD, Engine};
 
 #[macro_use]
 extern crate dotenv_codegen;
@@ -18,26 +18,28 @@ extern crate dotenv_codegen;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_oauth::init())
         .plugin(tauri_plugin_store::Builder::new().build())
-        .invoke_handler(
-            tauri::generate_handler![
-                commands::oauth,
-                commands::check_login,
-                commands::graphql,
-                commands::fetch,
-                commands::get_sources,
-                commands::open_source_dir,
-            ]
-        )
+        .plugin(tauri_plugin_dialog::init())
+        .invoke_handler(tauri::generate_handler![
+            commands::oauth,
+            commands::check_login,
+            commands::graphql,
+            commands::fetch,
+            commands::get_sources,
+            commands::open_source_dir,
+        ])
         .setup(|app| {
             let mut store_token = None;
             let aes = {
                 let key = dotenv!("TOKEN_ENCRYPT_KEY").as_bytes();
 
                 if key.len() != AES_256_KEY_LEN {
-                    Err(AppError::TokenStore("TOKEN_ENCRYPT_KEY is not 32 bytes long".to_string()))
+                    Err(AppError::TokenStore(
+                        "TOKEN_ENCRYPT_KEY is not 32 bytes long".to_string(),
+                    ))
                 } else {
                     // the things you do for type safety
                     let mut key_typed = [0u8; 32];
@@ -52,43 +54,31 @@ pub fn run() {
             // > good luck brave reader
             let token_store = app.store("token")?;
             if let Some(token) = token_store.get("token_encrypted") {
-                let token =
-                    BASE64_STANDARD.decode(
-                        token.as_str().
-                        ok_or(
-                            AppError::TokenStore("token isn't a string".to_string())
-                        )?
-                    )?;
-
-                let enc_iv =
-                    BASE64_STANDARD.decode(
-                        token_store.get("enc_iv")
-                        .ok_or(
-                            AppError::TokenStore("no enc_iv".to_string())
-                        )?
+                let token = BASE64_STANDARD.decode(
+                    token
                         .as_str()
-                        .ok_or(
-                            AppError::TokenStore("enc_iv isn't a string".to_string())
-                        )?
-                    )?;
+                        .ok_or(AppError::TokenStore("token isn't a string".to_string()))?,
+                )?;
 
-                store_token = Some(
-                    serde_json::from_str(
-                        &String::from_utf8(
-                            aes.cbc_decrypt(&enc_iv, &token)
-                        )?
-                    )?
-                );
+                let enc_iv = BASE64_STANDARD.decode(
+                    token_store
+                        .get("enc_iv")
+                        .ok_or(AppError::TokenStore("no enc_iv".to_string()))?
+                        .as_str()
+                        .ok_or(AppError::TokenStore("enc_iv isn't a string".to_string()))?,
+                )?;
+
+                store_token = Some(serde_json::from_str(&String::from_utf8(
+                    aes.cbc_decrypt(&enc_iv, &token),
+                )?)?);
             }
             drop(token_store);
 
-            app.manage(Mutex::new(
-                types::AppState {
-                    client: RqClient::new(),
-                    token: store_token,
-                    aes,
-                }
-            ));
+            app.manage(Mutex::new(types::AppState {
+                client: RqClient::new(),
+                token: store_token,
+                aes,
+            }));
 
             Ok(())
         })

@@ -3,6 +3,7 @@
 
 	import Tooltip from "$lib/ui/Tooltip.svelte";
 	import { Settings } from "$lib/stores/settings";
+	import ExportImport from "./(main)/settings/ExportImport.svelte";
 
 	interface Props {
 		open: boolean;
@@ -33,7 +34,7 @@
 
 <Dialog headline="Settings version mismatch" bind:open>
 	<span>
-		Your settings are from a {$Settings.version < Settings.defaultValue.version ? "newer" : "older"}
+		Your settings are from a {$Settings.version > Settings.defaultValue.version ? "newer" : "older"}
 		version of zentaku.
 	</span>
 
@@ -45,6 +46,7 @@
 				<span>Does nothing</span>
 			{/snippet}
 		</Tooltip>
+		<ExportImport />
 		<Tooltip>
 			<Button variant="tonal" onclick={reset}>Reset</Button>
 

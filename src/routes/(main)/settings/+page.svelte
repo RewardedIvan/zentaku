@@ -10,6 +10,7 @@
 	import PlayerKeybinds from "./PlayerKeybinds.svelte";
 	import Theme from "./Theme.svelte";
 	import Cache from "./Cache.svelte";
+	import ExportImport from "./ExportImport.svelte";
 
 	let scrollSection = $state("");
 	let scroll = new Spring(0, {
@@ -68,6 +69,7 @@
 		{@render category("Player")}
 		{@render category("Player keybinds")}
 		{@render category("Cache")}
+		{@render category("Export/Import")}
 	</div>
 	<div class="flex flex-col gap-2 overflow-auto flex-grow">
 		{#snippet categorytitle(name: string)}
@@ -82,5 +84,7 @@
 		<PlayerKeybinds />
 		{@render categorytitle("Cache")}
 		<Cache />
+		{@render categorytitle("Export/Import")}
+		<div class="flex flex-col gap-1 px-1"><ExportImport /></div>
 	</div>
 </div>
