@@ -214,3 +214,54 @@ export const Settings = createStoreLocalStorage<{
 		mediaListCollectionClearAgeHours: 10 / 60,
 	},
 });
+
+export type SettingsType = (typeof Settings)["defaultValue"];
+
+export const settingsMigrations = {
+	"3 -> 4": (s: any) => {
+		s.version = 4;
+		s.theme.contrast = (() => {
+			switch (s.theme.contrast) {
+				case 0:
+					return -0.5;
+				case 1:
+					return 0;
+				case 2:
+					return 6 / 12;
+				case 3:
+					return 8 / 12;
+				case 4:
+					return 10 / 12;
+				case 5:
+					return 11 / 12;
+				default:
+					return Settings.defaultValue.theme.contrast;
+			}
+		})();
+		if ("serialized" in s.theme) {
+			delete s.theme.serialized;
+		}
+		s.theme.variant = (() => {
+			switch (s.theme.algorithm) {
+				case "tonal_spot":
+					return Variant.TONAL_SPOT;
+				case "content":
+					return Variant.CONTENT;
+				case "fidelity":
+					return Variant.FIDELITY;
+				case "vibrant":
+					return Variant.VIBRANT;
+				case "expressive":
+					return Variant.EXPRESSIVE;
+				case "neutral":
+					return Variant.NEUTRAL;
+				case "monochrome":
+					return Variant.MONOCHROME;
+				default:
+					return Settings.defaultValue.theme.variant;
+			}
+		})();
+		delete s.theme.algorithm;
+		s.theme.density = Settings.defaultValue.theme.density;
+	},
+};
