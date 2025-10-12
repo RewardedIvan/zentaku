@@ -3,12 +3,12 @@
 	import Snackbar from "./Snackbar.svelte";
 	import ConfirmProgressUpdateDialog from "./ConfirmProgressUpdateDialog.svelte";
 
-	import { Playing, Progress } from "$lib/stores/Player";
-	import { SourceSettings } from "$lib/stores/SourceStores";
-	import { Settings } from "$lib/stores/Settings";
+	import { Playing, Progress } from "$lib/stores/player";
+	import { SourceSettings } from "$lib/stores/sourceStores";
+	import { Settings } from "$lib/stores/settings";
 	import { type VideoResult } from "$lib/source";
-	import { LSCache } from "$lib/stores/Cache";
-	import { areAllScriptsTrusted, getScripts, loadScripts } from "$lib/utils/Sources";
+	import { LSCache } from "$lib/stores/cache";
+	import { areAllScriptsTrusted, getScripts, loadScripts } from "$lib/utils/sources";
 	import { onMount, onDestroy } from "svelte";
 	import { beforeNavigate } from "$app/navigation";
 	import {

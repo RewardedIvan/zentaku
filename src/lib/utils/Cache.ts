@@ -1,5 +1,5 @@
-import { LSCache } from "$lib/stores/Cache";
-import { Settings } from "$lib/stores/Settings";
+import { LSCache } from "$lib/stores/cache";
+import { Settings } from "$lib/stores/settings";
 import { get } from "svelte/store";
 
 export function findCache<T extends keyof typeof LSCache.defaultValue>(

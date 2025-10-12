@@ -1,4 +1,4 @@
-import { createStoreLocalStorage } from "./LocalStorage";
+import { createStoreLocalStorage } from "./localstorage";
 import type { SearchVariables } from "$lib/anilist";
 import { Variant } from "@ktibow/material-color-utilities-nightly";
 

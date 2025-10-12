@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Settings } from "$lib/stores/Settings";
+	import { Settings } from "$lib/stores/settings";
 	import {
 		Button,
 		Chip,

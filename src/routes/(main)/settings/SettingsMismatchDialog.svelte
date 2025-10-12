@@ -2,7 +2,7 @@
 	import { Button, Dialog } from "m3-svelte";
 
 	import Tooltip from "$lib/ui/Tooltip.svelte";
-	import { Settings } from "$lib/stores/Settings";
+	import { Settings } from "$lib/stores/settings";
 
 	interface Props {
 		open: boolean;

@@ -2,7 +2,7 @@
 	import { easeEmphasizedAccel, easeEmphasizedDecel } from "m3-svelte";
 	import { slide } from "svelte/transition";
 	import { type ChangeProgress, listStatusToString } from "$lib/anilist";
-	import { Settings } from "$lib/stores/Settings";
+	import { Settings } from "$lib/stores/settings";
 
 	interface Props {
 		showSnack: boolean;

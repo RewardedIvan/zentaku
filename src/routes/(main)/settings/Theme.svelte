@@ -6,7 +6,7 @@
 		Variant,
 		hexFromArgb,
 	} from "@ktibow/material-color-utilities-nightly";
-	import { Settings } from "$lib/stores/Settings";
+	import { Settings } from "$lib/stores/settings";
 	import Tooltip from "$lib/ui/Tooltip.svelte";
 	import ColorPicker from "$lib/ui/ColorPicker.svelte";
 

@@ -19,8 +19,8 @@
 	import { onMount, type Snippet } from "svelte";
 	import { linear } from "svelte/easing";
 	import { Tween } from "svelte/motion";
-	import { Topbar } from "$lib/stores/App";
-	import { Settings, type PlayerSizeMode } from "$lib/stores/Settings";
+	import { Topbar } from "$lib/stores/app";
+	import { Settings, type PlayerSizeMode } from "$lib/stores/settings";
 
 	import Ripple from "$lib/ui/Ripple.svelte";
 	import Tooltip from "$lib/ui/Tooltip.svelte";

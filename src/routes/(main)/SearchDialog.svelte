@@ -16,7 +16,7 @@
 		type SearchVariables,
 	} from "$lib/anilist";
 	import { goto } from "$app/navigation";
-	import { Settings } from "$lib/stores/Settings";
+	import { Settings } from "$lib/stores/settings";
 
 	import SearchIcon from "@ktibow/iconset-material-symbols/search";
 	import MenuIcon from "@ktibow/iconset-material-symbols/menu";

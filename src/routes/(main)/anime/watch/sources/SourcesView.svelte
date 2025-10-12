@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { FAB } from "m3-svelte";
 	import type { VideoSource } from "$lib/source";
-	import { getScripts, trustScripts, areAllScriptsTrusted, loadScripts } from "$lib/utils/Sources";
+	import { getScripts, trustScripts, areAllScriptsTrusted, loadScripts } from "$lib/utils/sources";
 	import { invoke } from "@tauri-apps/api/core";
 	import type { IconifyIcon } from "@iconify/types";
 	import Tooltip from "$lib/ui/Tooltip.svelte";
-	import { Progress } from "$lib/stores/Player";
+	import { Progress } from "$lib/stores/player";
 	import { page } from "$app/state";
 
 	import PlayIcon from "@ktibow/iconset-material-symbols/play-arrow";

@@ -9,7 +9,7 @@
 		RGBtoHSV,
 		withComponentValue,
 		type RGBAComponent,
-	} from "$lib/utils/Colors";
+	} from "$lib/utils/colors";
 
 	interface Props {
 		argb: number;

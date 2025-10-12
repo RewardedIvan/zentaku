@@ -1,6 +1,6 @@
 <script lang="ts" generics="T">
 	import type { Placement } from "@floating-ui/core";
-	import { CurrentDropdown } from "$lib/stores/App";
+	import { CurrentDropdown } from "$lib/stores/app";
 	import Menu from "./Menu.svelte";
 	import { Button, MenuItem, TextField } from "m3-svelte";
 	import { get } from "svelte/store";

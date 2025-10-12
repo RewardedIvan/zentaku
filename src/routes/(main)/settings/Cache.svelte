@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { Button, Divider, Icon, TextField } from "m3-svelte";
 	import { name } from "./+page.svelte";
-	import { Settings } from "$lib/stores/Settings";
-	import { LSCache } from "$lib/stores/Cache";
+	import { Settings } from "$lib/stores/settings";
+	import { LSCache } from "$lib/stores/cache";
 
 	import DeleteIcon from "@ktibow/iconset-material-symbols/delete";
 

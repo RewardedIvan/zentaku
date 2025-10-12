@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { TrustStore } from "$lib/stores/SourceStores";
+	import { TrustStore } from "$lib/stores/sourceStores";
 	import { Dialog, ListItem, Button, Divider, Icon } from "m3-svelte";
 	import Tooltip from "$lib/ui/Tooltip.svelte";
 

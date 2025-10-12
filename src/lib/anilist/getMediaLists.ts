@@ -29,8 +29,8 @@ export async function getUserId() {
 
 import getMediaListsQuery from "./getMediaLists.gql?raw";
 import { invoke } from "@tauri-apps/api/core";
-import { LSCache } from "$lib/stores/Cache";
-import { findCache } from "$lib/utils/Cache";
+import { LSCache } from "$lib/stores/cache";
+import { findCache } from "$lib/utils/cache";
 
 export async function getMediaLists(type: "anime" | "manga") {
 	const cached = findCache("mediaListCollection", "mediaListCollectionClearAgeHours", type);

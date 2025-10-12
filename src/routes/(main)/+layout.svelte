@@ -15,7 +15,7 @@
 	import { page } from "$app/state";
 	import { getCurrentWindow } from "@tauri-apps/api/window";
 	import { slide } from "svelte/transition";
-	import { Topbar } from "$lib/stores/App";
+	import { Topbar } from "$lib/stores/app";
 	import { goto } from "$app/navigation";
 
 	import ArrowBackIcon from "@ktibow/iconset-material-symbols/arrow-back";

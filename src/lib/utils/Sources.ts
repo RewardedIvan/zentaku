@@ -1,5 +1,5 @@
 import type { VideoSource } from "$lib/source";
-import { TrustStore } from "$lib/stores/SourceStores";
+import { TrustStore } from "$lib/stores/sourceStores";
 import { invoke } from "@tauri-apps/api/core";
 import { get } from "svelte/store";
 import { fetch as unsafeFetch } from "$lib/tauri";

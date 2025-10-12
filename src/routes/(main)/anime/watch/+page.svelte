@@ -5,8 +5,8 @@
 	import { Button, Icon, LinearProgressEstimate, sharedAxisTransition, TextField } from "m3-svelte";
 	import type { SearchResult, VideoSource, EpisodeInfo } from "$lib/source";
 	import { type Media, getMedia } from "$lib/anilist";
-	import { SourceSettings } from "$lib/stores/SourceStores";
-	import { Playing, Progress } from "$lib/stores/Player";
+	import { SourceSettings } from "$lib/stores/sourceStores";
+	import { Playing, Progress } from "$lib/stores/player";
 
 	import NextIcon from "@ktibow/iconset-material-symbols/arrow-right-alt-rounded";
 	import PrevIcon from "@ktibow/iconset-material-symbols/arrow-left-alt-rounded";
@@ -14,7 +14,7 @@
 	import SourcesView from "./sources/SourcesView.svelte";
 	import ResultsView from "./ResultsView.svelte";
 	import EpisodesView from "./EpisodesView.svelte";
-	import { autoFocus } from "$lib/utils/Autofocus";
+	import { autoFocus } from "$lib/utils/autofocus";
 
 	let sourceResults: Promise<SearchResult[]> | null = $state(null);
 	let episodes: Promise<EpisodeInfo[]> | null = $state(null);

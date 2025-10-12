@@ -1,6 +1,6 @@
 import type { Character, Media, MediaListCollection, Viewer } from "$lib/anilist";
 import type { VideoResult } from "$lib/source";
-import { createStoreLocalStorage } from "./LocalStorage";
+import { createStoreLocalStorage } from "./localstorage";
 
 export const LSCache = createStoreLocalStorage<{
 	media: Record<number, { media: Media; timestamp: number }>;

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Divider, Slider, Switch } from "m3-svelte";
-	import { Settings } from "$lib/stores/Settings";
+	import { Settings } from "$lib/stores/settings";
 	import { name } from "./+page.svelte";
 	import Dropdown from "$lib/ui/Dropdown.svelte";
 </script>

@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-	import { Settings } from "$lib/stores/Settings";
+	import { Settings } from "$lib/stores/settings";
 	import Ripple from "$lib/ui/Ripple.svelte";
 	import { Spring } from "svelte/motion";
 

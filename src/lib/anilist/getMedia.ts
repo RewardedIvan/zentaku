@@ -117,8 +117,8 @@ export interface Media {
 
 import { invoke } from "@tauri-apps/api/core";
 import getMediaQuery from "./getMedia.gql?raw";
-import { LSCache } from "$lib/stores/Cache";
-import { findCache } from "$lib/utils/Cache";
+import { LSCache } from "$lib/stores/cache";
+import { findCache } from "$lib/utils/cache";
 
 export async function getMedia(id: number) {
 	const cached = findCache("media", "mediaClearAgeHours", id);

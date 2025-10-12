@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button, Divider, Dialog } from "m3-svelte";
-	import { SourceSettings } from "$lib/stores/SourceStores";
+	import { SourceSettings } from "$lib/stores/sourceStores";
 	import SettingControl from "./SettingControl.svelte";
 
 	interface Props {

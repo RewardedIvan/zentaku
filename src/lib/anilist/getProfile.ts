@@ -9,8 +9,8 @@ export interface Viewer {
 
 import { invoke } from "@tauri-apps/api/core";
 import getProfileQuery from "./getProfile.gql?raw";
-import { findCache } from "$lib/utils/Cache";
-import { LSCache } from "$lib/stores/Cache";
+import { findCache } from "$lib/utils/cache";
+import { LSCache } from "$lib/stores/cache";
 
 export async function getProfile() {
 	const cached = findCache("viewer", "viewerClearAgeHours", 0);

@@ -1,5 +1,5 @@
 import type { VideoResult } from "$lib/source";
-import { createStoreLocalStorage } from "./LocalStorage";
+import { createStoreLocalStorage } from "./localstorage";
 
 export const Playing = createStoreLocalStorage("playing", {
 	anilistId: 0,

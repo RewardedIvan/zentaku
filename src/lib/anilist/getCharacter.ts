@@ -33,8 +33,8 @@ export interface Character {
 import { invoke } from "@tauri-apps/api/core";
 
 import getCharacterQuery from "./getCharacter.gql?raw";
-import { findCache } from "$lib/utils/Cache";
-import { LSCache } from "$lib/stores/Cache";
+import { findCache } from "$lib/utils/cache";
+import { LSCache } from "$lib/stores/cache";
 
 export async function getCharacter(id: number) {
 	const cached = findCache("character", "characterClearAgeHours", id);
