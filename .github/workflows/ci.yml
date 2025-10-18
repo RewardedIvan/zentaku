@@ -1,0 +1,164 @@
+name: Build & Release
+
+on:
+  push:
+    branches:
+      - "**"
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: "macos-latest"
+            rust-targets: "aarch64-apple-darwin"
+            artifact-name: "macos-arm"
+          - platform: "macos-latest"
+            rust-targets: "x86_64-apple-darwin"
+            artifact-name: "macos-intel"
+          - platform: "ubuntu-22.04"
+            rust-targets: ""
+            artifact-name: "linux"
+          - platform: "ubuntu-22.04-arm"
+            rust-targets: ""
+            artifact-name: "linux-arm"
+          - platform: "windows-latest"
+            rust-targets: ""
+            artifact-name: "windows"
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install system dependencies (Linux only)
+        if: contains(matrix.platform, 'ubuntu')
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: Create .env file
+        run: |
+          echo "CLIENT_ID=23320" >> .env
+          echo "TOKEN_ENCRYPT_KEY=qqqqqwweeqweqweqweqwqewewwqewqew" >> .env
+          echo "DISCORD_CLIENT_ID=1328788640242864148" >> .env
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install package manager
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts=false
+
+      - name: Sync SvelteKit
+        run: pnpm svelte-kit sync
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust-targets }}
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      - name: Build Debug
+        run: pnpm tauri build --debug --ci
+      - name: Upload Debug
+        uses: actions/upload-artifact@v4
+        with:
+          name: zentaku-${{ matrix.artifact-name }}-debug
+          path: |
+            src-tauri/target/debug/bundle/**/*.dmg
+            src-tauri/target/debug/bundle/**/*.exe
+            src-tauri/target/debug/bundle/**/*.msi
+            src-tauri/target/debug/bundle/**/*.AppImage
+            src-tauri/target/debug/bundle/**/*.deb
+            src-tauri/target/debug/bundle/**/*.rpm
+          if-no-files-found: error
+          include-hidden-files: false
+          compression-level: 9
+          overwrite: true
+
+      - name: Build Release
+        run: pnpm tauri build --ci
+      - name: Upload Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: zentaku-${{ matrix.artifact-name }}-release
+          path: |
+            src-tauri/target/release/bundle/**/*.dmg
+            src-tauri/target/release/bundle/**/*.exe
+            src-tauri/target/release/bundle/**/*.msi
+            src-tauri/target/release/bundle/**/*.AppImage
+            src-tauri/target/release/bundle/**/*.deb
+            src-tauri/target/release/bundle/**/*.rpm
+          if-no-files-found: error
+          include-hidden-files: false
+          compression-level: 9
+          overwrite: true
+
+  release:
+    name: Create GitHub Release
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Generate release body
+        id: release_body
+        run: |
+          TAG_DESC=$(git tag -l --format='%(contents)' $GITHUB_REF_NAME)
+
+          PREV_TAG=$(git tag --sort=-creatordate | grep -A1 $GITHUB_REF_NAME | tail -n1)
+          if [ -z "$PREV_TAG" ]; then
+            PREV_TAG=$(git rev-list --max-parents=0 HEAD)
+          fi
+
+          COMMITS=$(git log $PREV_TAG..$GITHUB_REF_NAME --pretty=format:"- [\`%h\`](https://github.com/${GITHUB_REPOSITORY}/commit/%H) %s")
+          COMMITS_MD="<details><summary>Changelog</summary>
+
+          $COMMITS
+
+          </details>"
+          RELEASE_BODY="$TAG_DESC
+
+          $COMMITS_MD"
+
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$RELEASE_BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./artifacts/**/*
+          tag_name: ${{ github.ref_name }}
+          name: "Zentaku ${{ github.ref_name }}"
+          body: ${{ steps.release_body.outputs.body }}
+          overwrite: true

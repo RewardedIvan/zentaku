@@ -233,7 +233,7 @@ pub async fn set_activity(
         return Err(AppError::NoDiscord);
     }
 
-    if let Some(discord) = &l.discord {
+    if let Some(discord) = &mut l.discord {
         if let Some(state) = &activity.state {
             if state.len() < 3 {
                 return Err(AppError::InvalidDiscordState);
