@@ -21,9 +21,13 @@
 	import SaveIcon from "@ktibow/iconset-material-symbols/save";
 	import ReloadIcon from "@ktibow/iconset-material-symbols/refresh";
 	import ReloadCacheIcon from "@ktibow/iconset-material-symbols/cached";
+	import { setActivityH } from "$lib/utils/drpc";
+	import { get } from "svelte/store";
 
 	let loading = $state(true);
 	let time = $state(0);
+	let duration = $state(0);
+	let paused = $state(false);
 	let snackProgress: Promise<ChangeProgress> | null = $state(null);
 	let showSnack = $state(false);
 	let showConfirmProgressUpdate = $state(false);
@@ -102,6 +106,32 @@
 
 	let video = $state(fetchVideo());
 
+	onMount(() => {
+		const intv = setInterval(async () => {
+			const pl = get(Playing);
+			switch (get(Settings).drpc.watchingActivity) {
+				case "broad":
+					await setActivityH("Watching anime", undefined, "Watching");
+					break;
+				case "show":
+					await setActivityH("Watching anime", `${pl.animeTitle}`, "Watching");
+					break;
+				case "detailed":
+					const currentMs = new Date().getTime();
+					const start = currentMs - time * 1000;
+					await setActivityH(
+						`${pl.animeTitle}${paused ? " (paused)" : ""}`,
+						`Episode ${pl.episode}/${pl.episodes} "${pl.episodeTitles[pl.episode]}"`,
+						"Watching",
+						{ start, end: start + duration * 1000 },
+					);
+					break;
+			}
+		}, 5000);
+
+		return () => clearInterval(intv);
+	});
+
 	async function updateProgress(
 		command: "play" | "pause",
 		time: number,
@@ -113,9 +143,11 @@
 			newp.push({
 				source: $Playing.source,
 				animeId: $Playing.animeId,
+				animeTitle: $Playing.animeTitle,
 				anilistId: $Playing.anilistId,
 				currentEpisode: episode,
 				episodes: $Playing.episodes,
+				episodeTitles: $Playing.episodeTitles,
 				time,
 			});
 			return newp;
@@ -229,6 +261,8 @@
 
 <Video
 	bind:time
+	bind:duration
+	bind:paused
 	{loading}
 	class="flex-grow h-availscreen"
 	previous={() => switchEpisodeRelative(-1)}

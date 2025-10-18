@@ -52,6 +52,8 @@
 		next?: () => void;
 		children: Snippet<[]>;
 		time: number;
+		duration: number;
+		paused: boolean;
 		loading: boolean;
 		controlsRight?: Snippet<[]>;
 		controlsLeft?: Snippet<[]>;
@@ -65,14 +67,14 @@
 		next,
 		children,
 		time = $bindable(),
+		duration = $bindable(),
+		paused = $bindable(),
 		loading,
 		controlsRight,
 		controlsLeft,
 		video = $bindable(),
 	}: Props = $props();
 
-	let paused = $state(false);
-	let duration = $state(0);
 	let controlsOpacity = new Tween(0);
 	let win = getCurrentWindow();
 	let command: IconifyIcon | null = $state(null);

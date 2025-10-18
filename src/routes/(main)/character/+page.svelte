@@ -1,15 +1,30 @@
 <script lang="ts">
 	import { LinearProgressEstimate } from "m3-svelte";
 	import { page } from "$app/state";
+	import { get } from "svelte/store";
+	import { Settings } from "$lib/stores/settings";
+	import { setActivityH } from "$lib/utils/drpc";
 	import { formatDate, getCharacter, type Character } from "$lib/anilist";
 
 	import Favourite from "$lib/ui/Favourite.svelte";
 	import Spoiler from "$lib/ui/Spoiler.svelte";
 	import Markdown from "$lib/ui/Markdown.svelte";
 	import MediaScroll from "$lib/ui/MediaScroll.svelte";
+
+	let character = $state(getCharacter(parseInt(page.url.searchParams.get("id") ?? "")));
+
+	$effect(() => {
+		if (get(Settings).drpc.browsingActivity) {
+			character.then(c => {
+				setActivityH("Browsing AniList", `Looking at ${c?.name.userPreferred}`);
+			});
+		} else {
+			setActivityH("Browsing AniList");
+		}
+	});
 </script>
 
-{#await getCharacter(parseInt(page.url.searchParams.get("id") ?? ""))}
+{#await character}
 	<LinearProgressEstimate />
 {:then character}
 	{#if character}

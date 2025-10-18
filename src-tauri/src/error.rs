@@ -18,6 +18,12 @@ pub enum AppError {
     Graphql(String),
     #[error("tauri error: {0}")]
     Tauri(#[from] tauri::Error),
+    #[error("discord rpc error: {0}")]
+    Discord(#[from] discord_presence::error::DiscordError),
+    #[error("failed to initialize discord")]
+    NoDiscord,
+    #[error("invalid discord state, should be >2 characters")]
+    InvalidDiscordState,
 }
 
 #[derive(serde::Serialize)]
@@ -33,6 +39,9 @@ pub enum ErrorKind {
     TokenStore(String),
     Graphql(String),
     Tauri(String),
+    Discord(String),
+    NoDiscord,
+    InvalidDiscordState,
 }
 
 impl serde::Serialize for AppError {
@@ -51,6 +60,9 @@ impl serde::Serialize for AppError {
             Self::TokenStore(_) => ErrorKind::TokenStore(error_message),
             Self::Graphql(_) => ErrorKind::Graphql(error_message),
             Self::Tauri(_) => ErrorKind::Tauri(error_message),
+            Self::Discord(_) => ErrorKind::Discord(error_message),
+            Self::NoDiscord => ErrorKind::NoDiscord,
+            Self::InvalidDiscordState => ErrorKind::InvalidDiscordState,
         };
         error_kind.serialize(serializer)
     }

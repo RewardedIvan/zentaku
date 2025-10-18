@@ -19,6 +19,7 @@
 	let sourceResults: Promise<SearchResult[]> | null = $state(null);
 	let episodes: Promise<EpisodeInfo[]> | null = $state(null);
 	let animeId = $state("");
+	let animeTitle = $state("");
 	let media: Promise<Media | null> = $state(
 		getMedia(parseInt(page.url.searchParams.get("id") ?? "")),
 	);
@@ -72,9 +73,10 @@
 		}
 	}
 
-	async function getEpisodes(id: string) {
+	async function getEpisodes(id: string, title: string) {
 		if (!currentSource) return;
 		animeId = id;
+		animeTitle = title;
 
 		const settings = $SourceSettings[currentSource.name] ?? currentSource.defaultSettings;
 		episodes = currentSource.getEpisodes(settings, id);
@@ -84,12 +86,15 @@
 
 	async function playEpisode(episode: EpisodeInfo) {
 		if (!currentSource || !episodes) return;
+		const epsds = await episodes;
 
 		Playing.set({
 			anilistId: parseInt(page.url.searchParams.get("id") ?? ""),
 			source: currentSource.name,
 			animeId: animeId,
+			animeTitle: animeTitle,
 			episode: episode.number,
+			episodeTitles: epsds.reduce((a: string[], { number, title }) => ((a[number] = title), a), []),
 			episodes: (await episodes).length,
 		});
 
@@ -103,7 +108,9 @@
 				anilistId: Number(page.url.searchParams.get("id")),
 				source: progress.source,
 				animeId: progress.animeId,
+				animeTitle: progress.animeTitle,
 				episode: progress.currentEpisode,
+				episodeTitles: progress.episodeTitles,
 				episodes: progress.episodes,
 			});
 			goto(`/player?id=${page.url.searchParams.get("id")}`);

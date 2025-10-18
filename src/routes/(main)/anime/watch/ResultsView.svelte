@@ -5,7 +5,7 @@
 
 	interface Props {
 		sourceResults: Promise<SearchResult[]> | null;
-		getEpisodes: (id: string) => void;
+		getEpisodes: (id: string, title: string) => void;
 	}
 
 	const { sourceResults, getEpisodes }: Props = $props();
@@ -16,7 +16,11 @@
 		<div class="flex flex-row gap-2 flex-wrap max-w-[80vw] max-h-[70vh] overflow-x-auto">
 			{#each results as result}
 				<div class="flex flex-col gap-2">
-					<Card variant="filled" onclick={() => getEpisodes(result.id)} style="max-width: 12rem;">
+					<Card
+						variant="filled"
+						onclick={() => getEpisodes(result.id, result.title)}
+						style="max-width: 12rem;"
+					>
 						<span class="font-afacad-flux text-md text-wrap">{result.title}</span>
 						{#if result.episodes}
 							<span class="font-afacad-flux text-sm">{result.episodes} episodes</span>

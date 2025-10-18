@@ -4,6 +4,7 @@
 
 <script lang="ts">
 	import Ripple from "$lib/ui/Ripple.svelte";
+	import { setActivityH } from "$lib/utils/drpc";
 	import { Spring } from "svelte/motion";
 
 	import PlayerSettings from "./PlayerSettings.svelte";
@@ -11,6 +12,7 @@
 	import Theme from "./Theme.svelte";
 	import Cache from "./Cache.svelte";
 	import ExportImport from "./ExportImport.svelte";
+	import DiscordRPC from "./DiscordRPC.svelte";
 
 	let scrollSection = $state("");
 	let scroll = new Spring(0, {
@@ -41,6 +43,8 @@
 			scrollSection = arr[prevI].s.id;
 		}
 	}
+
+	setActivityH("Changing settings");
 </script>
 
 <svelte:window onwheel={onWheel} />
@@ -69,6 +73,7 @@
 		{@render category("Player")}
 		{@render category("Player keybinds")}
 		{@render category("Cache")}
+		{@render category("Discord RPC")}
 		{@render category("Export/Import")}
 	</div>
 	<div class="flex flex-col gap-2 overflow-auto flex-grow">
@@ -84,6 +89,8 @@
 		<PlayerKeybinds />
 		{@render categorytitle("Cache")}
 		<Cache />
+		{@render categorytitle("Discord RPC")}
+		<DiscordRPC />
 		{@render categorytitle("Export/Import")}
 		<div class="flex flex-col gap-1 px-1"><ExportImport /></div>
 	</div>

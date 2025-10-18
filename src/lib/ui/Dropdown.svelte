@@ -10,6 +10,7 @@
 
 	interface Descriptor<T> {
 		text?: string;
+		description?: string;
 		value: T;
 		icon?: IconifyIcon;
 	}
@@ -93,7 +94,10 @@
 	{#snippet menu()}
 		{#each options as o}
 			{#if typeof o == "object" && o != null && "value" in o}
-				<MenuItem icon={o.icon} onclick={() => changeValue(o.value)}>{o.text}</MenuItem>
+				<MenuItem icon={o.icon} onclick={() => changeValue(o.value)}
+					>{o.text ?? o.value}
+					<p class="text-sm text-on-surface-variant">{o.description}</p></MenuItem
+				>
 			{:else}
 				<MenuItem onclick={() => changeValue(o)}>{o}</MenuItem>
 			{/if}

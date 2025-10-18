@@ -33,6 +33,8 @@ CLIENT_ID=23320
 # 32 bytes for AES 256
 # Also I know I'm stupid, you don't have to tell me
 TOKEN_ENCRYPT_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# Discord app client id for the RPC; This is the zentaku one
+DISCORD_CLIENT_ID=1328788640242864148
 ```
 
 - Install pnpm dependencies

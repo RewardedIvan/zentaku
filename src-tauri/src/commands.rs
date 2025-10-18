@@ -5,13 +5,17 @@ use tauri_plugin_store::StoreExt;
 use base64::prelude::{Engine, BASE64_STANDARD};
 use rand::Rng;
 use serde_json::json;
-use std::{collections::HashMap, fs, sync::mpsc::channel};
+use std::{
+    collections::HashMap,
+    fs,
+    sync::{atomic::Ordering, mpsc::channel},
+};
 use tokio::sync::Mutex;
 use url::Url;
 
 use crate::{
     error::AppError,
-    types::{AppState, FetchMethod, FetchResponse, Json, Token},
+    types::{self, AppState, FetchMethod, FetchResponse, Json, Token},
 };
 
 #[tauri::command]
@@ -182,4 +186,156 @@ pub async fn open_source_dir(app_handle: tauri::AppHandle) -> Result<(), AppErro
     open::that(path)?;
 
     Ok(())
+}
+
+#[tauri::command]
+pub async fn restart_rpc(state: tauri::State<'_, Mutex<AppState>>) -> Result<(), AppError> {
+    let s = &mut state.lock().await;
+
+    s.discord_connected.store(false, Ordering::SeqCst);
+    if let Some(client) = s.discord.take() {
+        client.shutdown()?;
+    }
+
+    let mut new_discord =
+        discord_presence::Client::new(dotenv!("DISCORD_CLIENT_ID").parse::<u64>().unwrap());
+
+    new_discord
+        .on_connected({
+            let connected_clone = s.discord_connected.clone();
+            move |_| {
+                connected_clone.store(true, Ordering::SeqCst);
+            }
+        })
+        .persist();
+    new_discord
+        .on_disconnected({
+            let connected_clone = s.discord_connected.clone();
+            move |_| {
+                connected_clone.store(false, Ordering::SeqCst);
+            }
+        })
+        .persist();
+
+    new_discord.start();
+    s.discord = Some(new_discord);
+
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn set_activity(
+    state: tauri::State<'_, Mutex<AppState>>,
+    activity: crate::types::DiscordActivity,
+) -> Result<(), AppError> {
+    let l = &mut state.lock().await;
+    if !l.discord_connected.load(Ordering::SeqCst) || !discord_presence::Client::is_ready() {
+        return Err(AppError::NoDiscord);
+    }
+
+    if let Some(discord) = &l.discord {
+        if let Some(state) = &activity.state {
+            if state.len() < 3 {
+                return Err(AppError::InvalidDiscordState);
+            }
+        }
+
+        discord.set_activity(move |mut a| {
+            if let Some(state) = &activity.state {
+                a = a.state(state.as_str());
+            }
+
+            if let Some(details) = &activity.details {
+                a = a.details(details.as_str());
+            }
+
+            if let Some(activity_type) = &activity.activity_type {
+                use discord_presence::models::ActivityType;
+
+                a = a.activity_type(match activity_type {
+                    types::ActivityType::Playing => ActivityType::Playing,
+                    types::ActivityType::Watching => ActivityType::Watching,
+                    types::ActivityType::Competing => ActivityType::Competing,
+                    types::ActivityType::Listening => ActivityType::Listening,
+                })
+            }
+
+            if let Some(timestamps) = activity.timestamps {
+                a = a.timestamps(|mut ts| {
+                    if let Some(start) = timestamps.start {
+                        ts = ts.start(start.round() as u64);
+                    }
+                    if let Some(end) = timestamps.end {
+                        ts = ts.end(end.round() as u64);
+                    }
+
+                    ts
+                });
+            }
+
+            if let Some(assets) = &activity.assets {
+                a = a.assets(|mut ass| {
+                    if let Some(large_image) = &assets.large_image {
+                        ass = ass.large_image(large_image);
+                    }
+                    if let Some(large_text) = &assets.large_text {
+                        ass = ass.large_text(large_text);
+                    }
+                    if let Some(small_image) = &assets.small_image {
+                        ass = ass.small_image(small_image);
+                    }
+                    if let Some(small_text) = &assets.small_text {
+                        ass = ass.small_text(small_text);
+                    }
+
+                    ass
+                });
+            }
+
+            if let Some(secrets) = &activity.secrets {
+                a = a.secrets(|mut sec| {
+                    if let Some(game) = &secrets.game {
+                        sec = sec.game(game);
+                    }
+                    if let Some(join) = &secrets.join {
+                        sec = sec.join(join);
+                    }
+                    if let Some(spectate) = &secrets.spectate {
+                        sec = sec.spectate(spectate);
+                    }
+
+                    sec
+                });
+            }
+
+            if let Some(party) = &activity.party {
+                a = a.party(|mut par| {
+                    if let Some(id) = &party.id {
+                        par = par.id(id);
+                    }
+                    if let Some(size) = party.size {
+                        par = par.size(size);
+                    }
+
+                    par
+                });
+            }
+
+            if let Some(buttons) = &activity.buttons {
+                for button in buttons.iter() {
+                    a = a.append_buttons(move |mut b| {
+                        b = b.label(button.label.clone());
+                        b = b.url(button.url.clone());
+                        b
+                    });
+                }
+            }
+
+            a
+        })?;
+
+        Ok(())
+    } else {
+        Err(AppError::NoDiscord)
+    }
 }

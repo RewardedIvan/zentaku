@@ -15,6 +15,8 @@ type Keybind<T> = {
 	whenCtrl?: boolean;
 };
 
+export type MediaLod = "broad" | "show" | "detailed";
+
 export const Settings = createStoreLocalStorage<{
 	version: number;
 	lastUsedFilters: SearchVariables;
@@ -43,8 +45,18 @@ export const Settings = createStoreLocalStorage<{
 		characterClearAgeHours: number;
 		videoUrlClearAgeHours: number;
 	};
+	drpc: {
+		enabled: boolean;
+		emptyState: boolean;
+		browsingActivity: boolean;
+		listActivity: boolean;
+		watchingActivity: MediaLod;
+		readingActivity: MediaLod;
+		profileButton: boolean;
+		githubButton: boolean;
+	};
 }>("settings", {
-	version: 4.0,
+	version: 5.0,
 	lastUsedFilters: {
 		isAdult: false,
 		averageScoreUpperRange: 100,
@@ -213,6 +225,16 @@ export const Settings = createStoreLocalStorage<{
 		videoUrlClearAgeHours: 2,
 		mediaListCollectionClearAgeHours: 10 / 60,
 	},
+	drpc: {
+		enabled: true,
+		emptyState: false,
+		browsingActivity: false,
+		listActivity: true,
+		readingActivity: "detailed",
+		watchingActivity: "detailed",
+		profileButton: true,
+		githubButton: true,
+	},
 });
 
 export type SettingsType = (typeof Settings)["defaultValue"];
@@ -263,5 +285,13 @@ export const settingsMigrations = {
 		})();
 		delete s.theme.algorithm;
 		s.theme.density = Settings.defaultValue.theme.density;
+	},
+	"4 -> 5": (s: any) => {
+		s.version = 5;
+		s.drpc = Settings.defaultValue.drpc;
+	},
+	"3 -> 5": (s: any) => {
+		settingsMigrations["3 -> 4"](s);
+		settingsMigrations["4 -> 5"](s);
 	},
 };

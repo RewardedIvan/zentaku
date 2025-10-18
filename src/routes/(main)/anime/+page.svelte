@@ -2,7 +2,10 @@
 	import { Button, Icon, LinearProgressEstimate } from "m3-svelte";
 	import { page } from "$app/state";
 	import { followingWatched, getMedia, type Media } from "$lib/anilist";
+	import { setActivityH } from "$lib/utils/drpc";
 	import { goto } from "$app/navigation";
+	import { get } from "svelte/store";
+	import { Settings } from "$lib/stores/settings";
 	import MediaScroll from "$lib/ui/MediaScroll.svelte";
 	import Favourite from "$lib/ui/Favourite.svelte";
 
@@ -13,9 +16,24 @@
 	import Characters from "./Characters.svelte";
 	import FollowingWatched from "./FollowingWatched.svelte";
 	import Info from "./Info.svelte";
+
+	let media = $state(getMedia(parseInt(page.url.searchParams.get("id") ?? "")));
+
+	$effect(() => {
+		if (get(Settings).drpc.browsingActivity) {
+			media.then(m => {
+				setActivityH(
+					"Browsing AniList",
+					`Looking at ${m?.title.userPreferred ?? m?.title.english ?? m?.title.romaji}`,
+				);
+			});
+		} else {
+			setActivityH("Browsing AniList");
+		}
+	});
 </script>
 
-{#await getMedia(parseInt(page.url.searchParams.get("id") ?? ""))}
+{#await media}
 	<LinearProgressEstimate />
 {:then media}
 	{#if media}

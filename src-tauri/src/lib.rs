@@ -2,6 +2,11 @@ mod commands;
 mod error;
 mod types;
 
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc,
+};
+
 use error::AppError;
 use tauri::Manager;
 use tauri_plugin_http::reqwest;
@@ -30,6 +35,8 @@ pub fn run() {
             commands::fetch,
             commands::get_sources,
             commands::open_source_dir,
+            commands::set_activity,
+            commands::restart_rpc,
         ])
         .setup(|app| {
             let mut store_token = None;
@@ -74,7 +81,33 @@ pub fn run() {
             }
             drop(token_store);
 
+            let mut discord =
+                discord_presence::Client::new(dotenv!("DISCORD_CLIENT_ID").parse::<u64>().unwrap());
+
+            let discord_connected = Arc::new(AtomicBool::new(false));
+
+            discord
+                .on_connected({
+                    let connected_clone = discord_connected.clone();
+                    move |_| {
+                        connected_clone.store(true, Ordering::SeqCst);
+                    }
+                })
+                .persist();
+            discord
+                .on_disconnected({
+                    let connected_clone = discord_connected.clone();
+                    move |_| {
+                        connected_clone.store(false, Ordering::SeqCst);
+                    }
+                })
+                .persist();
+
+            discord.start();
+
             app.manage(Mutex::new(types::AppState {
+                discord: Some(discord),
+                discord_connected,
                 client: RqClient::new(),
                 token: store_token,
                 aes,

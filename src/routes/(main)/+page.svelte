@@ -1,8 +1,12 @@
 <script lang="ts">
 	import { LinearProgressEstimate, MenuItem, NavCMLX, NavCMLXItem } from "m3-svelte";
 	import { getProfile, getMediaLists } from "$lib/anilist";
+	import { setActivityH } from "$lib/utils/drpc";
 	import MediaList from "./MediaList.svelte";
 	import type { IconifyIcon } from "@iconify/types";
+	import { Settings } from "$lib/stores/settings";
+	import { get } from "svelte/store";
+
 	import BookIcon from "@ktibow/iconset-material-symbols/book";
 	import BookIconOutline from "@ktibow/iconset-material-symbols/book-outline";
 	import AnimeIcon from "@ktibow/iconset-material-symbols/movie";
@@ -22,7 +26,15 @@
 		}
 	}
 
-	let tab: Tab = fromUrl() ?? "anime";
+	let tab: Tab = $state(fromUrl() ?? "anime");
+
+	$effect(() => {
+		if (get(Settings).drpc.listActivity) {
+			setActivityH("Browsing AniList", `Looking at their ${tab}${tab != "feed" ? " list" : ""}`);
+		} else {
+			setActivityH("Browsing AniList");
+		}
+	});
 </script>
 
 <div class="flex flex-row size-full overflow-hidden gap-4">
